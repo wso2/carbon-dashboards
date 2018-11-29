@@ -40,22 +40,6 @@ public class SiddhiAppsApi implements Microservice {
     private final SiddhiAppsApiService delegate = SiddhiAppsApiServiceFactory.getSiddhiAppsApi();
 
     /**
-     * Returns list of @store annotated Aggregations,Tables,Windows from a siddhi app
-     *
-     * @param id worker id
-     * @param appName siddhi app name
-     * @return response
-     */
-    @OPTIONS
-    @Path("/{id}/{appName}")
-    @GET
-    @Produces({ "application/json" })
-    public Response getSiddhiAppDefinitions(@Context Request request,@PathParam("id") String id, @PathParam("appName")
-            String appName) {
-        return delegate.getSiddhiAppDefinitions(request,id,appName);
-    }
-
-    /**
      * Returns list of siddhi apps which contain @store annotated Aggregations,Tables,Windows
      *
      * @return response
@@ -64,6 +48,21 @@ public class SiddhiAppsApi implements Microservice {
     @GET
     @Produces({ "application/json" })
     public Response getAllSiddhiApps(@Context Request request){
-        return delegate.getAllSiddhiApps(request);
+        return delegate.getSiddhiApps(request);
+    }
+
+    /**
+     * Returns list of @store annotated Aggregations,Tables,Windows from a siddhi app
+     *
+     * @param appName siddhi app name
+     *
+     * @return response
+     */
+    @OPTIONS
+    @Path("/{appName}")
+    @GET
+    @Produces({ "application/json" })
+    public Response getSiddhiAppDefinitions(@Context Request request, @PathParam("appName") String appName) {
+        return delegate.getSiddhiAppDefinitions(request, appName);
     }
 }

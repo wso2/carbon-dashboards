@@ -19,7 +19,7 @@
 
 package org.wso2.carbon.siddhi.apps.api.rest.worker;
 
-import org.wso2.carbon.siddhi.apps.api.rest.internal.DataHolder;
+import org.wso2.carbon.siddhi.apps.api.rest.internal.SiddhiAppsDataHolder;
 
 /**
  * REST API service used to access service stub for calling workers
@@ -27,7 +27,7 @@ import org.wso2.carbon.siddhi.apps.api.rest.internal.DataHolder;
 public class WorkerServiceFactory {
 
     public static WorkerServiceStub getWorkerHttpsClient(String url, String username, String password) {
-        return DataHolder.getInstance().getClientBuilderService().build(username, password, 10000,
-                10000, WorkerServiceStub.class, url);
+        return SiddhiAppsDataHolder.getInstance().getClientBuilderService().build(username, password, 1000,
+                500, WorkerServiceStub.class, url);
     }
 }

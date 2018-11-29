@@ -55,9 +55,9 @@ public class ServiceComponent {
     @Activate
     public void start() {
         try {
-            DeploymentConfigs deploymentConfigs = DataHolder.getInstance().getConfigProvider()
+            DeploymentConfigs deploymentConfigs = SiddhiAppsDataHolder.getInstance().getConfigProvider()
                     .getConfigurationObject(DeploymentConfigs.class);
-            DataHolder.getInstance().setDatasearchConfigs(deploymentConfigs);
+            SiddhiAppsDataHolder.getInstance().setDatasearchConfigs(deploymentConfigs);
 
         } catch (ConfigurationException e) {
             logger.error("Error in reading configuration from deployment.yaml", e);
@@ -69,7 +69,7 @@ public class ServiceComponent {
         if (!permissionProvider.isPermissionExists(viewPermission)) {
             permissionProvider.addPermission(viewPermission);
         }
-        DeploymentConfigs datasearchConfigs = DataHolder.getInstance().getDatasearchConfigs();
+        DeploymentConfigs datasearchConfigs = SiddhiAppsDataHolder.getInstance().getDatasearchConfigs();
         if (datasearchConfigs.getViewerRoles() != null) {
             for (Map viewer : datasearchConfigs.getViewerRoles()) {
                 String name = viewer.get(NAME).toString();
@@ -89,11 +89,11 @@ public class ServiceComponent {
             unbind = "unregisterConfigProvider"
     )
     protected void registerConfigProvider(ConfigProvider configProvider) {
-        DataHolder.getInstance().setConfigProvider(configProvider);
+        SiddhiAppsDataHolder.getInstance().setConfigProvider(configProvider);
     }
 
     protected void unregisterConfigProvider(ConfigProvider configProvider) {
-        DataHolder.getInstance().setConfigProvider(null);
+        SiddhiAppsDataHolder.getInstance().setConfigProvider(null);
     }
 
     @Reference(
@@ -104,11 +104,11 @@ public class ServiceComponent {
             unbind = "unregisterAnalyticsHttpClient"
     )
     protected void registerAnalyticsHttpClient(AnalyticsHttpClientBuilderService service) {
-        DataHolder.getInstance().setClientBuilderService(service);
+        SiddhiAppsDataHolder.getInstance().setClientBuilderService(service);
     }
 
     protected void unregisterAnalyticsHttpClient(AnalyticsHttpClientBuilderService service) {
-        DataHolder.getInstance().setClientBuilderService(null);
+        SiddhiAppsDataHolder.getInstance().setClientBuilderService(null);
     }
 
     @Reference(
@@ -120,12 +120,12 @@ public class ServiceComponent {
     )
     protected void setPermissionManager(PermissionManager permissionManager) {
         this.permissionProvider = permissionManager.getProvider();
-        DataHolder.getInstance().setPermissionProvider(this.permissionProvider);
+        SiddhiAppsDataHolder.getInstance().setPermissionProvider(this.permissionProvider);
     }
 
     protected void unsetPermissionManager(PermissionManager permissionManager) {
         this.permissionProvider = null;
-        DataHolder.getInstance().setPermissionProvider(null);
+        SiddhiAppsDataHolder.getInstance().setPermissionProvider(null);
     }
 
 }

@@ -29,9 +29,9 @@ import javax.ws.rs.core.Response;
  */
 public abstract class SiddhiAppsApiService {
 
-    //Get All sidhhi apps from a worker
-    public abstract Response getAllSiddhiApps(Request request);
+    //Get store queriable sidhhi apps from a worker
+    public abstract Response getSiddhiApps(Request request);
 
     //Get Siddhi Definitions from a siddhi app
-    public abstract Response getSiddhiAppDefinitions(Request request, String id, String appName);
+    public abstract Response getSiddhiAppDefinitions(Request request, String appName);
 }

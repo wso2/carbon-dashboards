@@ -24,17 +24,22 @@ import org.wso2.carbon.analytics.permissions.PermissionProvider;
 import org.wso2.carbon.config.provider.ConfigProvider;
 import org.wso2.carbon.siddhi.apps.api.rest.config.DeploymentConfigs;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
- * Data holder for config provider implementations
+ * Data holder for siddhi apps api
  */
-public class DataHolder {
-    private static DataHolder instance = new DataHolder();
+public class SiddhiAppsDataHolder {
+    private static SiddhiAppsDataHolder instance = new SiddhiAppsDataHolder();
     private  PermissionProvider permissionProvider;
     private ConfigProvider configProvider;
     private AnalyticsHttpClientBuilderService clientBuilderService;
     private DeploymentConfigs datasearchConfigs;
+    private Map<String, List<String>> workerSiddhiApps = new HashMap<>();
 
-    private DataHolder(){
+    private SiddhiAppsDataHolder(){
     }
 
     public AnalyticsHttpClientBuilderService getClientBuilderService() {
@@ -46,11 +51,11 @@ public class DataHolder {
     }
 
     /**
-     * Returns instance of DataHolder Class
+     * Returns instance of SiddhiAppsDataHolder Class
      *
-     * @return Instance of DataHolder
+     * @return Instance of SiddhiAppsDataHolder
      */
-    public static DataHolder getInstance() {
+    public static SiddhiAppsDataHolder getInstance() {
         return instance;
     }
 
@@ -90,11 +95,39 @@ public class DataHolder {
         this.permissionProvider = permissionProvider;
     }
 
+    /**
+     * Returns deployment configs
+     *
+     * @return deployment configs
+     */
     public DeploymentConfigs getDatasearchConfigs() {
         return datasearchConfigs;
     }
 
+    /**
+     * Sets datasearch deployment configs
+     *
+     * @param datasearchConfigs dataseach configs
+     */
     public void setDatasearchConfigs(DeploymentConfigs datasearchConfigs) {
         this.datasearchConfigs = datasearchConfigs;
+    }
+
+    /**
+     * Returns map of workers and siddhi apps
+     *
+     * @return workerSiddhiApps
+     */
+    public Map<String, List<String>> getWorkerSiddhiApps() {
+        return workerSiddhiApps;
+    }
+
+    /**
+     * Sets worker siddhi apps map
+     *
+     * @param workerSiddhiApps map of worker, siddhi apps
+     */
+    public void setWorkerSiddhiApps(Map<String, List<String>> workerSiddhiApps) {
+        this.workerSiddhiApps = workerSiddhiApps;
     }
 }

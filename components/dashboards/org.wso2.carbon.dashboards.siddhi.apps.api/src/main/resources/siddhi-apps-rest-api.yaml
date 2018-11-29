@@ -18,19 +18,10 @@ paths:
       x-wso2-request: 'GET https://localhost:9643/portal/apis/datasearch/siddhi-apps'
       x-wso2-response: |-
         HTTP/1.1 200 OK Content-Type: application/json
-        [
-            {
-                "appName": "ShipmentHistoryApp",
-                "worker": "localhost_9443"
-            },
-            {
-                "appName": "ShipmentHistoryApp2",
-                "worker": "localhost_9443"
-            }
-        ]
+        ["ShipmentHistoryApp","SweetProductionApp"]
       tags:
       - SiddhiApps
-      summary: List Siddhi apps and relevant workers
+      summary: List Siddhi apps
       description: List Siddhi apps which contain @store annotated definitions
       responses:
         '200':
@@ -38,20 +29,19 @@ paths:
           schema:
             type: array
             items:
-              type: SiddhiAppWorker
-              $ref: '#/definitions/SiddhiAppWorker'
+              type: String
         '401':
-          description: Insufficient permissions to view siddhi apps.
-  'datasearch/{id}/{appName}':
+          description: Insufficient permission to view siddhi apps.
+  'datasearch/{appName}':
     get:
-      x-wso2-curl: 'curl -k -X GET https://localhost:9643/portal/apis/datasearch/{id}/{appName}'
-      x-wso2-request: 'GET https://localhost:9643/portal/apis/datasearch/{id}/{appName}'
+      x-wso2-curl: 'curl -k -X GET https://localhost:9643/portal/apis/datasearch/{appName}'
+      x-wso2-request: 'GET https://localhost:9643/portal/apis/datasearch/{appName}'
       x-wso2-response: >-
         HTTP/1.1 200 OK Content-Type: application/json
         [
         {
                 "definitionName": "ShipmentDetails",
-                "definitionText": "@primaryKey( 'name')@index( 'supplier')@store( type = 'rdbms', jdbc.url = 'jdbc:mysql://localhost:3306/LakiFactoryDB', username = 'root', password = 'root', jdbc.driver.name = 'com.mysql.jdbc.Driver')define table ShipmentDetails (name string, supplier string, amount double)",
+                "definitionText": "@primaryKey( 'name')@index( 'supplier')@store( type = 'rdbms', jdbc.url = 'jdbc:mysql://localhost:3306/SweetFactoryDB', username = 'root', password = 'root', jdbc.driver.name = 'com.mysql.jdbc.Driver')define table ShipmentDetails (name string, supplier string, amount double)",
                 "type": "Table",
                 "attributes": [
                     {
@@ -103,15 +93,6 @@ definitions:
       content:
         type: string
         description: Content of the Siddhi Application
-  SiddhiAppWorker:
-    type: object
-    properties:
-      appName:
-        type: string
-        description: name of siddhi app
-      worker:
-        type: string
-        description: worker id
   SiddhiDefinition:
     type: object
     properties:
