@@ -60,4 +60,13 @@ export default class WidgetAPI {
     getWidgetsInfo() {
         return WidgetAPI.getHTTPClient().get();
     }
+
+    /**
+     * This method will delete the widget with given ID
+     * @param widgetId
+     * @returns {boolean}
+     */
+    deleteWidgetByID(widgetId) {
+        return WidgetAPI.getHTTPClient().delete(widgetId);
+    }
 }

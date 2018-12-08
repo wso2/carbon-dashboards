@@ -27,6 +27,7 @@ import DashboardDesignerPage from '../designer/DashboardDesignerPage';
 import DashboardSettingsPage from '../designer/DashboardSettingsPage';
 import DashboardListingPage from '../listing/DashboardListingPage';
 import DashboardViewPage from '../viewer/DashboardViewPage';
+import WidgetStore from '../listing/WidgetStore';
 import GadgetsGenerationWizard from '../gadgets-generation-wizard/components/GadgetsGenerationWizard';
 
 /**
@@ -38,7 +39,6 @@ const sessionSkew = 100;
  * Secured router (protects secured pages).
  */
 export default class SecuredRouter extends Component {
-
     constructor() {
         super();
         this.handleSessionInvalid = this.handleSessionInvalid.bind(this);
@@ -53,7 +53,7 @@ export default class SecuredRouter extends Component {
      * Refreshes the access token by validating the expiration timee.
      */
     componentWillMount() {
-        setInterval(function () {
+        setInterval(() => {
             if (AuthManager.getUser()) {
                 const expiresOn = new Date(AuthManager.getUser().expires);
                 if ((expiresOn - new Date()) / 1000 < sessionSkew) {
@@ -77,9 +77,9 @@ export default class SecuredRouter extends Component {
                 referrer += '/';
             }
 
-            const params = Qs.stringify({referrer});
+            const params = Qs.stringify({ referrer });
             return (
-                <Redirect to={{pathname: '/login', search: params}} />
+                <Redirect to={{ pathname: '/login', search: params }} />
             );
         }
 
@@ -93,6 +93,9 @@ export default class SecuredRouter extends Component {
 
                 {/* Create gadget */}
                 <Route exact path={'/createGadget'} component={GadgetsGenerationWizard} />
+
+                {/* Widget listing a.k.a. landing page */}
+                <Route exact path={'/widgetstore'} component={WidgetStore} />
 
                 {/* Dashboard settings */}
                 <Route exact path={'/settings/:id'} component={DashboardSettingsPage} />
