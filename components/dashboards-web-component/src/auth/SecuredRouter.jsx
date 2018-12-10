@@ -27,7 +27,7 @@ import DashboardDesignerPage from '../designer/DashboardDesignerPage';
 import DashboardSettingsPage from '../designer/DashboardSettingsPage';
 import DashboardListingPage from '../listing/DashboardListingPage';
 import DashboardViewPage from '../viewer/DashboardViewPage';
-import WidgetStore from '../listing/WidgetStore';
+import WidgetStore from '../widget-store/WidgetStore';
 import GadgetsGenerationWizard from '../gadgets-generation-wizard/components/GadgetsGenerationWizard';
 
 /**
@@ -53,7 +53,7 @@ export default class SecuredRouter extends Component {
      * Refreshes the access token by validating the expiration timee.
      */
     componentWillMount() {
-        setInterval(() => {
+        setInterval(function () {
             if (AuthManager.getUser()) {
                 const expiresOn = new Date(AuthManager.getUser().expires);
                 if ((expiresOn - new Date()) / 1000 < sessionSkew) {
@@ -94,8 +94,8 @@ export default class SecuredRouter extends Component {
                 {/* Create gadget */}
                 <Route exact path={'/createGadget'} component={GadgetsGenerationWizard} />
 
-                {/* Widget listing a.k.a. landing page */}
-                <Route exact path={'/widgetstore'} component={WidgetStore} />
+                {/* Widget Store */}
+                <Route exact path={'/widgets'} component={WidgetStore} />
 
                 {/* Dashboard settings */}
                 <Route exact path={'/settings/:id'} component={DashboardSettingsPage} />

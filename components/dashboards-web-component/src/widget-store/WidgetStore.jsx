@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * Copyright (c) 2018, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  * WSO2 Inc. licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file except
@@ -15,32 +15,34 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 import React, {Component} from 'react';
 import {FormattedMessage} from 'react-intl';
 import {MuiThemeProvider, TextField} from 'material-ui';
 import WidgetStoreCard from './components/WidgetStoreCard';
 import defaultTheme from '../utils/Theme';
 import WidgetAPI from '../utils/apis/WidgetAPI';
-import WidgetStoreHeader from '../designer/components/WidgetStoreHeader';
+import WidgetStoreHeader from './components/WidgetStoreHeader';
 
 const styles = {
     generatedWidgetWrapper: {
         height: '35vh',
-        marginLeft: '30px',
+        marginLeft: '52px',
         overflow: 'hidden',
-        marginTop: '6px'
     },
     customWidgetWrapper: {
         height: '34vh',
-        marginLeft: '30px',
+        marginLeft: '52px',
         overflow: 'hidden',
         marginTop: '42px'
     },
-    widgetWrapper: {
+    expandGeneratedWrapper: {
         height: '100%',
-        marginLeft: '30px',
-        marginTop: '8px'
+        marginLeft: '52px'
+    },
+    expandCustomWrapper: {
+        height: '100%',
+        marginLeft: '52px',
+        marginTop: '35px'
     },
     widgetType: {
         height: '3.5vh',
@@ -51,7 +53,7 @@ const styles = {
         fontFamily: 'Roboto, sans-serif',
         color: 'white',
         display: 'block',
-        marginInlineStart: '40px',
+        marginInlineStart: '65px',
         marginTop: '20px'
     },
     generatedWidgetTypeText: {
@@ -63,14 +65,14 @@ const styles = {
         display: 'inline',
         fontSize: '0.8em',
         fontFamily: 'Roboto, sans-serif',
-        marginInlineStart: '90%',
+        marginInlineStart: '92.5%',
         cursor: 'pointer',
-        color: 'darkGrey'
+        color: '#b2babb '
     },
 };
 
 /**
- * Widget store a.k.a landing page.
+ * Widget Store
  */
 export default class WidgetStore extends Component {
     /**
@@ -101,8 +103,8 @@ export default class WidgetStore extends Component {
         this.retrieveWidgets();
     }
 
-    getKey(w) {
-        return w.configs.isGenerated ? 'generated' : 'custom';
+    handleWidgets(widget) {
+        return widget.configs.isGenerated ? 'generated' : 'custom';
     }
 
     /**
@@ -121,7 +123,7 @@ export default class WidgetStore extends Component {
                     widgets.all.push(
                         <WidgetStoreCard key={element.id} widget={element}/>,
                     );
-                    widgets[this.getKey(element)].push(
+                    widgets[this.handleWidgets(element)].push(
                         <WidgetStoreCard key={element.id} widget={element}/>,
                     );
                 });
@@ -167,7 +169,7 @@ export default class WidgetStore extends Component {
                     element.name.toLowerCase().indexOf(filterName.toLowerCase()) === -1
                 )
             ) {
-                filteredWidgets[this.getKey(element)].push(
+                filteredWidgets[this.handleWidgets(element)].push(
                     <WidgetStoreCard key={element.id} widget={element}/>,
                 );
             }
@@ -201,9 +203,10 @@ export default class WidgetStore extends Component {
                             />
                         </label>
                     </span>
-                    <span style={{float: 'right', paddingRight: '120px'}}>
+                    <span style={{float: 'right', paddingRight: '85px'}}>
                         <div>
                             <TextField
+                                hintStyle={{color: 'darkgrey'}}
                                 hintText={
                                     <FormattedMessage
                                         id="search.hint.text"
@@ -219,7 +222,7 @@ export default class WidgetStore extends Component {
                 <div
                     style={
                         this.state.viewGeneratedWidgets
-                            ? styles.widgetWrapper
+                            ? styles.expandGeneratedWrapper
                             : styles.generatedWidgetWrapper
                     }
                 >
@@ -253,7 +256,7 @@ export default class WidgetStore extends Component {
                 <div
                     style={
                         this.state.viewCustomWidgets
-                            ? styles.widgetWrapper
+                            ? styles.expandCustomWrapper
                             : styles.customWidgetWrapper
                     }
                 >

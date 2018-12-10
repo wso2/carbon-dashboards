@@ -29,8 +29,8 @@ const styles = {
         display: 'inline-block',
         width: 'calc(15% - 15px)',
         height: '85px',
-        minWidth: 220,
-        margin: '21px 20px 0px 10px',
+        minWidth: 230,
+        margin: '21px 25px 0px 10px',
     },
     cardTitleText: {
         overflow: 'hidden',
@@ -44,14 +44,13 @@ const styles = {
     deleteIcon: {
         height: '50px',
         width: '20px',
-        marginLeft: '23%',
-        fill: 'darkgrey',
+        marginLeft: '25%',
         marginTop: '14px',
         cursor: 'pointer',
     },
     cardTitle: {
         float: 'right',
-        width: '165px',
+        width: '160px',
         textOverflow: 'ellipsis',
         overflow: 'hidden',
     },
@@ -63,6 +62,7 @@ class WidgetStoreCard extends Component {
         this.state = {
             isConfirmDeleteShown: false,
             widgetDeleteActionResult: null,
+            deleteIconColor: 'darkgrey',
         };
         this.hideDeleteConfirmDialog = this.hideDeleteConfirmDialog.bind(this);
         this.showDeleteConfirmDialog = this.showDeleteConfirmDialog.bind(this);
@@ -73,11 +73,12 @@ class WidgetStoreCard extends Component {
         this.WidgetCardDefaultThumbnail = this.WidgetCardDefaultThumbnail.bind(this);
     }
 
+
     WidgetCardDefaultThumbnail() {
         return (
             <div style={{ width: '20px', height: '10px' }}>
                 <EditorInsertChart
-                    style={{ width: '70px', height: '85px', opacity: 0.5 }}
+                    style={{ width: '70px', height: '85px', opacity: 0.5, marginLeft: '5px' }}
                 />
             </div>
         );
@@ -220,7 +221,20 @@ class WidgetStoreCard extends Component {
                                     {config.isGenerated && (
                                         <ActionDelete
                                             onClick={this.showDeleteConfirmDialog}
-                                            style={styles.deleteIcon}
+                                            style={Object.assign(styles.deleteIcon,
+                                                { fill: this.state.deleteIconColor })}
+                                            onMouseEnter={() => {
+                                                this.setState({
+                                                    deleteIconColor: 'white',
+                                                });
+                                            }
+                                            }
+                                            onMouseLeave={() => {
+                                                this.setState({
+                                                    deleteIconColor: 'darkgrey',
+                                                });
+                                            }
+                                            }
                                         />
                                     )}
                                 </div>
