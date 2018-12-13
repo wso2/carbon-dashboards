@@ -27,7 +27,7 @@ const styles = {
     generatedWidgetWrapper: {
         height: '35vh',
         marginLeft: '52px',
-        overflow: 'hidden',
+        overflow: 'hidden'
     },
     customWidgetWrapper: {
         height: '34vh',
@@ -128,16 +128,10 @@ export default class WidgetStore extends Component {
                     );
                 });
                 widgets.generated.sort((widgetA, widgetB) => {
-                    return widgetA.props.widget.name.toLowerCase() <
-                    widgetB.props.widget.name.toLowerCase()
-                        ? -1
-                        : 1;
+                    return widgetA.props.widget.name.toLowerCase() < widgetB.props.widget.name.toLowerCase() ? -1 : 1;
                 });
                 widgets.custom.sort((widgetA, widgetB) => {
-                    return widgetA.props.widget.name.toLowerCase() <
-                    widgetB.props.widget.name.toLowerCase()
-                        ? -1
-                        : 1;
+                    return widgetA.props.widget.name.toLowerCase() < widgetB.props.widget.name.toLowerCase() ? -1 : 1;
                 });
                 this.setState({widgets});
             })
@@ -162,13 +156,8 @@ export default class WidgetStore extends Component {
             filteredWidgets.all.push(
                 <WidgetStoreCard key={element.id} widget={element}/>,
             );
-            if (
-                !(
-                    filterName &&
-                    filterName.length > 0 &&
-                    element.name.toLowerCase().indexOf(filterName.toLowerCase()) === -1
-                )
-            ) {
+            if (!(filterName && filterName.length > 0 &&
+                element.name.toLowerCase().indexOf(filterName.toLowerCase()) === -1)) {
                 filteredWidgets[this.handleWidgets(element)].push(
                     <WidgetStoreCard key={element.id} widget={element}/>,
                 );
@@ -190,12 +179,8 @@ export default class WidgetStore extends Component {
         return (
             <MuiThemeProvider muiTheme={defaultTheme}>
                 <WidgetStoreHeader showPortalButton/>
-                <div
-                    style={
-                        styles.generatedWidgetTypeText
-                    }
-                >
-            <span style={{float: 'left'}}>
+                <div style={styles.generatedWidgetTypeText}>
+                    <span style={{float: 'left'}}>
                         <label style={styles.widgetTypeText}>
                             <FormattedMessage
                                 id="generated.widgets"
@@ -204,28 +189,23 @@ export default class WidgetStore extends Component {
                         </label>
                     </span>
                     <span style={{float: 'right', paddingRight: '85px'}}>
-                        <div>
-                            <TextField
-                                hintStyle={{color: 'darkgrey'}}
-                                hintText={
-                                    <FormattedMessage
-                                        id="search.hint.text"
-                                        defaultMessage="Search..."
-                                    />
-                                }
-                                value={this.state.filter}
-                                onChange={event => this.filterWidgets(event.target.value)}
-                            />
+              <div>
+                <TextField
+                    hintStyle={{color: 'darkgrey'}}
+                    hintText={
+                        <FormattedMessage
+                            id="search.hint.text"
+                            defaultMessage="Search..."
+                        />
+                    }
+                    value={this.state.filter}
+                    onChange={event => this.filterWidgets(event.target.value)}
+                />
                         </div>
                     </span>
                 </div>
                 <div
-                    style={
-                        this.state.viewGeneratedWidgets
-                            ? styles.expandGeneratedWrapper
-                            : styles.generatedWidgetWrapper
-                    }
-                >
+                    style={this.state.viewGeneratedWidgets ? styles.expandGeneratedWrapper : styles.generatedWidgetWrapper}>
                     {this.state.widgets.generated}
                 </div>
                 <div style={styles.widgetType}>
@@ -238,13 +218,11 @@ export default class WidgetStore extends Component {
                         style={styles.text}
                     >
                         {this.state.widgets.generated.length > 18 &&
-                        (this.state.viewGeneratedWidgets ? <FormattedMessage
-                            id="see.less"
-                            defaultMessage="See Less"
-                        /> : <FormattedMessage
-                            id="see.more"
-                            defaultMessage="See More"
-                        />)}
+                        (this.state.viewGeneratedWidgets ? (
+                            <FormattedMessage id="see.less" defaultMessage="See Less"/>
+                        ) : (
+                            <FormattedMessage id="see.more" defaultMessage="See More"/>
+                        ))}
                     </p>
                     <label style={styles.widgetTypeText}>
                         <FormattedMessage
@@ -253,13 +231,7 @@ export default class WidgetStore extends Component {
                         />
                     </label>
                 </div>
-                <div
-                    style={
-                        this.state.viewCustomWidgets
-                            ? styles.expandCustomWrapper
-                            : styles.customWidgetWrapper
-                    }
-                >
+                <div style={this.state.viewCustomWidgets ? styles.expandCustomWrapper : styles.customWidgetWrapper}>
                     {this.state.widgets.custom}
                 </div>
                 <p
@@ -269,13 +241,11 @@ export default class WidgetStore extends Component {
                     style={styles.text}
                 >
                     {this.state.widgets.custom.length > 18 &&
-                    (this.state.viewCustomWidgets ? <FormattedMessage
-                        id="see.less"
-                        defaultMessage="See Less"
-                    /> : <FormattedMessage
-                        id="see.more"
-                        defaultMessage="See More"
-                    />)}
+                    (this.state.viewCustomWidgets ? (
+                        <FormattedMessage id="see.less" defaultMessage="See Less"/>
+                    ) : (
+                        <FormattedMessage id="see.more" defaultMessage="See More"/>
+                    ))}
                 </p>
             </MuiThemeProvider>
         );
