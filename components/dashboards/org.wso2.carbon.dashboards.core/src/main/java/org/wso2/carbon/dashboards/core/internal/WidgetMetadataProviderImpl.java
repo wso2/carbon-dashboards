@@ -115,7 +115,7 @@ public class WidgetMetadataProviderImpl implements WidgetMetadataProvider {
 
     private boolean isGeneratedWidgetPresent(String widgetName) throws DashboardException {
         return widgetMetadataDao.getGeneratedWidgetIdSet().stream()
-                .map(GeneratedWidgetConfigs::getName)
+                .map(GeneratedWidgetConfigs::getId)
                 .anyMatch(name -> name.equals(widgetName));
     }
 

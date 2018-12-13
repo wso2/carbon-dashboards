@@ -15,7 +15,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 import React, { Component } from 'react';
 import { FormattedMessage } from 'react-intl';
 import PropTypes from 'prop-types';
@@ -23,24 +22,36 @@ import PropTypes from 'prop-types';
 import Header from '../../common/Header';
 import UserMenu from '../../common/UserMenu';
 import PortalButton from '../../common/PortalButton';
-import WidgetButton from '../../common/WidgetButton';
 
-export default class DesignerHeader extends Component {
+export default class WidgetStoreHeader extends Component {
     render() {
         return (
             <Header
-                title={<FormattedMessage id="dashboard.designer.title" defaultMessage="Dashboard Designer" />}
-                rightElement={this.props.showPortalButton ?
-                    <span><WidgetButton /><PortalButton /><UserMenu /></span> : <UserMenu />}
+                title={
+                    <FormattedMessage
+                        id="widget.store.title"
+                        defaultMessage="Widget Store"
+                    />
+                }
+                rightElement={
+                    this.props.showPortalButton ? (
+                        <span>
+                            <PortalButton />
+                            <UserMenu />
+                        </span>
+                    ) : (
+                        <UserMenu />
+                    )
+                }
             />
         );
     }
 }
 
-DesignerHeader.propTypes = {
+WidgetStoreHeader.propTypes = {
     showPortalButton: PropTypes.bool,
 };
 
-DesignerHeader.defaultProps = {
+WidgetStoreHeader.defaultProps = {
     showPortalButton: false,
 };

@@ -27,6 +27,7 @@ import DashboardDesignerPage from '../designer/DashboardDesignerPage';
 import DashboardSettingsPage from '../designer/DashboardSettingsPage';
 import DashboardListingPage from '../listing/DashboardListingPage';
 import DashboardViewPage from '../viewer/DashboardViewPage';
+import WidgetStore from '../widget-store/WidgetStore';
 import GadgetsGenerationWizard from '../gadgets-generation-wizard/components/GadgetsGenerationWizard';
 
 /**
@@ -38,7 +39,6 @@ const sessionSkew = 100;
  * Secured router (protects secured pages).
  */
 export default class SecuredRouter extends Component {
-
     constructor() {
         super();
         this.handleSessionInvalid = this.handleSessionInvalid.bind(this);
@@ -77,9 +77,9 @@ export default class SecuredRouter extends Component {
                 referrer += '/';
             }
 
-            const params = Qs.stringify({referrer});
+            const params = Qs.stringify({ referrer });
             return (
-                <Redirect to={{pathname: '/login', search: params}} />
+                <Redirect to={{ pathname: '/login', search: params }} />
             );
         }
 
@@ -93,6 +93,9 @@ export default class SecuredRouter extends Component {
 
                 {/* Create gadget */}
                 <Route exact path={'/createGadget'} component={GadgetsGenerationWizard} />
+
+                {/* Widget Store */}
+                <Route exact path={'/widgets'} component={WidgetStore} />
 
                 {/* Dashboard settings */}
                 <Route exact path={'/settings/:id'} component={DashboardSettingsPage} />
