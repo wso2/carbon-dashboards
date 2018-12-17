@@ -23,6 +23,8 @@ import { MuiThemeProvider, Snackbar } from 'material-ui';
 import DashboardCard from './components/DashboardCard';
 import FabSpeedDial from './components/FabSpeedDial';
 import Header from '../common/Header';
+import WidgetButton from '../common/WidgetButton';
+import UserMenu from '../common/UserMenu';
 import defaultTheme from '../utils/Theme';
 import DashboardAPI from '../utils/apis/DashboardAPI';
 
@@ -137,7 +139,10 @@ export default class DashboardListingPage extends Component {
     render() {
         return (
             <MuiThemeProvider muiTheme={defaultTheme}>
-                <Header title={<FormattedMessage id='portal.title' defaultMessage='Portal' />} />
+                <Header
+                    title={<FormattedMessage id="portal.title" defaultMessage="Portal" />}
+                    rightElement={<span><WidgetButton /><UserMenu /></span>}
+                />
                 <div style={styles.thumbnailsWrapper}>
                     {this.renderDashboardThumbnails()}
                 </div>

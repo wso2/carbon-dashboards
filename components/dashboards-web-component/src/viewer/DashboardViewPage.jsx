@@ -55,6 +55,7 @@ class DashboardViewPage extends Component {
             dashboardFetchStatus: HttpStatus.UNKNOWN,
             isSidePaneOpen: true,
             isCurrentThemeDark: isDarkTheme ? isDarkTheme === 'true' : true,
+            embedWidget: false,
         };
 
         this.fetchDashboard = this.fetchDashboard.bind(this);
@@ -66,11 +67,18 @@ class DashboardViewPage extends Component {
         this.renderPagesList = this.renderPagesList.bind(this);
         this.renderDashboard = this.renderDashboard.bind(this);
         this.renderSideBarNav = this.renderSideBarNav.bind(this);
+        this.toggleRibbons = this.toggleRibbons.bind(this);
     }
 
     componentDidMount() {
         if (!this.dashboard) {
             this.fetchDashboard();
+        }
+    }
+
+    componentWillMount() {
+        if (this.props.location.search === '?embed=true') {
+            this.state.embedWidget = true;
         }
     }
 
@@ -108,6 +116,14 @@ class DashboardViewPage extends Component {
         };
     }
 
+    toggleRibbons(currentTheme) {
+        return [
+            this.renderHeader(currentTheme),
+            this.renderSidePane(currentTheme),
+            this.renderSideBarNav(currentTheme),
+        ];
+    }
+
     render() {
         const currentTheme = this.state.isCurrentThemeDark ? darkTheme : lightTheme;
 
@@ -141,19 +157,22 @@ class DashboardViewPage extends Component {
 
         return (
             <MuiThemeProvider muiTheme={currentTheme}>
-                {this.renderHeader(currentTheme)}
-                {this.renderSidePane(currentTheme)}
-                {this.renderSideBarNav(currentTheme)}
+                {!this.state.embedWidget ? this.toggleRibbons(currentTheme) : undefined}
+
                 <div
-                    style={{
-                        position: 'fixed',
-                        top: 40,
-                        right: 0,
-                        bottom: 0,
-                        width: 'calc(100% - 25px)',
-                        overflowX: 'hidden',
-                        overflowY: 'auto',
-                    }}
+                    style={
+                        !this.state.embedWidget
+                            ? {
+                                position: 'fixed',
+                                top: 40,
+                                right: 0,
+                                bottom: 0,
+                                width: 'calc(100% - 25px)',
+                                overflowX: 'hidden',
+                                overflowY: 'auto'
+                            }
+                            : undefined
+                    }
                 >
                     {this.renderDashboard(currentTheme)}
                 </div>

@@ -15,32 +15,35 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 import React, { Component } from 'react';
+import { withRouter } from 'react-router-dom';
 import { FormattedMessage } from 'react-intl';
 import PropTypes from 'prop-types';
 
-import Header from '../../common/Header';
-import UserMenu from '../../common/UserMenu';
-import PortalButton from '../../common/PortalButton';
-import WidgetButton from '../../common/WidgetButton';
+import { FlatButton } from 'material-ui';
+import { DeviceWidgets } from 'material-ui/svg-icons';
 
-export default class DesignerHeader extends Component {
+const styles = {
+    widgetIcon: {
+        height: '20px',
+    },
+};
+
+class WidgetButton extends Component {
     render() {
         return (
-            <Header
-                title={<FormattedMessage id="dashboard.designer.title" defaultMessage="Dashboard Designer" />}
-                rightElement={this.props.showPortalButton ?
-                    <span><WidgetButton /><PortalButton /><UserMenu /></span> : <UserMenu />}
+            <FlatButton
+                style={{ minWidth: '48px' }}
+                label={<FormattedMessage id='widgets.title' defaultMessage='Widgets' />}
+                icon={<DeviceWidgets style={styles.widgetIcon} />}
+                onClick={() => this.props.history.push('/widgets')}
             />
         );
     }
 }
 
-DesignerHeader.propTypes = {
-    showPortalButton: PropTypes.bool,
+WidgetButton.propTypes = {
+    history: PropTypes.shape({}).isRequired,
 };
 
-DesignerHeader.defaultProps = {
-    showPortalButton: false,
-};
+export default withRouter(WidgetButton);
