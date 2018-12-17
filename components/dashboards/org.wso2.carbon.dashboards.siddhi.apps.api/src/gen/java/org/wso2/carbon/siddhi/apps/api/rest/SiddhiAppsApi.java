@@ -26,6 +26,7 @@ import org.wso2.msf4j.Microservice;
 import org.wso2.msf4j.Request;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 
@@ -40,29 +41,29 @@ public class SiddhiAppsApi implements Microservice {
     private final SiddhiAppsApiService delegate = SiddhiAppsApiServiceFactory.getSiddhiAppsApi();
 
     /**
-     * Returns list of siddhi apps which contain @store annotated Aggregations,Tables,Windows
+     * Returns list of siddhi apps which contain @store annotated elements (Aggregations,Tables,Windows)
      *
      * @return response
      */
     @Path("/siddhi-apps")
     @GET
-    @Produces({ "application/json" })
+    @Produces({ MediaType.APPLICATION_JSON })
     public Response getAllSiddhiApps(@Context Request request){
         return delegate.getSiddhiApps(request);
     }
 
     /**
-     * Returns list of @store annotated Aggregations,Tables,Windows from a siddhi app
+     * Returns list of @store annotated elements from a siddhi app
      *
      * @param appName siddhi app name
      *
      * @return response
      */
     @OPTIONS
-    @Path("/{appName}")
+    @Path("/siddhi-apps/{appName}")
     @GET
-    @Produces({ "application/json" })
-    public Response getSiddhiAppDefinitions(@Context Request request, @PathParam("appName") String appName) {
-        return delegate.getSiddhiAppDefinitions(request, appName);
+    @Produces({ MediaType.APPLICATION_JSON })
+    public Response getSiddhiAppStoreElements(@Context Request request, @PathParam("appName") String appName) {
+        return delegate.getSiddhiAppStoreElements(request, appName);
     }
 }

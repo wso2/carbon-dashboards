@@ -28,6 +28,6 @@ public class WorkerServiceFactory {
 
     public static WorkerServiceStub getWorkerHttpsClient(String url, String username, String password) {
         return SiddhiAppsDataHolder.getInstance().getClientBuilderService().build(username, password, 1000,
-                500, WorkerServiceStub.class, url);
+                1000, WorkerServiceStub.class, url);
     }
 }

@@ -57,7 +57,7 @@ public class SiddhiAppsApiProvider implements RestApiProvider {
 
     @Override
     public Map<String, Microservice> getMicroservices(App app) {
-        Map<String, Microservice> microservices = new HashMap<>(2);
+        Map<String, Microservice> microservices = new HashMap<>();
         microservices.put(SiddhiAppsApi.API_CONTEXT_PATH, new SiddhiAppsApi());
         return microservices;
     }

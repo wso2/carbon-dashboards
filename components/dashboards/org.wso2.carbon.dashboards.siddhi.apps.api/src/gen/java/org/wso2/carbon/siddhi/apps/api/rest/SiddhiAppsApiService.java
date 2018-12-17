@@ -29,9 +29,9 @@ import javax.ws.rs.core.Response;
  */
 public abstract class SiddhiAppsApiService {
 
-    //Get store queriable sidhhi apps from a worker
+    //Get siddhi apps which have store annotated elements
     public abstract Response getSiddhiApps(Request request);
 
-    //Get Siddhi Definitions from a siddhi app
-    public abstract Response getSiddhiAppDefinitions(Request request, String appName);
+    //Get siddhi store elements from a siddhi app
+    public abstract Response getSiddhiAppStoreElements(Request request, String appName);
 }

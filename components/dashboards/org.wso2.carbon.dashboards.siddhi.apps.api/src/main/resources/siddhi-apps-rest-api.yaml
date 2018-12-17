@@ -10,9 +10,9 @@ info:
 schemes:
 - https
 host: localhost
-basePath: /portal/apis
+basePath: /portal/apis/datasearch
 paths:
-  /datasearch/siddhi-apps:
+  /siddhi-apps:
     get:
       x-wso2-curl: 'curl -k -X GET https://localhost:9643/portal/apis/datasearch/siddhi-apps'
       x-wso2-request: 'GET https://localhost:9643/portal/apis/datasearch/siddhi-apps'
@@ -32,16 +32,16 @@ paths:
               type: String
         '401':
           description: Insufficient permission to view siddhi apps.
-  'datasearch/{appName}':
+  'siddhi-apps/{appName}':
     get:
-      x-wso2-curl: 'curl -k -X GET https://localhost:9643/portal/apis/datasearch/{appName}'
-      x-wso2-request: 'GET https://localhost:9643/portal/apis/datasearch/{appName}'
+      x-wso2-curl: 'curl -k -X GET https://localhost:9643/portal/apis/datasearch/siddhi-apps/{appName}'
+      x-wso2-request: 'GET https://localhost:9643/portal/apis/datasearch/siddhi-apps/{appName}'
       x-wso2-response: >-
         HTTP/1.1 200 OK Content-Type: application/json
         [
         {
-                "definitionName": "ShipmentDetails",
-                "definitionText": "@primaryKey( 'name')@index( 'supplier')@store( type = 'rdbms', jdbc.url = 'jdbc:mysql://localhost:3306/SweetFactoryDB', username = 'root', password = 'root', jdbc.driver.name = 'com.mysql.jdbc.Driver')define table ShipmentDetails (name string, supplier string, amount double)",
+                "name": "ShipmentDetails",
+                "definition": "@primaryKey( 'name')@index( 'supplier')@store( type = 'rdbms', jdbc.url = 'jdbc:mysql://localhost:3306/SweetFactoryDB', username = 'root', password = 'root', jdbc.driver.name = 'com.mysql.jdbc.Driver')define table ShipmentDetails (name string, supplier string, amount double)",
                 "type": "Table",
                 "attributes": [
                     {
@@ -60,32 +60,30 @@ paths:
             }
         ]
       tags:
-      - Definitions
-      summary: Retrives @store annotated definitions in a siddhi app
-      description: Retrieves @store annotated definitions in a specified siddhi app
-      operationId: getSiddhiAppDefinitions
+      - Store Elements
+      summary: Retrives @store annotated elements in a siddhi app
+      description: Retrieves @store annotated elements in a specified siddhi app
+      operationId: getSiddhiAppStoreElements
       produces:
       - application/json
       parameters:
-      - name: id
+      - name: appName
         in: path
-        description: ID of the worker.
+        description: name of the siddhi app.
         required: true
         type: string
       responses:
         '200':
-          description: Siddhi app definitions successfully retrieved.
+          description: Siddhi app store elements successfully retrieved.
           schema:
             type: array
             items:
-              type: SiddhiDefinition
-              $ref: '#/definitions/SiddhiDefinition'
+              type: SiddhiStoreElement
+              $ref: '#/definitions/SiddhiStoreElement'
         '401':
           description: Unauthorized to view siddhi app.
         '404':
           description: The siddhi app specified is not found.
-          schema:
-            $ref: '#/definitions/ApiResponseMessage'
 definitions:
   SiddhiAppContent:
     type: object
@@ -93,18 +91,18 @@ definitions:
       content:
         type: string
         description: Content of the Siddhi Application
-  SiddhiDefinition:
+  SiddhiStoreElement:
     type: object
     properties:
-      definitionName:
+      name:
         type: string
-        description: name of definition
-      definitionText:
+        description: name of store element
+      definition:
         type: string
-        description: text view of definition
+        description: definition text of store element
       type:
         type: string
-        description: type of the definition
+        description: type of the store element
       attributes:
         type: List<Attribute>
         description: list of attributes
@@ -117,9 +115,3 @@ definitions:
       type:
         type: string
         description: type of the attribute
-  ApiResponseMessage:
-    type: object
-    properties:
-      message:
-        type: string
-        description: Error message

@@ -20,9 +20,8 @@ package org.wso2.carbon.siddhi.apps.api.rest.config;
 
 import org.wso2.carbon.config.annotation.Configuration;
 import org.wso2.carbon.config.annotation.Element;
-import org.wso2.carbon.siddhi.apps.api.rest.bean.WorkerAccessCredentials;
+
 import java.util.List;
-import java.util.Map;
 
 /**
  * Configuration bean class for dashboard datasearch configurations.
@@ -35,8 +34,8 @@ public class DeploymentConfigs {
     @Element(description = "List of workers")
     private List<String> workerList;
 
-    @Element(description = "Map of viewerRoles list")
-    private List<Map<String, List>> viewerRoles;
+    @Element(description = "List of viewer roles")
+    private List<String> roleIdList;
 
     public DeploymentConfigs() {
     }
@@ -66,15 +65,16 @@ public class DeploymentConfigs {
         return workerList;
     }
 
+    public List<String> getRoleIdList() {
+        return roleIdList;
+    }
+
+    public void setRoleIdList(List<String> roleIdList) {
+        this.roleIdList = roleIdList;
+    }
+
     public void setWorkerList(List<String> workerList) {
         this.workerList = workerList;
     }
 
-    public List<Map<String, List>> getViewerRoles() {
-        return viewerRoles;
-    }
-
-    public void setViewerRoles(List<Map<String, List>> viewerRoles) {
-        this.viewerRoles = viewerRoles;
-    }
 }

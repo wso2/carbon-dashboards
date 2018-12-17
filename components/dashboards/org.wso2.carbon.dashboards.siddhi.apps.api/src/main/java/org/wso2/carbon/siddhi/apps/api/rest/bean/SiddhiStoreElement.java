@@ -24,41 +24,36 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * Bean class to hold elements of a SiddhiApp Definition
+ * Bean class to hold elements of a SiddhiApp Store Element (Aggregation/Table/Window)
  */
-public class SiddhiDefinition implements Comparable<SiddhiDefinition> {
-    private String definitionName;
-    private String definitionText;
+
+public class SiddhiStoreElement implements Comparable<SiddhiStoreElement> {
+    private String name;
+    private String definition;
     private String type;
     private List<Attribute> attributes;
 
-    public SiddhiDefinition(String definitionName, String definitionText, String type) {
-        this.definitionName = definitionName;
-        this.definitionText = definitionText;
-        this.type = type;
-    }
-
-    public SiddhiDefinition(String definitionName, String definitionText, String type, List<Attribute> attributes) {
-        this.definitionName = definitionName;
-        this.definitionText = definitionText;
+    public SiddhiStoreElement(String name, String definition, String type, List<Attribute> attributes) {
+        this.name = name;
+        this.definition = definition;
         this.type = type;
         this.attributes = attributes;
     }
 
-    public String getDefinitionName() {
-        return definitionName;
+    public String getName() {
+        return name;
     }
 
-    public void setDefinitionName(String definitionName) {
-        this.definitionName = definitionName;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getDefinitionText() {
-        return definitionText;
+    public String getDefinition() {
+        return definition;
     }
 
-    public void setDefinitionText(String definitionText) {
-        this.definitionText = definitionText;
+    public void setDefinition(String definition) {
+        this.definition = definition;
     }
 
     public String getType() {
@@ -86,20 +81,20 @@ public class SiddhiDefinition implements Comparable<SiddhiDefinition> {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        SiddhiDefinition that = (SiddhiDefinition) o;
-        return Objects.equals(definitionName, that.definitionName) &&
-                Objects.equals(definitionText, that.definitionText) &&
+        SiddhiStoreElement that = (SiddhiStoreElement) o;
+        return Objects.equals(name, that.name) &&
+                Objects.equals(definition, that.definition) &&
                 Objects.equals(type, that.type) &&
                 Objects.equals(attributes, that.attributes);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(definitionName, definitionText, type, attributes);
+        return Objects.hash(name, definition, type, attributes);
     }
 
     @Override
-    public int compareTo(SiddhiDefinition sd) {
-        return definitionName.compareTo(sd.definitionName);
+    public int compareTo(SiddhiStoreElement sd) {
+        return name.compareTo(sd.name);
     }
 }

@@ -86,7 +86,7 @@
             org.wso2.carbon.uiserver.spi.*; version="${carbon.uiserver.version.range}",
             org.wso2.carbon.analytics.permissions.*; version="${carbon.analytics-common.version.range}",
             org.wso2.carbon.analytics.idp.client.*; version="${carbon.analytics-common.version.range}",
-            org.wso2.carbon.analytics.msf4j.interceptor.common.*,
+            org.wso2.carbon.analytics.msf4j.interceptor.common.*; version="${carbon.analytics.version.range}",
             org.wso2.carbon.config.*; version="${carbon.config.version.range}",
             org.osgi.service.component.annotations.*; version="${org.osgi.service.component.annotations.version.range}",
             org.slf4j.*; version="${slf4j.version.range}",
@@ -98,9 +98,6 @@
         <private.package>
             org.wso2.carbon.siddhi.apps.api.rest.internal.*
         </private.package>
-        <carbon.component>
-            osgi.service; objectClass="org.wso2.carbon.uiserver.spi.RestApiProvider"
-        </carbon.component>
     </properties>
     
 </project>

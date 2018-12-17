@@ -22,7 +22,7 @@ package org.wso2.carbon.siddhi.apps.api.rest.internal;
 import org.wso2.carbon.analytics.idp.client.core.api.AnalyticsHttpClientBuilderService;
 import org.wso2.carbon.analytics.permissions.PermissionProvider;
 import org.wso2.carbon.config.provider.ConfigProvider;
-import org.wso2.carbon.siddhi.apps.api.rest.config.DeploymentConfigs;
+import org.wso2.carbon.siddhi.apps.api.rest.bean.SiddhiStoreElement;
 
 import java.util.HashMap;
 import java.util.List;
@@ -36,8 +36,10 @@ public class SiddhiAppsDataHolder {
     private  PermissionProvider permissionProvider;
     private ConfigProvider configProvider;
     private AnalyticsHttpClientBuilderService clientBuilderService;
-    private DeploymentConfigs datasearchConfigs;
-    private Map<String, List<String>> workerSiddhiApps = new HashMap<>();
+    private Map<String, List<SiddhiStoreElement>> siddhiAppMap = new HashMap<>();
+    private String username;
+    private String password;
+    private List<String> workerList;
 
     private SiddhiAppsDataHolder(){
     }
@@ -96,38 +98,73 @@ public class SiddhiAppsDataHolder {
     }
 
     /**
-     * Returns deployment configs
+     * Returns username for worker
      *
-     * @return deployment configs
+     * @return username
      */
-    public DeploymentConfigs getDatasearchConfigs() {
-        return datasearchConfigs;
+    public String getUsername() {
+        return username;
     }
 
     /**
-     * Sets datasearch deployment configs
+     * Sets username of  worker
      *
-     * @param datasearchConfigs dataseach configs
+     * @param username
      */
-    public void setDatasearchConfigs(DeploymentConfigs datasearchConfigs) {
-        this.datasearchConfigs = datasearchConfigs;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     /**
-     * Returns map of workers and siddhi apps
+     * Returns password of worker
      *
-     * @return workerSiddhiApps
+     * @return password
      */
-    public Map<String, List<String>> getWorkerSiddhiApps() {
-        return workerSiddhiApps;
+    public String getPassword() {
+        return password;
     }
 
     /**
-     * Sets worker siddhi apps map
-     *
-     * @param workerSiddhiApps map of worker, siddhi apps
+     * Sets password of worker
+     * @param password
      */
-    public void setWorkerSiddhiApps(Map<String, List<String>> workerSiddhiApps) {
-        this.workerSiddhiApps = workerSiddhiApps;
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    /**
+     * Returns list of worker urls
+     *
+     * @return workerlist
+     */
+    public List<String> getWorkerList() {
+        return workerList;
+    }
+
+    /**
+     * Sets worker list
+     *
+     * @param workerList
+     */
+    public void setWorkerList(List<String> workerList) {
+        this.workerList = workerList;
+    }
+
+    /**
+     * Returns siddhiAppMap
+     *
+     * @return siddhiAppMap
+     */
+    public Map<String, List<SiddhiStoreElement>> getSiddhiAppMap() {
+        return siddhiAppMap;
+    }
+
+    /**
+     * Sets siddhiAppMap
+     *
+     * @param siddhiAppMap
+     */
+    public void setSiddhiAppMap(Map<String, List<SiddhiStoreElement>> siddhiAppMap) {
+        this.siddhiAppMap = siddhiAppMap;
     }
 }

@@ -34,7 +34,8 @@ import org.wso2.carbon.analytics.permissions.bean.Role;
 import org.wso2.carbon.config.ConfigurationException;
 import org.wso2.carbon.config.provider.ConfigProvider;
 import org.wso2.carbon.siddhi.apps.api.rest.config.DeploymentConfigs;
-import java.util.Map;
+
+import java.util.List;
 
 /**
  * OSGi-components to register config provider class.
@@ -48,8 +49,6 @@ public class ServiceComponent {
     private static final Permission viewPermission = new Permission("DASH",
             "DASH.siddhiApp.viewer");
     private static final Logger logger = LoggerFactory.getLogger(ServiceComponent.class);
-    private static final String ID = "id";
-    private static final String NAME = "name";
     private PermissionProvider permissionProvider;
 
     @Activate
@@ -57,26 +56,27 @@ public class ServiceComponent {
         try {
             DeploymentConfigs deploymentConfigs = SiddhiAppsDataHolder.getInstance().getConfigProvider()
                     .getConfigurationObject(DeploymentConfigs.class);
-            SiddhiAppsDataHolder.getInstance().setDatasearchConfigs(deploymentConfigs);
+            SiddhiAppsDataHolder.getInstance().setUsername(deploymentConfigs.getUsername());
+            SiddhiAppsDataHolder.getInstance().setPassword(deploymentConfigs.getPassword());
+            SiddhiAppsDataHolder.getInstance().setWorkerList(deploymentConfigs.getWorkerList());
+            initPermission(deploymentConfigs.getRoleIdList());
+            SiddhiAppsDataHolder.getInstance().setPermissionProvider(permissionProvider);
 
         } catch (ConfigurationException e) {
-            logger.error("Error in reading configuration from deployment.yaml", e);
+            logger.error("Error in reading datasearch configuration from deployment.yaml", e);
         }
-        initPermission();
+
     }
 
-    private void initPermission() {
+    private void initPermission(List<String> roleIdList) {
         if (!permissionProvider.isPermissionExists(viewPermission)) {
             permissionProvider.addPermission(viewPermission);
         }
-        DeploymentConfigs datasearchConfigs = SiddhiAppsDataHolder.getInstance().getDatasearchConfigs();
-        if (datasearchConfigs.getViewerRoles() != null) {
-            for (Map viewer : datasearchConfigs.getViewerRoles()) {
-                String name = viewer.get(NAME).toString();
-                if (!permissionProvider.hasPermission(name, viewPermission)) {
-                    Role role = new Role(viewer.get(ID).toString(), viewer.get(NAME).toString());
-                    permissionProvider.grantPermission(viewPermission, role);
-                }
+
+        if (roleIdList != null) {
+            //Grant permission to given role ids
+            for (String viewerRole : roleIdList) {
+                permissionProvider.grantPermission(viewPermission, new Role(viewerRole, ""));
             }
         }
     }
