@@ -144,4 +144,16 @@ export default class DashboardAPI {
             .getHTTPClient()
             .get(`/report-config`);
     }
+
+    /**
+     * Export Dashboard
+     *
+     * @param {string} dashboardId Dashboard ID
+     * @returns {Promise} Promise
+     */
+    static handleExportDashboard(dashboardId) {
+        return new DashboardAPI()
+            .getHTTPClient()
+            .get(`${dashboardId}/export`);
+    }
 }

@@ -75,6 +75,7 @@ class DashboardCard extends Component {
         this.hideDashboardDeleteConfirmDialog = this.hideDashboardDeleteConfirmDialog.bind(this);
         this.showDashboardDeleteConfirmDialog = this.showDashboardDeleteConfirmDialog.bind(this);
         this.handleDashboardDeletionConfirm = this.handleDashboardDeletionConfirm.bind(this);
+        this.handleDashboardExport = this.handleDashboardExport.bind(this);
 
         this.renderDashboardDeleteConfirmDialog = this.renderDashboardDeleteConfirmDialog.bind(this);
         this.renderDashboardDeletionSuccessMessage = this.renderDashboardDeletionSuccessMessage.bind(this);
@@ -141,6 +142,20 @@ class DashboardCard extends Component {
         );
     }
 
+    handleDashboardExport() {
+        const dashboard = this.props.dashboard;
+        const dashboardName = dashboard.name;
+        DashboardAPI.handleExportDashboard(dashboard.url).then((response) => {
+            const url = window.URL.createObjectURL(
+                new Blob([JSON.stringify(response.data, undefined, 2)]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', dashboardName + '.json');
+            document.body.appendChild(link);
+            link.click();
+        });
+    }
+
     renderDashboardDeletionSuccessMessage(dashboard) {
         return (<Snackbar
             open
@@ -170,6 +185,13 @@ class DashboardCard extends Component {
                 containerElement={<Link to={`/designer/${dashboard.url}`} />}
             />);
         }
+        let exportMenuItem;
+        if (dashboard.hasDesignerPermission) {
+            exportMenuItem = (<MenuItem
+                primaryText={<FormattedMessage id="export.button" defaultMessage="Export"/>}
+                onClick={this.handleDashboardExport}
+            />);
+        }
         let settingsMenuItem;
         let deleteMenuItem;
         if (dashboard.hasOwnerPermission) {
@@ -194,6 +216,7 @@ class DashboardCard extends Component {
                 <Menu>
                     {designMenuItem}
                     {settingsMenuItem}
+                    {exportMenuItem}
                     {deleteMenuItem}
                 </Menu>
             </Popover>
