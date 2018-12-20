@@ -26,6 +26,7 @@ import { NavigationMoreVert } from 'material-ui/svg-icons';
 
 import DashboardThumbnail from '../../utils/DashboardThumbnail';
 import DashboardAPI from '../../utils/apis/DashboardAPI';
+import DashboardExportor from '../../utils/DashboardExportor';
 
 const styles = {
     card: {
@@ -75,7 +76,6 @@ class DashboardCard extends Component {
         this.hideDashboardDeleteConfirmDialog = this.hideDashboardDeleteConfirmDialog.bind(this);
         this.showDashboardDeleteConfirmDialog = this.showDashboardDeleteConfirmDialog.bind(this);
         this.handleDashboardDeletionConfirm = this.handleDashboardDeletionConfirm.bind(this);
-        this.handleDashboardExport = this.handleDashboardExport.bind(this);
 
         this.renderDashboardDeleteConfirmDialog = this.renderDashboardDeleteConfirmDialog.bind(this);
         this.renderDashboardDeletionSuccessMessage = this.renderDashboardDeletionSuccessMessage.bind(this);
@@ -142,20 +142,6 @@ class DashboardCard extends Component {
         );
     }
 
-    handleDashboardExport() {
-        const dashboard = this.props.dashboard;
-        const dashboardName = dashboard.name;
-        DashboardAPI.handleExportDashboard(dashboard.url).then((response) => {
-            const url = window.URL.createObjectURL(
-                new Blob([JSON.stringify(response.data, undefined, 2)]));
-            const link = document.createElement('a');
-            link.href = url;
-            link.setAttribute('download', dashboardName + '.json');
-            document.body.appendChild(link);
-            link.click();
-        });
-    }
-
     renderDashboardDeletionSuccessMessage(dashboard) {
         return (<Snackbar
             open
@@ -186,10 +172,12 @@ class DashboardCard extends Component {
             />);
         }
         let exportMenuItem;
+        const dashboardName = dashboard.name;
+        const dashboardURL = dashboard.url;
         if (dashboard.hasDesignerPermission) {
             exportMenuItem = (<MenuItem
-                primaryText={<FormattedMessage id="export.button" defaultMessage="Export"/>}
-                onClick={this.handleDashboardExport}
+                primaryText={<FormattedMessage id="export.button" defaultMessage="Export" />}
+                onClick={() => DashboardExportor.handleDashboardExport(dashboardName, dashboardURL)}
             />);
         }
         let settingsMenuItem;

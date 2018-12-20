@@ -151,7 +151,7 @@ export default class DashboardAPI {
      * @param {string} dashboardId Dashboard ID
      * @returns {Promise} Promise
      */
-    static handleExportDashboard(dashboardId) {
+    static ExportDashboardByID(dashboardId) {
         return new DashboardAPI()
             .getHTTPClient()
             .get(`${dashboardId}/export`);
