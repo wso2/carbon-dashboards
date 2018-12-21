@@ -38,7 +38,7 @@ export default class DashboardExporter {
             })
             .catch((e) => {
                 // TODO: Show a proper error message to the user
-                console.error(`Exporting dashboard ${dashboardName} with URL '${dashboardURL}' failed.`, e);
+                console.error(`Exporting dashboard '${dashboardName}' with URL '${dashboardURL}' failed.`, e);
             });
     }
 }
