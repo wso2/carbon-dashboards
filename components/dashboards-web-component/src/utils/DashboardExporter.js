@@ -20,7 +20,7 @@ import DashboardAPI from './apis/DashboardAPI';
 
 export default class DashboardExporter {
     /**
-     * Export Dashboard
+     * Exports the specified dashboard as a JSON.
      * @param {string} dashboardName name of the dashboard
      * @param {string} dashboardURL url of the dashboard
      */
