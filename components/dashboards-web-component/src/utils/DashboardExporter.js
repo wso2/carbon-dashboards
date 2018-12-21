@@ -18,14 +18,14 @@
 
 import DashboardAPI from './apis/DashboardAPI';
 
-export default class DashboardExportor {
+export default class DashboardExporter {
     /**
      * Export Dashboard
      * @param {string} dashboardName name of the dashboard
      * @param {string} dashboardURL url of the dashboard
      */
-    static handleDashboardExport(dashboardName, dashboardURL) {
-        DashboardAPI.ExportDashboardByID(dashboardURL)
+    static exportDashboard(dashboardName, dashboardURL) {
+        DashboardAPI.exportDashboardByID(dashboardURL)
             .then((response) => {
                 const url = window.URL.createObjectURL(
                     new Blob([JSON.stringify(response.data, undefined, 2)]));
@@ -37,7 +37,8 @@ export default class DashboardExportor {
                 document.body.removeChild(link);
             })
             .catch((e) => {
-                console.error(e);
+                // TODO: Show a proper error message to the user
+                console.error(`Exporting dashboard ${dashboardName} with URL '${dashboardURL}' failed.`, e);
             });
     }
 }

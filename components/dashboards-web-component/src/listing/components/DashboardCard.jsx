@@ -26,7 +26,7 @@ import { NavigationMoreVert } from 'material-ui/svg-icons';
 
 import DashboardThumbnail from '../../utils/DashboardThumbnail';
 import DashboardAPI from '../../utils/apis/DashboardAPI';
-import DashboardExportor from '../../utils/DashboardExportor';
+import DashboardExporter from '../../utils/DashboardExporter';
 
 const styles = {
     card: {
@@ -177,7 +177,7 @@ class DashboardCard extends Component {
         if (dashboard.hasDesignerPermission) {
             exportMenuItem = (<MenuItem
                 primaryText={<FormattedMessage id="export.button" defaultMessage="Export" />}
-                onClick={() => DashboardExportor.handleDashboardExport(dashboardName, dashboardURL)}
+                onClick={() => DashboardExporter.exportDashboard(dashboardName, dashboardURL)}
             />);
         }
         let settingsMenuItem;
