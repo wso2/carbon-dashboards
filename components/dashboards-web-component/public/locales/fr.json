@@ -40,6 +40,7 @@
   "settings.button": "Paramètres",
   "design.button": "Conception",
   "view.button": "Vue",
+  "export.button":"Exportation",
   "delete": "Effacer",
   "search.hint.text": "Chercher...",
   "dialog-box.confirmation.yes": "Oui",
