@@ -65,7 +65,6 @@ public class ServiceComponent {
         } catch (ConfigurationException e) {
             logger.error("Error in reading datasearch configuration from deployment.yaml", e);
         }
-
     }
 
     private void initPermission(List<String> roleIdList) {
@@ -127,5 +126,4 @@ public class ServiceComponent {
         this.permissionProvider = null;
         SiddhiAppsDataHolder.getInstance().setPermissionProvider(null);
     }
-
 }

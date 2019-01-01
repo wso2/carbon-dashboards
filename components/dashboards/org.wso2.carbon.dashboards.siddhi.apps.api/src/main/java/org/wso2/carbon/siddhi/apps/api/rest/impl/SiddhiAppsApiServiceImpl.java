@@ -113,7 +113,6 @@ public class SiddhiAppsApiServiceImpl extends SiddhiAppsApiService {
         return username != null ? username.toString() : null;
     }
 
-
     private void getSiddhiAppsFromWorkers() {
         String username = SiddhiAppsDataHolder.getInstance().getUsername();
         String password = SiddhiAppsDataHolder.getInstance().getPassword();
