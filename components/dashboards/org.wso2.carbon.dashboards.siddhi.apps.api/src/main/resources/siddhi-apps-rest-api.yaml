@@ -41,7 +41,7 @@ paths:
         [
         {
                 "name": "ShipmentDetails",
-                "definition": "@primaryKey( 'name')@index( 'supplier')@store( type = 'rdbms', jdbc.url = 'jdbc:mysql://localhost:3306/SweetFactoryDB', username = 'root', password = 'root', jdbc.driver.name = 'com.mysql.jdbc.Driver')define table ShipmentDetails (name string, supplier string, amount double)",
+                "definition": "@primaryKey( 'name')@index( 'supplier')@store( type = 'rdbms', datasource = 'SweetFactoryDB') define table ShipmentDetails (name string, supplier string, amount double)",
                 "type": "Table",
                 "attributes": [
                     {
