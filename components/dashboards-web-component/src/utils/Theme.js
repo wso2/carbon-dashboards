@@ -18,6 +18,7 @@
 
 import { darkBaseTheme, getMuiTheme, lightBaseTheme } from 'material-ui/styles/index';
 import * as Colors from 'material-ui/styles/colors';
+import createMuiTheme from '@material-ui/core/styles/createMuiTheme';
 
 export const darkTheme = getMuiTheme(darkBaseTheme,
     {
@@ -68,5 +69,10 @@ export const lightTheme = getMuiTheme(lightBaseTheme,
         },
     }
 );
+
+export const newDarkTheme = createMuiTheme({
+    palette: { type: 'dark' },
+    typography: { useNextVariants: true },
+});
 
 export default darkTheme;

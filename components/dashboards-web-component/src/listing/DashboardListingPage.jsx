@@ -19,13 +19,15 @@
 import React, { Component } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { MuiThemeProvider, Snackbar } from 'material-ui';
+import MuiThemeProviderNEW from '@material-ui/core/styles/MuiThemeProvider';
 
 import DashboardCard from './components/DashboardCard';
 import FabSpeedDial from './components/FabSpeedDial';
 import Header from '../common/Header';
-import defaultTheme from '../utils/Theme';
+import { darkTheme, newDarkTheme } from '../utils/Theme';
 import DashboardAPI from '../utils/apis/DashboardAPI';
 
+const defaultTheme = darkTheme;
 const styles = {
     thumbnailsWrapper: {
         width: '100%',
@@ -136,13 +138,12 @@ export default class DashboardListingPage extends Component {
      */
     render() {
         return (
-            <MuiThemeProvider muiTheme={defaultTheme}>
+            <MuiThemeProviderNEW theme={newDarkTheme}>
                 <Header title={<FormattedMessage id='portal.title' defaultMessage='Portal' />} />
                 <div style={styles.thumbnailsWrapper}>
                     {this.renderDashboardThumbnails()}
                 </div>
-                <FabSpeedDial theme={defaultTheme} />
-            </MuiThemeProvider>
+            </MuiThemeProviderNEW>
         );
     }
 }
