@@ -20,6 +20,8 @@
   },
   "homepage": "https://github.com/wso2/carbon-dashboards#readme",
   "dependencies": {
+    "@material-ui/core": "^3.6.2",
+    "@material-ui/icons": "^3.0.1",
     "@wso2-dashboards/widget": "^1.4.0",
     "axios": "^0.16.2",
     "babel-polyfill": "^6.26.0",
