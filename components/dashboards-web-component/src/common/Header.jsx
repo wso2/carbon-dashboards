@@ -18,30 +18,61 @@
 
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import { withStyles } from '@material-ui/core/styles';
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import Typography from '@material-ui/core/Typography';
+import Button from '@material-ui/core/Button';
+import IconButton from '@material-ui/core/IconButton';
+import MenuIcon from '@material-ui/icons/Menu';
 import PropTypes from 'prop-types';
 
-import { AppBar } from 'material-ui';
+// import { AppBar } from 'material-ui';
 
 import UserMenu from './UserMenu';
 import defaultTheme from '../utils/Theme';
 
-export default class Header extends Component {
+const styles = {
+    root: {
+        flexGrow: 1,
+    },
+    grow: {
+        flexGrow: 1,
+    },
+    menuButton: {
+        marginLeft: -12,
+        marginRight: 20,
+    },
+};
+
+class Header extends Component {
     render() {
         return (
-            <AppBar
-                style={{ zIndex: this.props.theme.zIndex.drawer + 100 }}
-                title={this.props.title}
-                iconElementRight={this.props.rightElement}
-                iconElementLeft={this.props.logo}
-                onLeftIconButtonClick={this.props.onLogoClick}
-                iconStyleLeft={{ margin: '0 15px 0 0', display: 'flex', alignItems: 'center' }}
-                titleStyle={{ fontSize: 16 }}
-                zDepth={2}
-            />
+            <AppBar position='static'>
+                <Toolbar variant='dense'>
+                    <IconButton className={this.props.classes.menuButton} color='inherit' aria-label='Logo'>
+                        <MenuIcon />
+                    </IconButton>
+                    <Typography variant="h6" color="inherit" className={this.props.classes.grow}>
+                        {this.props.title}
+                    </Typography>
+                    <Button color="inherit">Login</Button>
+                </Toolbar>
+            </AppBar>
         );
     }
 }
-
+//
+// <AppBar
+//     style={{ zIndex: this.props.theme.zIndex.drawer + 100 }}
+//     title={this.props.title}
+//     iconElementRight={this.props.rightElement}
+//     iconElementLeft={this.props.logo}
+//     onLeftIconButtonClick={this.props.onLogoClick}
+//     iconStyleLeft={{ margin: '0 15px 0 0', display: 'flex', alignItems: 'center' }}
+//     titleStyle={{ fontSize: 16 }}
+//     zDepth={2}
+// />
 
 Header.propTypes = {
     logo: PropTypes.element,
@@ -51,7 +82,8 @@ Header.propTypes = {
         PropTypes.element,
     ]).isRequired,
     rightElement: PropTypes.element,
-    theme: PropTypes.shape({}),
+    // theme: PropTypes.shape({}),
+    classes: PropTypes.object.isRequired, // eslint-disable-line
 };
 
 Header.defaultProps = {
@@ -68,3 +100,5 @@ Header.defaultProps = {
     rightElement: <UserMenu />,
     theme: defaultTheme,
 };
+
+export default withStyles(styles)(Header);
