@@ -27,10 +27,10 @@ import WidgetAPI from '../../utils/apis/WidgetAPI';
 const styles = {
     card: {
         display: 'inline-block',
-        width: 'calc(15% - 15px)',
+        width: 'calc(13% - 13px)',
         height: '85px',
-        minWidth: 230,
-        margin: '21px 25px 0px 10px',
+        minWidth: 232,
+        margin: '21px 18px 0px 10px',
     },
     cardTitleText: {
         overflow: 'hidden',

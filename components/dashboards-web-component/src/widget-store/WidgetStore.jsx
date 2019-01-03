@@ -22,38 +22,38 @@ import WidgetStoreCard from './components/WidgetStoreCard';
 import defaultTheme from '../utils/Theme';
 import WidgetAPI from '../utils/apis/WidgetAPI';
 import WidgetStoreHeader from './components/WidgetStoreHeader';
+import WidgetsFabSpeedDial from './components/WidgetsFabSpeedDial';
 
 const styles = {
     generatedWidgetWrapper: {
-        height: '35vh',
-        marginLeft: '52px',
+        height: '34vh',
+        marginLeft: '18px',
         overflow: 'hidden'
     },
     customWidgetWrapper: {
         height: '34vh',
-        marginLeft: '52px',
-        overflow: 'hidden',
-        marginTop: '42px'
+        marginLeft: '18px',
+        overflow: 'hidden'
     },
     expandGeneratedWrapper: {
         height: '100%',
-        marginLeft: '52px'
+        width: '99%',
+        marginLeft: '18px,'
     },
     expandCustomWrapper: {
         height: '100%',
-        marginLeft: '52px',
-        marginTop: '35px'
+        width: '99%',
+        marginLeft: '18px'
     },
     widgetType: {
-        height: '3.5vh',
-        width: '100%'
+        height: '0.5vh'
     },
     widgetTypeText: {
         fontSize: '20px',
         fontFamily: 'Roboto, sans-serif',
         color: 'white',
         display: 'block',
-        marginInlineStart: '65px',
+        marginInlineStart: '29px',
         marginTop: '20px'
     },
     generatedWidgetTypeText: {
@@ -65,7 +65,8 @@ const styles = {
         display: 'inline',
         fontSize: '0.8em',
         fontFamily: 'Roboto, sans-serif',
-        marginInlineStart: '92.5%',
+        float: 'right',
+        marginRight: '42px',
         cursor: 'pointer',
         color: '#b2babb '
     },
@@ -188,9 +189,10 @@ export default class WidgetStore extends Component {
                             />
                         </label>
                     </span>
-                    <span style={{float: 'right', paddingRight: '85px'}}>
+                    <span style={{float: 'right', paddingRight: '36px'}}>
               <div>
                 <TextField
+                    style={{ width: '232px' }}
                     hintStyle={{color: 'darkgrey'}}
                     hintText={
                         <FormattedMessage
@@ -217,13 +219,15 @@ export default class WidgetStore extends Component {
                         }
                         style={styles.text}
                     >
-                        {this.state.widgets.generated.length > 18 &&
+                        {this.state.widgets.generated.length > 21 &&
                         (this.state.viewGeneratedWidgets ? (
                             <FormattedMessage id="see.less" defaultMessage="See Less"/>
                         ) : (
                             <FormattedMessage id="see.more" defaultMessage="See More"/>
                         ))}
                     </p>
+                </div>
+                <div>
                     <label style={styles.widgetTypeText}>
                         <FormattedMessage
                             id="custom.widgets"
@@ -240,13 +244,14 @@ export default class WidgetStore extends Component {
                     }
                     style={styles.text}
                 >
-                    {this.state.widgets.custom.length > 18 &&
+                    {this.state.widgets.custom.length > 21 &&
                     (this.state.viewCustomWidgets ? (
                         <FormattedMessage id="see.less" defaultMessage="See Less"/>
                     ) : (
                         <FormattedMessage id="see.more" defaultMessage="See More"/>
                     ))}
                 </p>
+                <WidgetsFabSpeedDial theme={defaultTheme} />
             </MuiThemeProvider>
         );
     }
