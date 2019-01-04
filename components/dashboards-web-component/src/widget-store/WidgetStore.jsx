@@ -17,12 +17,13 @@
  */
 import React, {Component} from 'react';
 import {FormattedMessage} from 'react-intl';
-import {MuiThemeProvider, TextField} from 'material-ui';
+import { MuiThemeProvider, TextField,FloatingActionButton} from 'material-ui';
+import ContentAdd from 'material-ui/svg-icons/content/add';
 import WidgetStoreCard from './components/WidgetStoreCard';
 import defaultTheme from '../utils/Theme';
 import WidgetAPI from '../utils/apis/WidgetAPI';
 import WidgetStoreHeader from './components/WidgetStoreHeader';
-import WidgetsFabSpeedDial from './components/WidgetsFabSpeedDial';
+
 
 const styles = {
     generatedWidgetWrapper: {
@@ -69,6 +70,11 @@ const styles = {
         marginRight: '42px',
         cursor: 'pointer',
         color: '#b2babb '
+    },
+    actionButton: {
+        position: 'fixed',
+        right: '16px',
+        bottom: '16px',
     },
 };
 
@@ -251,7 +257,15 @@ export default class WidgetStore extends Component {
                         <FormattedMessage id="see.more" defaultMessage="See More"/>
                     ))}
                 </p>
-                <WidgetsFabSpeedDial theme={defaultTheme} />
+                <div style={styles.actionButton}>
+                   <span title="Create Widget">
+                      <FloatingActionButton
+                          onClick={() => this.props.history.push("/createGadget")}
+                      >
+                        <ContentAdd/>
+                      </FloatingActionButton>
+                   </span>
+                </div>
             </MuiThemeProvider>
         );
     }
