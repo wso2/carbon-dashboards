@@ -218,19 +218,13 @@ export default class WidgetStore extends Component {
                 </div>
                 <div style={styles.widgetType}>
                     <p
-                        onClick={() =>
-                            this.setState({
-                                viewGeneratedWidgets: !this.state.viewGeneratedWidgets,
-                            })
-                        }
+                        onClick={() => this.setState({viewGeneratedWidgets: !this.state.viewGeneratedWidgets})}
                         style={styles.text}
                     >
                         {this.state.widgets.generated.length > 21 &&
-                        (this.state.viewGeneratedWidgets ? (
-                            <FormattedMessage id="see.less" defaultMessage="See Less"/>
-                        ) : (
-                            <FormattedMessage id="see.more" defaultMessage="See More"/>
-                        ))}
+                        (this.state.viewGeneratedWidgets ?
+                            (<FormattedMessage id="see.less" defaultMessage="See Less"/>) :
+                            (<FormattedMessage id="see.more" defaultMessage="See More"/>))}
                     </p>
                 </div>
                 <div>
@@ -245,27 +239,19 @@ export default class WidgetStore extends Component {
                     {this.state.widgets.custom}
                 </div>
                 <p
-                    onClick={() =>
-                        this.setState({viewCustomWidgets: !this.state.viewCustomWidgets})
-                    }
+                    onClick={() => this.setState({viewCustomWidgets: !this.state.viewCustomWidgets})}
                     style={styles.text}
                 >
                     {this.state.widgets.custom.length > 21 &&
-                    (this.state.viewCustomWidgets ? (
-                        <FormattedMessage id="see.less" defaultMessage="See Less"/>
-                    ) : (
-                        <FormattedMessage id="see.more" defaultMessage="See More"/>
-                    ))}
+                    (this.state.viewCustomWidgets ?
+                        (<FormattedMessage id="see.less" defaultMessage="See Less"/>) :
+                        (<FormattedMessage id="see.more" defaultMessage="See More"/>))}
                 </p>
-                <div style={styles.actionButton}>
-                   <span title="Create Widget">
-                      <FloatingActionButton
-                          onClick={() => this.props.history.push("/createGadget")}
-                      >
+                   <span style={styles.actionButton} title="Create Widget">
+                      <FloatingActionButton onClick={() => this.props.history.push("/createGadget")}>
                         <ContentAdd/>
                       </FloatingActionButton>
                    </span>
-                </div>
             </MuiThemeProvider>
         );
     }

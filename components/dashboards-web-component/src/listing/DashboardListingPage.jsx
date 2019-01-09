@@ -152,9 +152,7 @@ export default class DashboardListingPage extends Component {
                 </div>
                 <div style={styles.actionButton}>
                     <span title="Create Dashboard">
-                        <FloatingActionButton
-                            onClick={() => this.props.history.push('/create')}
-                        >
+                        <FloatingActionButton onClick={() => this.props.history.push('/create')} >
                             <ContentAdd />
                         </FloatingActionButton>
                     </span>
