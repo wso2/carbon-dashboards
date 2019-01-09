@@ -98,7 +98,7 @@ public class SiddhiAppsApiServiceImpl extends SiddhiAppsApiService {
         }
 
         getSiddhiAppsFromWorkers();
-        List<String> siddhiAppList = new ArrayList<>(SiddhiAppsDataHolder.getInstance().getSiddhiAppMap().keySet()
+        List<String> siddhiAppList = SiddhiAppsDataHolder.getInstance().getSiddhiAppMap().keySet()
                 .stream().sorted().collect(Collectors.toList()));
         String jsonString = new Gson().toJson(siddhiAppList);
         return Response.ok().entity(jsonString).build();
