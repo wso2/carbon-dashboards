@@ -1,5 +1,5 @@
 /*
- *   Copyright (c) 2018, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *   Copyright (c) 2019, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  *   WSO2 Inc. licenses this file to you under the Apache License,
  *   Version 2.0 (the "License"); you may not use this file except
@@ -41,6 +41,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 import javax.ws.rs.core.Response;
 
 import static org.wso2.carbon.siddhi.apps.api.rest.utils.Constants.AGGREGATION;
@@ -79,14 +80,10 @@ public class SiddhiAppsApiServiceImpl extends SiddhiAppsApiService {
             getSiddhiAppsFromWorkers();
         }
 
-        for (Map.Entry<String, List<SiddhiStoreElement>> entry :
-                SiddhiAppsDataHolder.getInstance().getSiddhiAppMap().entrySet()) {
-            if (entry.getKey().equals(appName)) {
-                List<SiddhiStoreElement> siddhiStoreElements = entry.getValue();
-                Collections.sort(siddhiStoreElements);
-                String jsonString = new Gson().toJson(siddhiStoreElements);
-                return Response.ok().entity(jsonString).build();
-            }
+        List<SiddhiStoreElement> storeElementsList = SiddhiAppsDataHolder.getInstance().getSiddhiAppMap().get(appName);
+        if (storeElementsList != null) {
+            String jsonString = new Gson().toJson(storeElementsList);
+            return Response.ok().entity(jsonString).build();
         }
         return Response.status(Response.Status.NOT_FOUND).entity("Siddhi App not found").build();
     }
@@ -101,9 +98,8 @@ public class SiddhiAppsApiServiceImpl extends SiddhiAppsApiService {
         }
 
         getSiddhiAppsFromWorkers();
-        List<String> siddhiAppList = new ArrayList<>(SiddhiAppsDataHolder.getInstance().getSiddhiAppMap().keySet());
-
-        Collections.sort(siddhiAppList);
+        List<String> siddhiAppList = new ArrayList<>(SiddhiAppsDataHolder.getInstance().getSiddhiAppMap().keySet()
+                .stream().sorted().collect(Collectors.toList()));
         String jsonString = new Gson().toJson(siddhiAppList);
         return Response.ok().entity(jsonString).build();
     }
@@ -177,6 +173,7 @@ public class SiddhiAppsApiServiceImpl extends SiddhiAppsApiService {
 
                                 //Add siddhiApp to the map if it has store elements
                                 if (!storeElementList.isEmpty()) {
+                                    Collections.sort(storeElementList);
                                     siddhiAppsMap.put(appName, storeElementList);
                                 }
 
