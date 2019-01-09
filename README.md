@@ -1,5 +1,12 @@
 # WSO2 Dashboard Component
 
+---
+
+|  Branch | Build Status |
+| :------------ |:-------------
+| master      | [![Build Status](https://wso2.org/jenkins/job/platform-builds/job/carbon-dashboards/badge/icon)](https://wso2.org/jenkins/job/platform-builds/job/carbon-dashboards/) |
+
+---
 ## Getting Started
 
 Please follow the below steps to setup the WSO2 Dashboard Component.
