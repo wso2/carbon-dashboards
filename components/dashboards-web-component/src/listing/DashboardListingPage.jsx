@@ -18,10 +18,9 @@
 
 import React, { Component } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { MuiThemeProvider, Snackbar } from 'material-ui';
-
+import { MuiThemeProvider, Snackbar, FloatingActionButton } from 'material-ui';
+import ContentAdd from 'material-ui/svg-icons/content/add';
 import DashboardCard from './components/DashboardCard';
-import FabSpeedDial from './components/FabSpeedDial';
 import Header from '../common/Header';
 import WidgetButton from '../common/WidgetButton';
 import UserMenu from '../common/UserMenu';
@@ -40,6 +39,11 @@ const styles = {
         fontWeight: 'bold',
         paddingTop: '10%',
         color: defaultTheme.appBar.color,
+    },
+    actionButton: {
+        position: 'fixed',
+        right: '16px',
+        bottom: '16px',
     },
 };
 
@@ -146,7 +150,13 @@ export default class DashboardListingPage extends Component {
                 <div style={styles.thumbnailsWrapper}>
                     {this.renderDashboardThumbnails()}
                 </div>
-                <FabSpeedDial theme={defaultTheme} />
+                <div style={styles.actionButton}>
+                    <span title="Create Dashboard">
+                        <FloatingActionButton onClick={() => this.props.history.push('/create')} >
+                            <ContentAdd />
+                        </FloatingActionButton>
+                    </span>
+                </div>
             </MuiThemeProvider>
         );
     }

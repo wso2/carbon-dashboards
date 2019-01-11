@@ -17,43 +17,44 @@
  */
 import React, {Component} from 'react';
 import {FormattedMessage} from 'react-intl';
-import {MuiThemeProvider, TextField} from 'material-ui';
+import { MuiThemeProvider, TextField,FloatingActionButton} from 'material-ui';
+import ContentAdd from 'material-ui/svg-icons/content/add';
 import WidgetStoreCard from './components/WidgetStoreCard';
 import defaultTheme from '../utils/Theme';
 import WidgetAPI from '../utils/apis/WidgetAPI';
 import WidgetStoreHeader from './components/WidgetStoreHeader';
 
+
 const styles = {
     generatedWidgetWrapper: {
-        height: '35vh',
-        marginLeft: '52px',
+        height: '34vh',
+        marginLeft: '18px',
         overflow: 'hidden'
     },
     customWidgetWrapper: {
         height: '34vh',
-        marginLeft: '52px',
-        overflow: 'hidden',
-        marginTop: '42px'
+        marginLeft: '18px',
+        overflow: 'hidden'
     },
     expandGeneratedWrapper: {
         height: '100%',
-        marginLeft: '52px'
+        width: '99%',
+        marginLeft: '18px,'
     },
     expandCustomWrapper: {
         height: '100%',
-        marginLeft: '52px',
-        marginTop: '35px'
+        width: '99%',
+        marginLeft: '18px'
     },
     widgetType: {
-        height: '3.5vh',
-        width: '100%'
+        height: '0.5vh'
     },
     widgetTypeText: {
         fontSize: '20px',
         fontFamily: 'Roboto, sans-serif',
         color: 'white',
         display: 'block',
-        marginInlineStart: '65px',
+        marginInlineStart: '29px',
         marginTop: '20px'
     },
     generatedWidgetTypeText: {
@@ -65,9 +66,15 @@ const styles = {
         display: 'inline',
         fontSize: '0.8em',
         fontFamily: 'Roboto, sans-serif',
-        marginInlineStart: '92.5%',
+        float: 'right',
+        marginRight: '42px',
         cursor: 'pointer',
         color: '#b2babb '
+    },
+    actionButton: {
+        position: 'fixed',
+        right: '16px',
+        bottom: '16px',
     },
 };
 
@@ -188,9 +195,10 @@ export default class WidgetStore extends Component {
                             />
                         </label>
                     </span>
-                    <span style={{float: 'right', paddingRight: '85px'}}>
+                    <span style={{float: 'right', paddingRight: '36px'}}>
               <div>
                 <TextField
+                    style={{ width: '232px' }}
                     hintStyle={{color: 'darkgrey'}}
                     hintText={
                         <FormattedMessage
@@ -210,20 +218,16 @@ export default class WidgetStore extends Component {
                 </div>
                 <div style={styles.widgetType}>
                     <p
-                        onClick={() =>
-                            this.setState({
-                                viewGeneratedWidgets: !this.state.viewGeneratedWidgets,
-                            })
-                        }
+                        onClick={() => this.setState({viewGeneratedWidgets: !this.state.viewGeneratedWidgets})}
                         style={styles.text}
                     >
-                        {this.state.widgets.generated.length > 18 &&
-                        (this.state.viewGeneratedWidgets ? (
-                            <FormattedMessage id="see.less" defaultMessage="See Less"/>
-                        ) : (
-                            <FormattedMessage id="see.more" defaultMessage="See More"/>
-                        ))}
+                        {this.state.widgets.generated.length > 21 &&
+                        (this.state.viewGeneratedWidgets ?
+                            (<FormattedMessage id="see.less" defaultMessage="See Less"/>) :
+                            (<FormattedMessage id="see.more" defaultMessage="See More"/>))}
                     </p>
+                </div>
+                <div>
                     <label style={styles.widgetTypeText}>
                         <FormattedMessage
                             id="custom.widgets"
@@ -235,18 +239,19 @@ export default class WidgetStore extends Component {
                     {this.state.widgets.custom}
                 </div>
                 <p
-                    onClick={() =>
-                        this.setState({viewCustomWidgets: !this.state.viewCustomWidgets})
-                    }
+                    onClick={() => this.setState({viewCustomWidgets: !this.state.viewCustomWidgets})}
                     style={styles.text}
                 >
-                    {this.state.widgets.custom.length > 18 &&
-                    (this.state.viewCustomWidgets ? (
-                        <FormattedMessage id="see.less" defaultMessage="See Less"/>
-                    ) : (
-                        <FormattedMessage id="see.more" defaultMessage="See More"/>
-                    ))}
+                    {this.state.widgets.custom.length > 21 &&
+                    (this.state.viewCustomWidgets ?
+                        (<FormattedMessage id="see.less" defaultMessage="See Less"/>) :
+                        (<FormattedMessage id="see.more" defaultMessage="See More"/>))}
                 </p>
+                   <span style={styles.actionButton} title="Create Widget">
+                      <FloatingActionButton onClick={() => this.props.history.push("/createGadget")}>
+                        <ContentAdd/>
+                      </FloatingActionButton>
+                   </span>
             </MuiThemeProvider>
         );
     }
