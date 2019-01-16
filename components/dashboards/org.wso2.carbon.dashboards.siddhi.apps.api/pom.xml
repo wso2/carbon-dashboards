@@ -99,5 +99,4 @@
             org.wso2.carbon.siddhi.apps.api.rest.internal.*
         </private.package>
     </properties>
-
 </project>
