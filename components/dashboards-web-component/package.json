@@ -6,9 +6,9 @@
   "scripts": {
     "test": "NODE_ENV=test NODE_TLS_REJECT_UNAUTHORIZED='0' mocha --recursive --require babel-register  -r mock-local-storage \"./test/**/*.test.js\"",
     "clean": "rimraf dist",
-    "dev": "NODE_ENV=development webpack -d --progress --devtool source-map",
+    "dev": "NODE_ENV=development webpack --mode development --progress --devtool source-map",
     "lint": "eslint . --ext .jsx --ext .js",
-    "build": "webpack -p",
+    "build": "webpack --mode production",
     "deploy": "cp ./dist/bundle.js $DS_HOME/wso2/dashboard/deployment/web-ui-apps/portal/public/js/"
   },
   "repository": {
@@ -69,7 +69,8 @@
     "style-loader": "^0.23.1",
     "to-string-loader": "^1.1.5",
     "url-loader": "^1.1.2",
-    "webpack": "^3.4.1",
+    "webpack": "^4.29.0",
+    "webpack-cli": "^3.2.1",
     "webpack-dev-server": "^2.6.1"
   }
 }
