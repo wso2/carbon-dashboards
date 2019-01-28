@@ -35,10 +35,7 @@ module.exports = {
             {
                 test: /\.js$/,
                 exclude: /node_modules/,
-                use: [{
-                    loader: 'babel-loader',
-                    options: { presets: ['es2015', 'stage-2'] },
-                }],
+                use: ['babel-loader'],
             },
             {
                 test: /\.(png|jpg|svg|cur|gif|eot|ttf|woff|woff2)$/,
@@ -47,10 +44,7 @@ module.exports = {
             {
                 test: /\.jsx$/,
                 exclude: /node_modules/,
-                use: [{
-                    loader: 'babel-loader',
-                    options: { presets: ['es2015', 'react', 'stage-2'] },
-                }],
+                use: ['babel-loader'],
             },
             {
                 test: /\.css$/,
