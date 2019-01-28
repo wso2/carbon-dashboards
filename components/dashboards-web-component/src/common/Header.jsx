@@ -22,57 +22,61 @@ import { withStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
-import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
 import PropTypes from 'prop-types';
+import MuiThemeProviderNEW from '@material-ui/core/styles/MuiThemeProvider';
 
-// import { AppBar } from 'material-ui';
-
+import { darkTheme, newDarkTheme } from '../utils/Theme';
 import UserMenu from './UserMenu';
-import defaultTheme from '../utils/Theme';
+
+const defaultTheme = newDarkTheme;
 
 const styles = {
     root: {
         flexGrow: 1,
+        //zIndex: this.props.theme.zIndex.drawer + 100
     },
-    grow: {
+    title: {
         flexGrow: 1,
+        fontSize: 16
     },
-    menuButton: {
-        marginLeft: -12,
-        marginRight: 20,
-    },
+    logo: {
+        label:{
+            alignItems: 'center',
+            display: 'flex',
+            margin: '0 15px 0 0'
+        }
+    }
 };
 
 class Header extends Component {
     render() {
         return (
-            <AppBar position='static'>
-                <Toolbar variant='dense'>
-                    <IconButton className={this.props.classes.menuButton} color='inherit' aria-label='Logo'>
-                        <MenuIcon />
-                    </IconButton>
-                    <Typography variant="h6" color="inherit" className={this.props.classes.grow}>
-                        {this.props.title}
-                    </Typography>
-                    <Button color="inherit">Login</Button>
-                </Toolbar>
-            </AppBar>
+            <MuiThemeProviderNEW theme={newDarkTheme}>
+                <AppBar position='static'>
+                    <Toolbar variant='dense'>
+                            {this.props.logo}
+                        <Typography color="inherit" className={this.props.classes.title}>
+                            {this.props.title}
+                        </Typography>
+                    </Toolbar>
+                </AppBar>
+            </MuiThemeProviderNEW>
         );
     }
 }
+
 //
 // <AppBar
-//     style={{ zIndex: this.props.theme.zIndex.drawer + 100 }}
-//     title={this.props.title}
+//     style={{ zIndex: this.props.theme.zIndex.drawer + 100 }}  XXXXXXXX
+//     title={this.props.title}   XXXXXX
 //     iconElementRight={this.props.rightElement}
-//     iconElementLeft={this.props.logo}
+//     iconElementLeft={this.props.logo} XXXXXXXXXXXXXXXXXX
 //     onLeftIconButtonClick={this.props.onLogoClick}
-//     iconStyleLeft={{ margin: '0 15px 0 0', display: 'flex', alignItems: 'center' }}
-//     titleStyle={{ fontSize: 16 }}
+//     iconStyleLeft={{ margin: '0 15px 0 0', display: 'flex', alignItems: 'center' }} XXXXXXXXXXXXXXXX
+//     titleStyle={{ fontSize: 16 }} XXXXXXXXXXXXXXXXXXXXXXXX
 //     zDepth={2}
 // />
+
 
 Header.propTypes = {
     logo: PropTypes.element,
@@ -88,13 +92,15 @@ Header.propTypes = {
 
 Header.defaultProps = {
     logo: (
-        <Link style={{ height: '17px' }} to={'/'}>
-            <img
-                height='17'
-                src={`${window.contextPath}/public/app/images/logo.svg`}
-                alt='logo'
-            />
-        </Link>
+        <div stryle={{}}>
+            <Link style={{margin: '0 15px 0 0', display: 'flex', alignItems: 'center' }} to={'/'}>
+                <img
+                    height='17'
+                    src={`${window.contextPath}/public/app/images/logo.svg`}
+                    alt='logo'
+                />
+            </Link>
+        </div>
     ),
     onLogoClick: null,
     rightElement: <UserMenu />,
