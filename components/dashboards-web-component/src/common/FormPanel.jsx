@@ -18,29 +18,30 @@
  */
 
 import React, {Component} from "react";
-import {darkBaseTheme, getMuiTheme} from 'material-ui/styles';
 import PropTypes from 'prop-types';
+import { withStyles } from '@material-ui/core/styles';
 
-const muiTheme = getMuiTheme(darkBaseTheme);
-const titleStyles = {
-    fontFamily: muiTheme.fontFamily,
-    color: muiTheme.palette.textColor
-};
+const styles = theme => ({
+    title: {
+        color: theme.palette.textColor,
+        fontFamily: theme.typography.fontFamily
+    },
+    wrapper: {
+        margin: '0 auto',
+        width: 400,
+        paddingBottom: 15,
+        paddingTop: 30
+    }
+});
 
-export default class FormPanel extends Component {
+class FormPanel extends Component {
 
     render() {
-        let wrapperStyles = {
-            margin: '0 auto',
-            width: Number(this.props.width),
-            paddingTop: this.props.paddingTop,
-            paddingBottom: 15
-        };
-
+        const {classes} = this.props;
         return (
-            <div style={wrapperStyles}>
+            <div className={classes.wrapper}>
                 <form method="post" onSubmit={this.props.onSubmit}>
-                    <h1 style={titleStyles}>{this.props.title}</h1>
+                    <h1 className={classes.title}>{this.props.title}</h1>
                     {this.props.children}
                 </form>
             </div>
@@ -52,7 +53,8 @@ FormPanel.propTypes = {
     title: PropTypes.string,
     onSubmit: PropTypes.func,
     width: PropTypes.number,
-    paddingTop: PropTypes.number
+    paddingTop: PropTypes.number,
+    classes: PropTypes.object.isRequired,
 };
 
 FormPanel.defaultProps = {
@@ -60,3 +62,5 @@ FormPanel.defaultProps = {
     width: 400,
     paddingTop: 30
 };
+
+export default withStyles(styles)(FormPanel);

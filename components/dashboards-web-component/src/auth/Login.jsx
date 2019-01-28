@@ -17,33 +17,44 @@
  *
  */
 
-import { Checkbox, RaisedButton, Snackbar, TextField } from 'material-ui';
-import { MuiThemeProvider } from 'material-ui/styles';
+import { Checkbox, Snackbar, TextField, Button, FormControlLabel } from '@material-ui/core/';
+import MuiThemeProvider from '@material-ui/core/styles/MuiThemeProvider';
+import { withStyles } from '@material-ui/core/styles';
+
 import Qs from 'qs';
 import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import FormPanel from '../common/FormPanel';
 
 import { FormattedMessage } from 'react-intl';
 
 import AuthManager from './utils/AuthManager';
 import Header from '../common/Header';
-import defaultTheme from '../utils/Theme';
+import FormPanel from '../common/FormPanel';
+
+import { darkTheme, newDarkTheme } from '../utils/Theme';
+
+const defaultTheme = newDarkTheme;
 
 /**
  * Style constants.
  */
 const styles = {
-    cookiePolicy: { padding: '10px', fontFamily: defaultTheme.fontFamily,
-        border: '1px solid #8a6d3b', color: '#8a6d3b'},
-    cookiePolicyAnchor: { fontWeight: 'bold', color: '#8a6d3b' },
+    cookiePolicy: {
+        padding: '10px',
+        border: '1px solid #8a6d3b',
+        color: '#8a6d3b'
+    },
+    cookiePolicyAnchor: {
+        fontWeight: 'bold',
+        color: '#8a6d3b'
+    },
 };
 
 /**
  * Login page.
  */
-export default class Login extends Component {
+class Login extends Component {
     /**
      * Constructor.
      *
@@ -131,7 +142,7 @@ export default class Login extends Component {
         }
 
         return (
-            <MuiThemeProvider muiTheme={defaultTheme}>
+            <MuiThemeProvider theme={newDarkTheme}>
                 <div>
                     <Header
                         title={<FormattedMessage id='portal.title' defaultMessage='Portal' />}
@@ -143,7 +154,7 @@ export default class Login extends Component {
                             autoFocus
                             fullWidth
                             autoComplete="off"
-                            floatingLabelText={<FormattedMessage id="login.username" defaultMessage="Username"/>}
+                            label={<FormattedMessage id="login.username" defaultMessage="Username"/>}
                             value={this.state.username}
                             onChange={(e) => {
                                 this.setState({
@@ -156,7 +167,7 @@ export default class Login extends Component {
                             fullWidth
                             type="password"
                             autoComplete="off"
-                            floatingLabelText={<FormattedMessage id="login.password" defaultMessage="Password"/>}
+                            label={<FormattedMessage id="login.password" defaultMessage="Password"/>}
                             value={this.state.password}
                             onChange={(e) => {
                                 this.setState({
@@ -165,27 +176,32 @@ export default class Login extends Component {
                             }}
                         />
                         <br />
-                        <Checkbox
-                            label={<FormattedMessage id="login.rememberMe" defaultMessage="Remember Me"/>}
-                            checked={this.state.rememberMe}
-                            onCheck={(e, checked) => {
+                        <FormControlLabel
+                            control={
+                                <Checkbox
+                                    checked={this.state.rememberMe}
+                                    onCheck={(e, checked) => {
                                 this.setState({
                                     rememberMe: checked,
                                 });
                             }}
-                            style={{'margin':'30px 0'}}
+
+                                />
+                            }
+                            label={<FormattedMessage id="login.rememberMe" defaultMessage="Remember Me"/>}
                         />
                         <br />
-                        <RaisedButton
+                        <Button
+                            variant="contained"
                             primary
                             type="submit"
                             disabled={this.state.username === '' || this.state.password === ''}
-                            label={<FormattedMessage id="login.title" defaultMessage="Login"/>}
-                            disabledBackgroundColor="rgb(27, 40, 47)"
-                        />
+                            disabledBackgroundColor="rgb(27, 40, 47)">
+                            {<FormattedMessage id="login.title" defaultMessage="Login"/>}
+                        </Button>
                         <br />
                         <br />
-                        <div style={styles.cookiePolicy}>
+                        <div className={this.props.classes.cookiePolicy}>
                             <div>
                                 <FormattedMessage
                                     id="login.cookie.policy.before"
@@ -193,7 +209,7 @@ export default class Login extends Component {
                                     track your session. You can refer our "
                                 />
                                 <a
-                                    style={styles.cookiePolicyAnchor}
+                                    className={this.props.classes.cookiePolicyAnchor}
                                     href="/policies/cookie-policy"
                                     target="_blank"
                                 >
@@ -203,14 +219,14 @@ export default class Login extends Component {
                             </div>
                         </div>
                         <br />
-                        <div style={styles.cookiePolicy}>
+                        <div className={this.props.classes.cookiePolicy}>
                             <div>
                                 <FormattedMessage
                                     id="login.privacy.policy.before"
                                     defaultMessage="By signing in, you agree to our "
                                 />
                                 <a
-                                    style={styles.cookiePolicyAnchor}
+                                    className={this.props.classes.cookiePolicyAnchor}
                                     href="/policies/privacy-policy"
                                     target="_blank">
                                     <FormattedMessage id="login.privacy.policy" defaultMessage="Privacy Policy"/>
@@ -222,7 +238,7 @@ export default class Login extends Component {
                     <Snackbar
                         message={this.state.error}
                         open={this.state.showError}
-                        autoHideDuration="4000"
+                        autoHideDuration={4000}
                         onRequestClose={() => this.setState({error: '', showError: false})}
                     />
                 </div>
@@ -234,3 +250,9 @@ export default class Login extends Component {
 Login.contextTypes = {
     intl: PropTypes.object.isRequired
 };
+
+Login.propTypes = {
+    classes: PropTypes.object.isRequired
+};
+
+export default withStyles(styles)(Login);
