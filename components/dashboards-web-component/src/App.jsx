@@ -17,8 +17,6 @@
  *
  */
 
-import 'babel-polyfill';
-
 import Axios from 'axios';
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
