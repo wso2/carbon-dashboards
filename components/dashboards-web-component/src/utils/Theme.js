@@ -17,8 +17,8 @@
  */
 
 import { darkBaseTheme, getMuiTheme, lightBaseTheme } from 'material-ui/styles/index';
-import * as Colors from 'material-ui/styles/colors';
 import createMuiTheme from '@material-ui/core/styles/createMuiTheme';
+import * as Colors from '@material-ui/core/colors';
 
 export const darkTheme = getMuiTheme(darkBaseTheme,
     {
@@ -71,8 +71,30 @@ export const lightTheme = getMuiTheme(lightBaseTheme,
 );
 
 export const newDarkTheme = createMuiTheme({
-    palette: { type: 'dark' },
-    typography: { useNextVariants: true },
+    palette: {
+        type: 'dark',
+        primary: Colors.orange,
+        accent1Color: Colors.cyan,
+        textColor: Colors.common.white,
+        alternateTextColor: Colors.common.white
+    },
+    typography: {
+        fontFamily: ['Roboto', 'sans-serif'].join(','),
+    },
+    overrides: {
+        MuiAppBar: {
+            colorPrimary: {
+                backgroundColor: Colors.blueGrey[900],
+                color: Colors.grey[200],
+                height: 40
+            }
+        },
+        MuiToolbar : {
+            dense: {
+                minHeight: 40,
+            }
+        },
+    },
 });
 
 export default darkTheme;
