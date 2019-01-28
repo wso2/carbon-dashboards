@@ -60,18 +60,6 @@ module.exports = {
                 test: /\.scss$/,
                 use: ['style-loader', 'css-loader', 'sass-loader'],
             },
-            // {
-            //     test: /\.jsx$/,
-            //     exclude: /node_modules/,
-            //     enforce: 'pre',
-            //     use: [{
-            //         loader: 'eslint-loader',
-            //         options: {
-            //             failOnWarning: false,
-            //             failOnError: true,
-            //         },
-            //     }],
-            // },
         ],
     },
     resolve: {
