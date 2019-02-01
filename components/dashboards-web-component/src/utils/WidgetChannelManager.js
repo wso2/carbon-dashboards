@@ -23,6 +23,7 @@ class WidgetChannelManager {
         this.widgetMap = {};
         this.subscribeWidget = this.subscribeWidget.bind(this);
         this.unsubscribeWidget = this.unsubscribeWidget.bind(this);
+        this.poll = this.poll.bind(this);
         this._initializeWebSocket = this._initializeWebSocket.bind(this);
         this._wsOnClose = this._wsOnClose.bind(this);
         this._wsOnError = this._wsOnError.bind(this);
@@ -61,6 +62,24 @@ class WidgetChannelManager {
             providerName: null,
             dataProviderConfiguration: null,
             action: 'unsubscribe',
+        };
+        this.webSocket.send(JSON.stringify(config));
+    }
+
+    /**
+     * Request publish data from the provider endpoint
+     * @param widgetId
+     * @param callback
+     * @param dataConfig
+     * @param paginate
+     */
+    poll(widgetId, callback, dataConfig) {
+        this.widgetMap[widgetId] = callback;
+        let config = {
+            topic: widgetId,
+            providerName: dataConfig.configs.type,
+            dataProviderConfiguration: dataConfig.configs.config,
+            action: 'polling',
         };
         this.webSocket.send(JSON.stringify(config));
     }

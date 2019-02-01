@@ -16,15 +16,18 @@
  * under the License.
  */
 
-import React, { Component } from 'react';
-import { FormattedMessage } from 'react-intl';
-import { MuiThemeProvider, Snackbar } from 'material-ui';
+import React, {Component} from 'react';
+import {FormattedMessage} from 'react-intl';
+import {MuiThemeProvider, Snackbar} from 'material-ui';
 import MuiThemeProviderNEW from '@material-ui/core/styles/MuiThemeProvider';
-
+import {MuiThemeProvider, Snackbar, FloatingActionButton} from 'material-ui';
+import ContentAdd from 'material-ui/svg-icons/content/add';
 import DashboardCard from './components/DashboardCard';
-import FabSpeedDial from './components/FabSpeedDial';
 import Header from '../common/Header';
-import { darkTheme, newDarkTheme } from '../utils/Theme';
+import {darkTheme, newDarkTheme} from '../utils/Theme';
+import WidgetButton from '../common/WidgetButton';
+import UserMenu from '../common/UserMenu';
+import defaultTheme from '../utils/Theme';
 import DashboardAPI from '../utils/apis/DashboardAPI';
 
 const defaultTheme = darkTheme;
@@ -40,6 +43,11 @@ const styles = {
         fontWeight: 'bold',
         paddingTop: '10%',
         color: defaultTheme.appBar.color,
+    },
+    actionButton: {
+        position: 'fixed',
+        right: '16px',
+        bottom: '16px',
     },
 };
 
@@ -75,7 +83,7 @@ export default class DashboardListingPage extends Component {
             .then((response) => {
                 const dashboards = response.data;
                 dashboards.sort((dashboardA, dashboardB) => dashboardA.url > dashboardB.url);
-                this.setState({ dashboards });
+                this.setState({dashboards});
             })
             .catch(function () {
                 this.setState({
@@ -90,13 +98,13 @@ export default class DashboardListingPage extends Component {
      * @return {XML} dashboard thumbnails
      */
     renderDashboardThumbnails() {
-        const { dashboards, error } = this.state;
+        const {dashboards, error} = this.state;
 
         if (!dashboards) {
             // Dashboards are loading.
             return (
                 <div style={styles.dashboardMessage}>
-                    <FormattedMessage id='listing.loading' defaultMessage='Loading Dashboards...' />
+                    <FormattedMessage id='listing.loading' defaultMessage='Loading Dashboards...'/>
                 </div>
             );
         }
@@ -121,14 +129,14 @@ export default class DashboardListingPage extends Component {
             // No dashboards available.
             return (
                 <div style={styles.dashboardMessage}>
-                    <FormattedMessage id='listing.error.no-dashboards' defaultMessage='No Dashboards Available' />
+                    <FormattedMessage id='listing.error.no-dashboards' defaultMessage='No Dashboards Available'/>
                 </div>
             );
         }
 
         // Render dashboards.
         return this.state.dashboards.map((dashboard) => {
-            return <DashboardCard key={dashboard.url} dashboard={dashboard} />;
+            return <DashboardCard key={dashboard.url} dashboard={dashboard}/>;
         });
     }
 
@@ -139,9 +147,16 @@ export default class DashboardListingPage extends Component {
     render() {
         return (
             <MuiThemeProviderNEW theme={newDarkTheme}>
-                <Header title={<FormattedMessage id='portal.title' defaultMessage='Portal' />} />
+                <Header title={<FormattedMessage id='portal.title' defaultMessage='Portal' />}/>
                 <div style={styles.thumbnailsWrapper}>
                     {this.renderDashboardThumbnails()}
+                </div>
+                <div style={styles.actionButton}>
+                    <span title="Create Dashboard">
+                        <FloatingActionButton onClick={() => this.props.history.push('/create')}>
+                            <ContentAdd />
+                        </FloatingActionButton>
+                    </span>
                 </div>
             </MuiThemeProviderNEW>
         );

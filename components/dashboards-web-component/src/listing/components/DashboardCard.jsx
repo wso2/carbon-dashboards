@@ -26,6 +26,7 @@ import { NavigationMoreVert } from 'material-ui/svg-icons';
 
 import DashboardThumbnail from '../../utils/DashboardThumbnail';
 import DashboardAPI from '../../utils/apis/DashboardAPI';
+import DashboardExporter from '../../utils/DashboardExporter';
 
 const styles = {
     card: {
@@ -170,6 +171,15 @@ class DashboardCard extends Component {
                 containerElement={<Link to={`/designer/${dashboard.url}`} />}
             />);
         }
+        let exportMenuItem;
+        const dashboardName = dashboard.name;
+        const dashboardURL = dashboard.url;
+        if (dashboard.hasDesignerPermission) {
+            exportMenuItem = (<MenuItem
+                primaryText={<FormattedMessage id="export.button" defaultMessage="Export" />}
+                onClick={() => DashboardExporter.exportDashboard(dashboardName, dashboardURL)}
+            />);
+        }
         let settingsMenuItem;
         let deleteMenuItem;
         if (dashboard.hasOwnerPermission) {
@@ -194,6 +204,7 @@ class DashboardCard extends Component {
                 <Menu>
                     {designMenuItem}
                     {settingsMenuItem}
+                    {exportMenuItem}
                     {deleteMenuItem}
                 </Menu>
             </Popover>

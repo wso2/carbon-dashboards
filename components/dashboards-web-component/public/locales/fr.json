@@ -40,6 +40,7 @@
   "settings.button": "Paramètres",
   "design.button": "Conception",
   "view.button": "Vue",
+  "export.button":"Exportation",
   "delete": "Effacer",
   "search.hint.text": "Chercher...",
   "dialog-box.confirmation.yes": "Oui",
@@ -95,5 +96,16 @@
   "widget-configuration.pubsub.title": "Les éditeurs",
   "widgets.loading.dashboard": "Les widgets se chargent toujours ...",
   "add.widget.outputs": "Ajouter des sorties widget",
-  "add.widget.outputs.as": "Comme"
+  "add.widget.outputs.as": "Comme",
+  "generated.widgets": "widgets générés",
+  "custom.widgets": "widgets personnalisés",
+  "widget.store.title": "magasin de widgets",
+  "widget.store": "magasin de widgets",
+  "this.action.cannot.be.undone": "Cette action ne peut pas être annulée",
+  "widgets.title": "widgets",
+  "see.less": "Voir moins",
+  "see.more": "Voir plus",
+  "do.you.want.to.delete.widget'": "voulez-vous supprimer le widget {widgetName} ?",
+  "widget.delete.successfully": "widget {widgetName} est supprimé avec succès.",
+  "cannot.delete.widget": "Can't.delete.widget {widgetName} "
 }

@@ -21,7 +21,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>org.wso2.carbon.dashboards.api.feature</artifactId>
-    <version>4.0.50-SNAPSHOT</version>
+    <version>4.0.53-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>WSO2 Carbon Dashboards - Core Feature</name>
@@ -33,7 +33,7 @@
     <parent>
         <groupId>org.wso2.carbon.dashboards</groupId>
         <artifactId>carbon-dashboards</artifactId>
-        <version>4.0.50-SNAPSHOT</version>
+        <version>4.0.53-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
@@ -46,6 +46,10 @@
         <dependency>
             <groupId>org.wso2.carbon.dashboards</groupId>
             <artifactId>org.wso2.carbon.dashboards.api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.dashboards</groupId>
+            <artifactId>org.wso2.carbon.dashboards.siddhi.apps.api</artifactId>
         </dependency>
 
         <!--Datasources-->
@@ -92,6 +96,10 @@
                                 </bundle>
                                 <bundle>
                                     <symbolicName>org.wso2.carbon.dashboards.api</symbolicName>
+                                    <version>${carbon.dashboards.version}</version>
+                                </bundle>
+                                <bundle>
+                                    <symbolicName>org.wso2.carbon.dashboards.siddhi.apps.api</symbolicName>
                                     <version>${carbon.dashboards.version}</version>
                                 </bundle>
                                 <bundle>

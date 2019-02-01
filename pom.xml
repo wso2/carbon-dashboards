@@ -21,7 +21,7 @@
 
     <groupId>org.wso2.carbon.dashboards</groupId>
     <artifactId>carbon-dashboards</artifactId>
-    <version>4.0.50-SNAPSHOT</version>
+    <version>4.0.53-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>WSO2 Carbon Dashboards - Parent</name>
@@ -34,6 +34,7 @@
     <modules>
         <module>components/dashboards/org.wso2.carbon.dashboards.core</module>
         <module>components/dashboards/org.wso2.carbon.dashboards.api</module>
+        <module>components/dashboards/org.wso2.carbon.dashboards.siddhi.apps.api</module>
         <module>components/dashboards-web-component</module>
         <module>components/universal-widget</module>
         <module>features/org.wso2.carbon.dashboards.api.feature</module>
@@ -52,6 +53,11 @@
             <dependency>
                 <groupId>org.wso2.carbon.dashboards</groupId>
                 <artifactId>org.wso2.carbon.dashboards.api</artifactId>
+                <version>${carbon.dashboards.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.dashboards</groupId>
+                <artifactId>org.wso2.carbon.dashboards.siddhi.apps.api</artifactId>
                 <version>${carbon.dashboards.version}</version>
             </dependency>
             <dependency>
@@ -387,7 +393,7 @@
     </dependencyManagement>
 
     <properties>
-        <carbon.dashboards.version>4.0.50-SNAPSHOT</carbon.dashboards.version>
+        <carbon.dashboards.version>4.0.53-SNAPSHOT</carbon.dashboards.version>
 
         <!-- Datasource -->
         <carbon.datasource.core.version>1.1.4</carbon.datasource.core.version>
@@ -422,10 +428,10 @@
         <carbon.datasources.version>1.1.4</carbon.datasources.version>
 
         <!--Analytics-->
-        <carbon.analytics.version>2.0.460</carbon.analytics.version>
+        <carbon.analytics.version>2.0.484</carbon.analytics.version>
         <carbon.analytics.version.range>[2.0.395, 3.0.0)</carbon.analytics.version.range>
         <!--Analytics common-->
-        <carbon.analytics-common.version>6.0.72</carbon.analytics-common.version>
+        <carbon.analytics-common.version>6.0.73</carbon.analytics-common.version>
         <carbon.analytics-common.version.range>[6.0.65, 7.0.0)</carbon.analytics-common.version.range>
 
         <!--OSGi-->
@@ -456,11 +462,18 @@
         <mockito.core.version>2.11.0</mockito.core.version>
 
         <!--Maven Plugin-->
+        <build.helper.maven.plugin.version>1.9.1</build.helper.maven.plugin.version>
         <carbon.feature.plugin.version>3.0.0</carbon.feature.plugin.version>
         <maven.exec.plugin.version>1.5.0</maven.exec.plugin.version>
         <maven.clean.plugin.version>3.0.0</maven.clean.plugin.version>
         <jacoco.maven.plugin.version>0.7.9</jacoco.maven.plugin.version>
         <junit-platform.surefire-provider.version>1.0.2</junit-platform.surefire-provider.version>
+
+        <!--Feign-->
+        <openfeign.version>9.3.1</openfeign.version>
+
+        <!--Siddhi-->
+        <siddhi.version.range>[4.0.0, 5.0.0)</siddhi.version.range>
 
         <!--Character encoding for source files-->
         <!--See: https://maven.apache.org/general.html#encoding-warning-->

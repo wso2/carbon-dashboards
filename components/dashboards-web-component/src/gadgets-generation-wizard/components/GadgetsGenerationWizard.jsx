@@ -511,7 +511,7 @@ class GadgetsGenerationWizard extends Component {
                     {this.renderNextButton(stepIndex)}
                     <FlatButton
                         label="Cancel"
-                        onClick={() => this.props.history.push('/')}
+                        onClick={this.props.history.goBack}
                         style={{ marginRight: 12 }}
                     />
                 </div>

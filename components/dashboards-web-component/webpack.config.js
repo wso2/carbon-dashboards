@@ -17,46 +17,34 @@
  */
 
 const path = require('path');
-const webpack = require('webpack');
 
 module.exports = {
     context: path.resolve(__dirname, './src'),
-    entry: ['babel-polyfill', './App.jsx'],
+    entry: ['./App.jsx'],
     output: {
         path: path.resolve(__dirname, './dist/'),
         filename: 'bundle.js',
     },
     module: {
-        loaders: [
+        rules: [
             {
                 test: /\.html$/,
-                use: [{
-                    loader: 'html-loader',
-                }],
+                exclude: /node_modules/,
+                use: ['html-loader'],
             },
             {
                 test: /\.js$/,
                 exclude: /node_modules/,
-                use: [
-                    {
-                        loader: 'babel-loader',
-                        query: {
-                            presets: ['es2015', 'react', 'stage-2'],
-                        },
-                    },
-                ],
+                use: ['babel-loader'],
             },
             {
-                test: /\.(png|jpg|svg|cur|gif|eot|svg|ttf|woff|woff2)$/,
+                test: /\.(png|jpg|svg|cur|gif|eot|ttf|woff|woff2)$/,
                 use: ['url-loader'],
             },
             {
-                test: /\.jsx?$/,
-                exclude: /(node_modules)/,
-                loader: 'babel-loader',
-                query: {
-                    presets: ['es2015', 'react', 'stage-2'],
-                },
+                test: /\.jsx$/,
+                exclude: /node_modules/,
+                use: ['babel-loader'],
             },
             {
                 test: /\.css$/,
@@ -64,34 +52,12 @@ module.exports = {
             },
             {
                 test: /\.scss$/,
-                use: [{
-                    loader: 'style-loader',
-                }, {
-                    loader: 'css-loader',
-                }, {
-                    loader: 'sass-loader',
-                }],
+                use: ['style-loader', 'css-loader', 'sass-loader'],
             },
-            // {
-            //     test: /\.jsx?$/,
-            //     loader: 'eslint-loader',
-            //     enforce: 'pre',
-            //     exclude: /node_modules/,
-            //     options: {
-            //         failOnWarning: false,
-            //         failOnError: true,
-            //     },
-            // },
         ],
     },
-    plugins: [
-        new webpack.ProvidePlugin({
-            React: 'react',
-            ReactDOM: 'react-dom',
-        }),
-    ],
     resolve: {
-        extensions: ['.js', '.json', '.jsx', '.scss'],
+        extensions: ['.js', '.jsx'],
     },
     devServer: {
         contentBase: path.join(__dirname, 'public'),

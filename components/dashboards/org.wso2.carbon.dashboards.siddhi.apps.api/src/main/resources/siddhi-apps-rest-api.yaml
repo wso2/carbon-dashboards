@@ -1,0 +1,117 @@
+swagger: '2.0'
+info:
+  version: 1.0.0
+  title: Dashboard Siddhi Apps Api
+  description: >-
+    This provides information about deployed siddhi apps in given workers.
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+schemes:
+- https
+host: localhost
+basePath: /portal/apis/datasearch
+paths:
+  /siddhi-apps:
+    get:
+      x-wso2-curl: 'curl -k -X GET https://localhost:9643/portal/apis/datasearch/siddhi-apps'
+      x-wso2-request: 'GET https://localhost:9643/portal/apis/datasearch/siddhi-apps'
+      x-wso2-response: |-
+        HTTP/1.1 200 OK Content-Type: application/json
+        ["ShipmentHistoryApp","SweetProductionApp"]
+      tags:
+      - SiddhiApps
+      summary: List Siddhi apps
+      description: List Siddhi apps which contain @store annotated definitions
+      responses:
+        '200':
+          description: The Siddhi Applications are successfully retrieved.
+          schema:
+            type: array
+            items:
+              type: String
+        '401':
+          description: Insufficient permission to view siddhi apps.
+  'siddhi-apps/{appName}':
+    get:
+      x-wso2-curl: 'curl -k -X GET https://localhost:9643/portal/apis/datasearch/siddhi-apps/{appName}'
+      x-wso2-request: 'GET https://localhost:9643/portal/apis/datasearch/siddhi-apps/{appName}'
+      x-wso2-response: >-
+        HTTP/1.1 200 OK Content-Type: application/json
+        [
+        {
+                "name": "ShipmentDetails",
+                "definition": "@primaryKey( 'name')@index( 'supplier')@store( type = 'rdbms', datasource = 'SweetFactoryDB') define table ShipmentDetails (name string, supplier string, amount double)",
+                "type": "Table",
+                "attributes": [
+                    {
+                        "name": "name",
+                        "type": "STRING"
+                    },
+                    {
+                        "name": "supplier",
+                        "type": "STRING"
+                    },
+                    {
+                        "name": "amount",
+                        "type": "DOUBLE"
+                    }
+                ]
+            }
+        ]
+      tags:
+      - Store Elements
+      summary: Retrives @store annotated elements in a siddhi app
+      description: Retrieves @store annotated elements in a specified siddhi app
+      operationId: getSiddhiAppStoreElements
+      produces:
+      - application/json
+      parameters:
+      - name: appName
+        in: path
+        description: name of the siddhi app.
+        required: true
+        type: string
+      responses:
+        '200':
+          description: Siddhi app store elements successfully retrieved.
+          schema:
+            type: array
+            items:
+              type: SiddhiStoreElement
+              $ref: '#/definitions/SiddhiStoreElement'
+        '401':
+          description: Unauthorized to view siddhi app.
+        '404':
+          description: The siddhi app specified is not found.
+definitions:
+  SiddhiAppContent:
+    type: object
+    properties:
+      content:
+        type: string
+        description: Content of the Siddhi Application
+  SiddhiStoreElement:
+    type: object
+    properties:
+      name:
+        type: string
+        description: name of store element
+      definition:
+        type: string
+        description: definition text of store element
+      type:
+        type: string
+        description: type of the store element
+      attributes:
+        type: List<Attribute>
+        description: list of attributes
+  Attribute:
+    type: object
+    properties:
+      name:
+        type: string
+        description: name of the attribute
+      type:
+        type: string
+        description: type of the attribute

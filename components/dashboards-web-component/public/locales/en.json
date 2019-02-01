@@ -40,6 +40,7 @@
   "settings.button": "Settings",
   "design.button": "Design",
   "view.button": "View",
+  "export.button":"Export",
   "delete": "Delete",
   "search.hint.text": "Search...",
   "dialog-box.confirmation.yes": "Yes",
@@ -97,5 +98,16 @@
   "widget-configuration.pubsub.title": "Publishers",
   "widgets.loading.dashboard": "Widget are still loading...",
   "add.widget.outputs": "Add widget outputs",
-  "add.widget.outputs.as": "As"
+  "add.widget.outputs.as": "As",
+  "generated.widgets": "Generated Widgets",
+  "custom.widgets": "Custom Widgets",
+  "widget.store.title":"Widget Store",
+  "widget.store": "Widget Store",
+  "widgets.title" : "widgets",
+  "see.less" : "See Less",
+  "see.more" : "See More",
+  "do.you.want.to.delete.widget'" : "Do you want to delete widget {widgetName} ?",
+  "this.action.cannot.be.undone" : "This action cannot be undone",
+  "widget.delete.successfully" : "Widget {widgetName} is  deleted successfully.",
+  "cannot.delete.widget" : "Cannot delete widget {widgetName}"
 }
