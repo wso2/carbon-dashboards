@@ -16,9 +16,6 @@
  * under the License.
  */
 
-module.exports = {
-    verbose: true,
-    testRegex: 'test/(.+)(.test.)(js|jsx)$',
-    moduleDirectories: ['node_modules', '<rootDir>'],
-    setupFiles: ['./test/browser-setup.js'],
-};
+// Sets-up the browser environment for Jest tests.
+
+global.window.contextPath = '/portal';
