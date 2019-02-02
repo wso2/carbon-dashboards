@@ -17,9 +17,6 @@
  */
 
 import WidgetClassRegistry from 'src/utils/WidgetClassRegistry';
-import TestUtils from 'test/TestUtils';
-
-TestUtils.setupMockEnvironment();
 
 afterEach(() => WidgetClassRegistry.clear());
 
