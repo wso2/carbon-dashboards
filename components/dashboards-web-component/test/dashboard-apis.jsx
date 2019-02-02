@@ -20,7 +20,7 @@
 import {describe, it} from "mocha";
 import DashboardAPI from '../src/utils/apis/DashboardAPI';
 import {assert} from 'chai';
-import TestUtils from './utils/test-utils';
+import TestUtils from './TestUtils';
 
 TestUtils.setupMockEnvironment();
 
