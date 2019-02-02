@@ -18,5 +18,6 @@
 
 module.exports = {
     verbose: true,
-    testRegex: 'test/.*\\.(js|jsx)$',
+    testRegex: 'test/(.+)(.test.)(js|jsx)$',
+    moduleDirectories: ['node_modules', '<rootDir>'],
 };
