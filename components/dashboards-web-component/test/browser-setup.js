@@ -16,6 +16,11 @@
  * under the License.
  */
 
-// Sets-up the browser environment for Jest tests.
+import { configure } from 'enzyme';
+import Adapter from 'enzyme-adapter-react-16';
 
+// Setting-up Enzyme to work with React v16.
+configure({ adapter: new Adapter() });
+
+// Setting-up the browser environment.
 global.window.contextPath = '/portal';
