@@ -20,5 +20,5 @@ module.exports = {
     verbose: true,
     testRegex: 'test/(.+)(.test.)(js|jsx)$',
     moduleDirectories: ['node_modules', '<rootDir>'],
-    setupFiles: ['./test/browser-setup.js'],
+    setupFiles: ['./test/test-setup.js'],
 };
