@@ -21,4 +21,7 @@ module.exports = {
     testRegex: 'test/(.+)(.test.)(js|jsx)$',
     moduleDirectories: ['node_modules', '<rootDir>'],
     setupFiles: ['./test/test-setup.js'],
+    collectCoverage: true,
+    coverageReporters: ['html', 'text'],
+    coverageDirectory: './target/js-test-coverage',
 };
