@@ -20,14 +20,13 @@ import React, {Component} from 'react';
 import {FormattedMessage} from 'react-intl';
 import {MuiThemeProvider, Snackbar} from 'material-ui';
 import MuiThemeProviderNEW from '@material-ui/core/styles/MuiThemeProvider';
-import {MuiThemeProvider, Snackbar, FloatingActionButton} from 'material-ui';
+import {FloatingActionButton} from 'material-ui';
 import ContentAdd from 'material-ui/svg-icons/content/add';
 import DashboardCard from './components/DashboardCard';
 import Header from '../common/Header';
 import {darkTheme, newDarkTheme} from '../utils/Theme';
 import WidgetButton from '../common/WidgetButton';
 import UserMenu from '../common/UserMenu';
-import defaultTheme from '../utils/Theme';
 import DashboardAPI from '../utils/apis/DashboardAPI';
 
 const defaultTheme = darkTheme;
