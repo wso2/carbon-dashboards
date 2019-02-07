@@ -109,7 +109,7 @@ class DashboardListingPage extends Component {
         if (!dashboards) {
             // Dashboards are loading.
             return (
-                <div style={styles.dashboardMessage}>
+                <div className={this.props.classes.dashboardMessage}>
                     <FormattedMessage id='listing.loading' defaultMessage='Loading Dashboards...'/>
                 </div>
             );
@@ -134,7 +134,7 @@ class DashboardListingPage extends Component {
         if (dashboards.length === 0) {
             // No dashboards available.
             return (
-                <div style={styles.dashboardMessage}>
+                <div className={this.props.classes.dashboardMessage}>
                     <FormattedMessage id='listing.error.no-dashboards' defaultMessage='No Dashboards Available'/>
                 </div>
             );
@@ -154,7 +154,7 @@ class DashboardListingPage extends Component {
         return (
             <MuiThemeProviderNEW theme={newDarkTheme}>
                 <Header title={<FormattedMessage id='portal.title' defaultMessage='Portal' />}/>
-                <div style={styles.thumbnailsWrapper}>
+                <div className={this.props.classes.thumbnailsWrapper}>
                     {this.renderDashboardThumbnails()}
                 </div>
                 <div className={this.props.classes.actionButton}>
