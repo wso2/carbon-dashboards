@@ -18,20 +18,23 @@
 
 import React, {Component} from 'react';
 import {FormattedMessage} from 'react-intl';
-import {MuiThemeProvider, Snackbar} from 'material-ui';
+import PropTypes from 'prop-types';
+
+import { withStyles } from '@material-ui/core/styles';
+import Snackbar from '@material-ui/core/Snackbar';
+import Fab from '@material-ui/core/Fab';
+import ContentAdd from '@material-ui/icons/Add';
 import MuiThemeProviderNEW from '@material-ui/core/styles/MuiThemeProvider';
-import {MuiThemeProvider, Snackbar, FloatingActionButton} from 'material-ui';
-import ContentAdd from 'material-ui/svg-icons/content/add';
+
 import DashboardCard from './components/DashboardCard';
 import Header from '../common/Header';
 import {darkTheme, newDarkTheme} from '../utils/Theme';
 import WidgetButton from '../common/WidgetButton';
 import UserMenu from '../common/UserMenu';
-import defaultTheme from '../utils/Theme';
 import DashboardAPI from '../utils/apis/DashboardAPI';
 
 const defaultTheme = darkTheme;
-const styles = {
+const styles = theme => ({
     thumbnailsWrapper: {
         width: '100%',
         height: '100%',
@@ -49,12 +52,15 @@ const styles = {
         right: '16px',
         bottom: '16px',
     },
-};
+    fab: {
+        margin: theme.spacing.unit,
+    }
+});
 
 /**
  * Dashboards listing page a.k.a landing page.
  */
-export default class DashboardListingPage extends Component {
+class DashboardListingPage extends Component {
     /**
      * Constructor.
      */
@@ -151,14 +157,20 @@ export default class DashboardListingPage extends Component {
                 <div style={styles.thumbnailsWrapper}>
                     {this.renderDashboardThumbnails()}
                 </div>
-                <div style={styles.actionButton}>
+                <div className={this.props.classes.actionButton}>
                     <span title="Create Dashboard">
-                        <FloatingActionButton onClick={() => this.props.history.push('/create')}>
-                            <ContentAdd />
-                        </FloatingActionButton>
+                        <Fab color="primary" aria-label="Add" className={this.props.classes.fab} href={() => this.props.history.push('/create')}>
+                              <ContentAdd />
+                        </Fab>
                     </span>
                 </div>
             </MuiThemeProviderNEW>
         );
     }
 }
+
+DashboardListingPage.propTypes = {
+    classes: PropTypes.object.isRequired
+};
+
+export default withStyles(styles)(DashboardListingPage);

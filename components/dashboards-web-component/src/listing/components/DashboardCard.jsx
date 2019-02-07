@@ -21,8 +21,17 @@ import { Link, withRouter } from 'react-router-dom';
 import { FormattedMessage } from 'react-intl';
 import PropTypes from 'prop-types';
 
-import { Card, CardMedia, CardTitle, Dialog, FlatButton, Menu, MenuItem, Popover, Snackbar } from 'material-ui';
-import { NavigationMoreVert } from 'material-ui/svg-icons';
+import Card from '@material-ui/core/Card';
+import CardMedia from '@material-ui/core/CardMedia';
+import CardHeader from '@material-ui/core/CardHeader';
+import Dialog from '@material-ui/core/Dialog';
+import Button from '@material-ui/core/Button';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
+import Popover from '@material-ui/core/Popover';
+import Snackbar from '@material-ui/core/Snackbar';
+import NavigationMoreVert from '@material-ui/icons/MoreVert';
+import { withStyles } from '@material-ui/core/styles';
 
 import DashboardThumbnail from '../../utils/DashboardThumbnail';
 import DashboardAPI from '../../utils/apis/DashboardAPI';
@@ -117,12 +126,12 @@ class DashboardCard extends Component {
 
     renderDashboardDeleteConfirmDialog(dashboard) {
         const actionsButtons = [
-            <FlatButton
+            <Button
                 primary
                 label={<FormattedMessage id='dialog-box.confirmation.no' defaultMessage='No' />}
                 onClick={this.hideDashboardDeleteConfirmDialog}
             />,
-            <FlatButton
+            <Button
                 primary
                 label={<FormattedMessage id='dialog-box.confirmation.yes' defaultMessage='Yes' />}
                 onClick={() => this.handleDashboardDeletionConfirm(dashboard)}
@@ -224,7 +233,7 @@ class DashboardCard extends Component {
 
         return (
             <span>
-                <Card expanded={false} expandable={false} actAsExpander={false} style={styles.card} zDepth={1}>
+                <Card expanded={false} expandable={false} actAsExpander={false} className={this.props.classes.card}  zDepth={1}>
                     <CardMedia
                         actAsExpander={false}
                         style={{
@@ -238,21 +247,21 @@ class DashboardCard extends Component {
                     >
                         <div style={{ height: 120 }}>&nbsp;</div>
                     </CardMedia>
-                    <CardTitle
+                    <CardHeader
                         actAsExpander={false}
                         showExpandableButton={false}
                         title={
                             <div>
-                                <span style={styles.cardTitle}>{title}</span>
+                                <span className={this.props.classes.cardTitle}>{title}</span>
                                 {
                                     dashboard.hasOwnerPermission && dashboard.hasDesignerPermission &&
-                                    (<NavigationMoreVert onClick={this.handleMenuIconClick} style={styles.menuIcon} />)
+                                    (<NavigationMoreVert onClick={this.handleMenuIconClick} className={this.props.classes.menuIcon} />)
                                 }
                             </div>
                         }
-                        titleStyle={styles.cardTitleText}
+                        titleStyle={this.props.classes.cardTitleText}
                         subtitle={subtitle ? <span title={subtitle}>{subtitle}</span> : <span>&nbsp;</span>}
-                        subtitleStyle={styles.cardSubtitleText}
+                        subtitleStyle={this.props.classes.cardSubtitleText}
                     />
                 </Card>
                 {this.renderMenu(dashboard)}
@@ -261,8 +270,7 @@ class DashboardCard extends Component {
             </span>
         );
     }
-}
-
+            }
 DashboardCard.propTypes = {
     dashboard: PropTypes.shape({
         name: PropTypes.string.isRequired,
@@ -274,4 +282,8 @@ DashboardCard.propTypes = {
     history: PropTypes.shape({}).isRequired,
 };
 
-export default withRouter(DashboardCard);
+DashboardCard.propTypes = {
+    classes: PropTypes.object.isRequired
+};
+
+export default  withStyles(styles)(withRouter(DashboardCard));
