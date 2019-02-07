@@ -58,6 +58,7 @@ class Header extends Component {
                         <Typography color="inherit" className={this.props.classes.title}>
                             {this.props.title}
                         </Typography>
+                        {this.props.rightElement}
                     </Toolbar>
                 </AppBar>
             </MuiThemeProviderNEW>

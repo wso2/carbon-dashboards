@@ -16,74 +16,60 @@
  * under the License.
  */
 
-import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+import React, { Component, Fragment } from 'react';
+import Link from 'react-router-dom/Link';
 import { FormattedMessage } from 'react-intl';
-
-import { FlatButton, Menu, MenuItem, Popover } from 'material-ui';
-import { ActionAccountCircle } from 'material-ui/svg-icons';
+import Button from '@material-ui/core/Button';
+import MenuItem from '@material-ui/core/MenuItem';
+import Popover from '@material-ui/core/Popover';
+// TODO: Remove MuiThemeProviderNEW
+import MuiThemeProviderNEW from '@material-ui/core/styles/MuiThemeProvider';
+import AccountCircle from '@material-ui/icons/AccountCircle';
 
 import AuthManager from '../auth/utils/AuthManager';
+import { newDarkTheme } from '../utils/Theme';
 
 export default class UserMenu extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            isMenuOpen: false,
             anchorElement: null,
         };
-        this.handleUserIconClick = this.handleUserIconClick.bind(this);
-        this.handleMenuCloseRequest = this.handleMenuCloseRequest.bind(this);
-    }
-
-    handleUserIconClick(event) {
-        event.preventDefault();
-        this.setState({
-            isMenuOpen: !this.state.isMenuOpen,
-            anchorElement: event.currentTarget,
-        });
-    }
-
-    handleMenuCloseRequest() {
-        this.setState({
-            isMenuOpen: false,
-        });
     }
 
     render() {
         const user = AuthManager.getUser();
         if (user) {
             return (
-                <span>
-                    <FlatButton
-                        style={{ marginTop: '6px' }}
-                        label={user.username}
-                        onClick={this.handleUserIconClick}
-                        icon={<ActionAccountCircle />}
-                    />
-                    <Popover
-                        open={this.state.isMenuOpen}
-                        anchorEl={this.state.anchorElement}
-                        anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-                        targetOrigin={{ horizontal: 'right', vertical: 'top' }}
-                        onRequestClose={this.handleMenuCloseRequest}
-                    >
-                        <Menu>
-                            <MenuItem
-                                primaryText={<FormattedMessage id='logout' defaultMessage='Logout' />}
-                                containerElement={<Link to={'/logout'} />}
-                            />
-                        </Menu>
-                    </Popover>
-                </span>
+                <MuiThemeProviderNEW theme={newDarkTheme}>
+                    <Fragment>
+                        <Button onClick={event => this.setState({ anchorElement: event.currentTarget })}>
+                            <AccountCircle />
+                            <span style={{ paddingLeft: 5 }}>{user.username}</span>
+                        </Button>
+                        <Popover
+                            open={!!this.state.anchorElement}
+                            anchorEl={this.state.anchorElement}
+                            onClose={() => this.setState({ anchorElement: null })}
+                            anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                            transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+                        >
+                            <MenuItem component={Link} to={'/logout'}>
+                                <FormattedMessage id='logout' defaultMessage='Logout' />
+                            </MenuItem>
+                        </Popover>
+                    </Fragment>
+                </MuiThemeProviderNEW>
             );
         } else {
             return (
-                <FlatButton
-                    style={{ marginTop: '6px' }}
-                    label={<FormattedMessage id='login' defaultMessage='Login' />}
-                    containerElement={<Link to={`/login?referrer=${window.location.pathname}`} />}
-                />
+                <MuiThemeProviderNEW theme={newDarkTheme}>
+                    <Button>
+                        <Link to={`/login?referrer=${window.location.pathname}`}>
+                            <FormattedMessage id='login' defaultMessage='Login' />
+                        </Link>
+                    </Button>
+                </MuiThemeProviderNEW>
             );
         }
     }
