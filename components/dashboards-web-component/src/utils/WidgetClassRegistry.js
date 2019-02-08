@@ -55,6 +55,13 @@ class WidgetClassRegistry {
     getRegisteredWidgetNames() {
         return Array.from(this.registry.keys());
     }
+
+    /**
+     * Removes all registrations from this registry.
+     */
+    clear() {
+        this.registry.clear();
+    }
 }
 
 const instance = new WidgetClassRegistry();
