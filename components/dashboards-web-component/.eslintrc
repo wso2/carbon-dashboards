@@ -9,9 +9,13 @@
   "env": {
     "browser": true,
     "commonjs": true,
-    "es6": true
+    "es6": true,
+    "jest/globals": true
   },
-  "extends": "airbnb",
+  "extends": [
+    "airbnb",
+    "plugin:jest/recommended"
+  ],
   "rules": {
     "max-len": [
       "error",
@@ -108,6 +112,7 @@
     "no-else-return": "off"
   },
   "plugins": [
-    "react"
+    "react",
+    "jest"
   ]
 }
