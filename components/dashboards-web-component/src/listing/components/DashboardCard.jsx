@@ -26,7 +26,6 @@ import CardMedia from '@material-ui/core/CardMedia';
 import CardHeader from '@material-ui/core/CardHeader';
 import Dialog from '@material-ui/core/Dialog';
 import Button from '@material-ui/core/Button';
-import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Popover from '@material-ui/core/Popover';
 import Snackbar from '@material-ui/core/Snackbar';
@@ -74,7 +73,6 @@ class DashboardCard extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            isMenuOpen: false,
             menuAnchorElement: null,
             isDashboardDeleteConfirmDialogOpen: false,
             dashboardDeleteActionResult: null,
@@ -175,8 +173,8 @@ class DashboardCard extends Component {
 
         let designMenuItem;
         if (dashboard.hasDesignerPermission) {
-            designMenuItem = (<MenuItem ContainerComponent={<Link to={`/designer/${dashboard.url}`} />}>
-               {<FormattedMessage id='design.button' defaultMessage='Design' />}
+            designMenuItem = (<MenuItem  component={Link} to={`/designer/${dashboard.url}`}>
+               <FormattedMessage id='design.button' defaultMessage='Design' />
             </MenuItem>);
         }
         let exportMenuItem;
@@ -184,34 +182,32 @@ class DashboardCard extends Component {
         const dashboardURL = dashboard.url;
         if (dashboard.hasDesignerPermission) {
             exportMenuItem = (<MenuItem onClick={() => DashboardExporter.exportDashboard(dashboardName, dashboardURL)} >
-                {<FormattedMessage id="export.button" defaultMessage="Export" />}
+                <FormattedMessage id="export.button" defaultMessage="Export" />
             </MenuItem>);
         }
         let settingsMenuItem;
         let deleteMenuItem;
         if (dashboard.hasOwnerPermission) {
-            settingsMenuItem = (<MenuItem containerElement={<Link to={`/settings/${dashboard.url}`} />} >
-               {<FormattedMessage id='settings.button' defaultMessage='Settings' />}
+            settingsMenuItem = (<MenuItem  component={Link} to={`/settings/${dashboard.url}`}>
+               <FormattedMessage id='settings.button' defaultMessage='Settings' />
               </MenuItem>);
             deleteMenuItem = (<MenuItem onClick={this.showDashboardDeleteConfirmDialog}>
-                 {<FormattedMessage id='delete.button' defaultMessage='Delete' />}
+                 <FormattedMessage id='delete.button' defaultMessage='Delete' />
               </MenuItem>);
         }
 
         return (
             <Popover
-                open={this.state.isMenuOpen}
+                open={!!this.state.menuAnchorElement}
                 anchorEl={this.state.menuAnchorElement}
-                anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-                targetOrigin={{ horizontal: 'right', vertical: 'top' }}
-                onRequestClose={this.handleMenuCloseRequest}
+                onClose={() => this.setState({ menuAnchorElement: null })}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                transformOrigin={{ vertical: 'top', horizontal: 'right' }}
             >
-                <Menu>
-                    {designMenuItem}
-                    {settingsMenuItem}
-                    {exportMenuItem}
-                    {deleteMenuItem}
-                </Menu>
+                {designMenuItem}
+                {settingsMenuItem}
+                {exportMenuItem}
+                {deleteMenuItem}
             </Popover>
         );
     }
@@ -251,7 +247,8 @@ class DashboardCard extends Component {
                                 <span className={this.props.classes.cardTitle}>{title}</span>
                                 {
                                     dashboard.hasOwnerPermission && dashboard.hasDesignerPermission &&
-                                    (<NavigationMoreVert onClick={this.handleMenuIconClick} className={this.props.classes.menuIcon} />)
+                                    (<NavigationMoreVert onClick={event => this.setState({menuAnchorElement: event.currentTarget })}
+                                          className={this.props.classes.menuIcon}/>)
                                 }
                             </div>
                         }
