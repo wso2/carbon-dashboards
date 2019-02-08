@@ -175,31 +175,27 @@ class DashboardCard extends Component {
 
         let designMenuItem;
         if (dashboard.hasDesignerPermission) {
-            designMenuItem = (<MenuItem
-                primaryText={<FormattedMessage id='design.button' defaultMessage='Design' />}
-                containerElement={<Link to={`/designer/${dashboard.url}`} />}
-            />);
+            designMenuItem = (<MenuItem ContainerComponent={<Link to={`/designer/${dashboard.url}`} />}>
+               {<FormattedMessage id='design.button' defaultMessage='Design' />}
+            </MenuItem>);
         }
         let exportMenuItem;
         const dashboardName = dashboard.name;
         const dashboardURL = dashboard.url;
         if (dashboard.hasDesignerPermission) {
-            exportMenuItem = (<MenuItem
-                primaryText={<FormattedMessage id="export.button" defaultMessage="Export" />}
-                onClick={() => DashboardExporter.exportDashboard(dashboardName, dashboardURL)}
-            />);
+            exportMenuItem = (<MenuItem onClick={() => DashboardExporter.exportDashboard(dashboardName, dashboardURL)} >
+                {<FormattedMessage id="export.button" defaultMessage="Export" />}
+            </MenuItem>);
         }
         let settingsMenuItem;
         let deleteMenuItem;
         if (dashboard.hasOwnerPermission) {
-            settingsMenuItem = (<MenuItem
-                primaryText={<FormattedMessage id='settings.button' defaultMessage='Settings' />}
-                containerElement={<Link to={`/settings/${dashboard.url}`} />}
-            />);
-            deleteMenuItem = (<MenuItem
-                primaryText={<FormattedMessage id='delete.button' defaultMessage='Delete' />}
-                onClick={this.showDashboardDeleteConfirmDialog}
-            />);
+            settingsMenuItem = (<MenuItem containerElement={<Link to={`/settings/${dashboard.url}`} />} >
+               {<FormattedMessage id='settings.button' defaultMessage='Settings' />}
+              </MenuItem>);
+            deleteMenuItem = (<MenuItem onClick={this.showDashboardDeleteConfirmDialog}>
+                 {<FormattedMessage id='delete.button' defaultMessage='Delete' />}
+              </MenuItem>);
         }
 
         return (
