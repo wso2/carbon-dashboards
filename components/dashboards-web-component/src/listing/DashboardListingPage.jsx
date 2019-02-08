@@ -17,6 +17,7 @@
  */
 
 import React, {Component} from 'react';
+import { Link } from 'react-router-dom';
 import {FormattedMessage} from 'react-intl';
 import PropTypes from 'prop-types';
 
@@ -159,7 +160,7 @@ class DashboardListingPage extends Component {
                 </div>
                 <div className={this.props.classes.actionButton}>
                     <span title="Create Dashboard">
-                        <Fab color="primary" aria-label="Add" className={this.props.classes.fab} href={() => this.props.history.push('/create')}>
+                        <Fab color="primary" aria-label="Add" className={this.props.classes.fab} onClick={() => this.props.history.push('/create')}>
                               <ContentAdd />
                         </Fab>
                     </span>
