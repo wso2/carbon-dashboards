@@ -18,9 +18,8 @@
 
 import WidgetClassRegistry from 'src/utils/WidgetClassRegistry';
 
-afterEach(() => WidgetClassRegistry.clear());
-
 describe('WidgetClassRegistry', () => {
+    afterEach(() => WidgetClassRegistry.clear());
     const fooWidgetClass = () => {
     };
     const barWidgetClass = () => {
