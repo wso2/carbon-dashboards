@@ -16,38 +16,41 @@
  * under the License.
  */
 
-import { shallow } from 'enzyme';
 import React from 'react';
-import Link from 'react-router-dom/Link';
-import { FlatButton, MenuItem, Popover } from 'material-ui';
+import Button from '@material-ui/core/Button';
+import MenuItem from '@material-ui/core/MenuItem';
+import Popover from '@material-ui/core/Popover';
 import UserMenu from 'src/common/UserMenu';
 import AuthManager from 'src/auth/utils/AuthManager';
+import { muiShallow } from 'test/material-ui-test-utils';
 
 describe('UserMenu', () => {
     test('should render the login button if there is no user session', () => {
         AuthManager.getUser = jest.fn(() => null);
-        const wrapper = shallow(<UserMenu />);
-        expect(wrapper.prop('containerElement')).toEqual(<Link to='/login?referrer=/' />);
+        const wrapper = muiShallow(<UserMenu />).dive();
+        expect(wrapper.prop('to')).toEqual('/login?referrer=/');
+        expect(wrapper.childAt(0).prop('id')).toEqual('login');
     });
 
     test('should render the menu with correct username & logout menu item when an user session is present', () => {
         AuthManager.getUser = jest.fn(() => ({ username: 'Foo' }));
-        const wrapper = shallow(<UserMenu />);
+        const wrapper = muiShallow(<UserMenu />);
 
-        const menuButtonWrapper = wrapper.find(FlatButton);
+        const menuButtonWrapper = wrapper.find(Button);
         expect(menuButtonWrapper).not.toBe(null);
-        expect(menuButtonWrapper.prop('label')).toBe('Foo');
-
-        const logoutMenuItemWrapper = wrapper.find(MenuItem);
-        expect(logoutMenuItemWrapper.prop('containerElement')).toEqual(<Link to='/logout' />);
+        expect(menuButtonWrapper.containsMatchingElement(<span>Foo</span>)).toBeTruthy();
     });
 
     test('should open the user menu upon clicking the user button when an user session is present', () => {
         AuthManager.getUser = jest.fn(() => ({ username: 'Foo' }));
-        const wrapper = shallow(<UserMenu />);
+        const wrapper = muiShallow(<UserMenu />);
 
-        wrapper.find(FlatButton).simulate('click', { preventDefault: () => null });
+        wrapper.find(Button).simulate('click', { currentTarget: {} });
         wrapper.update();
         expect(wrapper.find(Popover).prop('open')).toBeTruthy();
+
+        const logoutMenuItemWrapper = wrapper.find(MenuItem);
+        expect(logoutMenuItemWrapper.prop('to')).toEqual('/logout');
+        expect(logoutMenuItemWrapper.childAt(0).prop('id')).toEqual('logout');
     });
 });

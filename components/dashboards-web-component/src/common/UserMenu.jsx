@@ -64,10 +64,8 @@ export default class UserMenu extends Component {
         } else {
             return (
                 <MuiThemeProviderNEW theme={newDarkTheme}>
-                    <Button>
-                        <Link to={`/login?referrer=${window.location.pathname}`}>
-                            <FormattedMessage id='login' defaultMessage='Login' />
-                        </Link>
+                    <Button component={Link} to={`/login?referrer=${window.location.pathname}`}>
+                        <FormattedMessage id='login' defaultMessage='Login' />
                     </Button>
                 </MuiThemeProviderNEW>
             );
