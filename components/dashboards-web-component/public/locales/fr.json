@@ -5,6 +5,7 @@
   "login.username": "Nom d'utilisateur",
   "login.password": "Mot de passe",
   "login.rememberMe": "Souviens-toi de moi",
+  "login.button": "S'identifier",
   "login.error.message": "Nom d'utilisateur / mot de passe invalide!",
   "login.unknown.error": "Une erreur inconnue s'est produite!",
   "create.dashboard": "Créer un tableau de bord",

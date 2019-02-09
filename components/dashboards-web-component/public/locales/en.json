@@ -5,6 +5,7 @@
   "login.username": "Username",
   "login.password": "Password",
   "login.rememberMe": "Remember Me",
+  "login.button": "Login",
   "login.error.message": "Invalid username/password!",
   "login.unknown.error": "Unknown error occurred!",
   "create.dashboard": "Create Dashboard",

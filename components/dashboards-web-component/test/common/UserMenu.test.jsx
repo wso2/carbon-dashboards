@@ -29,7 +29,7 @@ describe('UserMenu', () => {
         AuthManager.getUser = jest.fn(() => null);
         const wrapper = muiShallow(<UserMenu />).dive();
         expect(wrapper.prop('to')).toEqual('/login?referrer=/');
-        expect(wrapper.childAt(0).prop('id')).toEqual('login');
+        expect(wrapper.childAt(0).prop('id')).toEqual('login.button');
     });
 
     test('should render the menu with correct username & logout menu item when an user session is present', () => {

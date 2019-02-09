@@ -59,7 +59,7 @@ export default class UserMenu extends Component {
         } else {
             return (
                 <Button component={Link} to={`/login?referrer=${window.location.pathname}`}>
-                    <FormattedMessage id='login' defaultMessage='Login' />
+                    <FormattedMessage id='login.button' defaultMessage='Login' />
                 </Button>
             );
         }
