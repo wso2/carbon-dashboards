@@ -22,12 +22,9 @@ import { FormattedMessage } from 'react-intl';
 import Button from '@material-ui/core/Button';
 import MenuItem from '@material-ui/core/MenuItem';
 import Popover from '@material-ui/core/Popover';
-// TODO: Remove MuiThemeProviderNEW
-import MuiThemeProviderNEW from '@material-ui/core/styles/MuiThemeProvider';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 
 import AuthManager from '../auth/utils/AuthManager';
-import { newDarkTheme } from '../utils/Theme';
 
 export default class UserMenu extends Component {
     constructor(props) {
@@ -41,33 +38,29 @@ export default class UserMenu extends Component {
         const user = AuthManager.getUser();
         if (user) {
             return (
-                <MuiThemeProviderNEW theme={newDarkTheme}>
-                    <Fragment>
-                        <Button onClick={event => this.setState({ anchorElement: event.currentTarget })}>
-                            <AccountCircle />
-                            <span style={{ paddingLeft: 5 }}>{user.username}</span>
-                        </Button>
-                        <Popover
-                            open={!!this.state.anchorElement}
-                            anchorEl={this.state.anchorElement}
-                            onClose={() => this.setState({ anchorElement: null })}
-                            anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-                            transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-                        >
-                            <MenuItem component={Link} to={'/logout'}>
-                                <FormattedMessage id='logout' defaultMessage='Logout' />
-                            </MenuItem>
-                        </Popover>
-                    </Fragment>
-                </MuiThemeProviderNEW>
+                <Fragment>
+                    <Button onClick={event => this.setState({ anchorElement: event.currentTarget })}>
+                        <AccountCircle />
+                        <span style={{ paddingLeft: 5 }}>{user.username}</span>
+                    </Button>
+                    <Popover
+                        open={!!this.state.anchorElement}
+                        anchorEl={this.state.anchorElement}
+                        onClose={() => this.setState({ anchorElement: null })}
+                        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+                    >
+                        <MenuItem component={Link} to={'/logout'}>
+                            <FormattedMessage id='logout' defaultMessage='Logout' />
+                        </MenuItem>
+                    </Popover>
+                </Fragment>
             );
         } else {
             return (
-                <MuiThemeProviderNEW theme={newDarkTheme}>
-                    <Button component={Link} to={`/login?referrer=${window.location.pathname}`}>
-                        <FormattedMessage id='login' defaultMessage='Login' />
-                    </Button>
-                </MuiThemeProviderNEW>
+                <Button component={Link} to={`/login?referrer=${window.location.pathname}`}>
+                    <FormattedMessage id='login' defaultMessage='Login' />
+                </Button>
             );
         }
     }
