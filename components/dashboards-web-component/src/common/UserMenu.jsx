@@ -26,6 +26,9 @@ import AccountCircle from '@material-ui/icons/AccountCircle';
 
 import AuthManager from '../auth/utils/AuthManager';
 
+/**
+ * User menu component.
+ */
 export default class UserMenu extends Component {
     constructor(props) {
         super(props);
@@ -50,7 +53,7 @@ export default class UserMenu extends Component {
                         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
                         transformOrigin={{ vertical: 'top', horizontal: 'right' }}
                     >
-                        <MenuItem component={Link} to={'/logout'}>
+                        <MenuItem component={Link} to='/logout'>
                             <FormattedMessage id='logout' defaultMessage='Logout' />
                         </MenuItem>
                     </Popover>
