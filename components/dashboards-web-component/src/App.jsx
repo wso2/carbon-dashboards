@@ -98,7 +98,7 @@ class App extends Component {
      */
     render() {
         return (
-            <IntlProvider locale={language} messages={this.state.messages}>
+            <IntlProvider locale={language} messages={this.state.messages} defaultLocale='en'>
                 <BrowserRouter basename={appContext}>
                     <Switch>
                         {/* Authentication */}
