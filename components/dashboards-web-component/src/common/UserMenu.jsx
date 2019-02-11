@@ -17,19 +17,27 @@
  */
 
 import React, { Component, Fragment } from 'react';
-import Link from 'react-router-dom/Link';
 import { FormattedMessage } from 'react-intl';
+import PropTypes from 'prop-types';
+import Link from 'react-router-dom/Link';
 import Button from '@material-ui/core/Button';
 import MenuItem from '@material-ui/core/MenuItem';
 import Popover from '@material-ui/core/Popover';
 import AccountCircle from '@material-ui/icons/AccountCircle';
+import withStyles from '@material-ui/core/styles/withStyles';
 
 import AuthManager from '../auth/utils/AuthManager';
+
+const styles = theme => ({
+    icon: {
+        paddingRight: theme.spacing.unit * 0.5,
+    },
+});
 
 /**
  * User menu component.
  */
-export default class UserMenu extends Component {
+class UserMenu extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -43,8 +51,8 @@ export default class UserMenu extends Component {
             return (
                 <Fragment>
                     <Button onClick={event => this.setState({ anchorElement: event.currentTarget })}>
-                        <AccountCircle />
-                        <span style={{ paddingLeft: 5 }}>{user.username}</span>
+                        <AccountCircle className={this.props.classes.icon} />
+                        {user.username}
                     </Button>
                     <Popover
                         open={!!this.state.anchorElement}
@@ -68,3 +76,9 @@ export default class UserMenu extends Component {
         }
     }
 }
+
+UserMenu.propTypes = {
+    classes: PropTypes.shape(styles).isRequired,
+};
+
+export default withStyles(styles)(UserMenu);

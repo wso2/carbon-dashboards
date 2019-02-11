@@ -34,16 +34,16 @@ describe('UserMenu', () => {
 
     test('should render the menu with correct username & logout menu item when an user session is present', () => {
         AuthManager.getUser = jest.fn(() => ({ username: 'Foo' }));
-        const wrapper = muiShallow(<UserMenu />);
+        const wrapper = muiShallow(<UserMenu />).dive();
 
         const menuButtonWrapper = wrapper.find(Button);
         expect(menuButtonWrapper).not.toBe(null);
-        expect(menuButtonWrapper.containsMatchingElement(<span>Foo</span>)).toBeTruthy();
+        expect(menuButtonWrapper.render().text()).toBe('Foo');
     });
 
     test('should open the user menu upon clicking the user button when an user session is present', () => {
         AuthManager.getUser = jest.fn(() => ({ username: 'Foo' }));
-        const wrapper = muiShallow(<UserMenu />);
+        const wrapper = muiShallow(<UserMenu />).dive();
 
         wrapper.find(Button).simulate('click', { currentTarget: {} });
         wrapper.update();
