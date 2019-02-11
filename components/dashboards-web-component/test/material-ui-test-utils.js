@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import { createShallow, createMount, createRender } from '@material-ui/core/test-utils';
+import { createMount, createRender, createShallow } from '@material-ui/core/test-utils';
 
 // Test utils from Material-UI. See https://material-ui.com/guides/testing/#userspace
 export const muiShallow = createShallow();
