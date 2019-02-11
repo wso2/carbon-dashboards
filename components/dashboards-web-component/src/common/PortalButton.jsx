@@ -17,28 +17,35 @@
  */
 
 import React, { Component } from 'react';
-import { withRouter } from 'react-router-dom';
 import { FormattedMessage } from 'react-intl';
 import PropTypes from 'prop-types';
+import Link from 'react-router-dom/Link';
+import Button from '@material-ui/core/Button';
+import ViewModuleIcon from '@material-ui/icons/ViewModule';
+import withStyles from '@material-ui/core/styles/withStyles';
 
-import { FlatButton } from 'material-ui';
-import { ActionViewModule } from 'material-ui/svg-icons';
+const styles = theme => ({
+    icon: {
+        paddingRight: theme.spacing.unit * 0.5,
+    },
+});
 
+/**
+ * Dashboard portal button.
+ */
 class PortalButton extends Component {
     render() {
         return (
-            <FlatButton
-                style={{ minWidth: '48px' }}
-                label={<FormattedMessage id='portal.title' defaultMessage='Portal' />}
-                icon={<ActionViewModule />}
-                onClick={() => this.props.history.push('/')}
-            />
+            <Button component={Link} to='/'>
+                <ViewModuleIcon className={this.props.classes.icon} />
+                <FormattedMessage id='portal.title' defaultMessage='Portal' />
+            </Button>
         );
     }
 }
 
 PortalButton.propTypes = {
-    history: PropTypes.shape({}).isRequired,
+    classes: PropTypes.shape(styles).isRequired,
 };
 
-export default withRouter(PortalButton);
+export default withStyles(styles)(PortalButton);
