@@ -15,35 +15,37 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 import React, { Component } from 'react';
-import { withRouter } from 'react-router-dom';
 import { FormattedMessage } from 'react-intl';
 import PropTypes from 'prop-types';
+import Link from 'react-router-dom/Link';
+import Button from '@material-ui/core/Button';
+import WidgetsIcon from '@material-ui/icons/Widgets';
+import withStyles from '@material-ui/core/styles/withStyles';
 
-import { FlatButton } from 'material-ui';
-import { DeviceWidgets } from 'material-ui/svg-icons';
-
-const styles = {
-    widgetIcon: {
-        height: '20px',
+const styles = theme => ({
+    icon: {
+        paddingRight: theme.spacing.unit * 0.5,
     },
-};
+});
 
+/**
+ * Widget store button.
+ */
 class WidgetButton extends Component {
     render() {
         return (
-            <FlatButton
-                style={{ minWidth: '48px' }}
-                label={<FormattedMessage id='widgets.title' defaultMessage='Widgets' />}
-                icon={<DeviceWidgets style={styles.widgetIcon} />}
-                onClick={() => this.props.history.push('/widgets')}
-            />
+            <Button component={Link} to='/widgets'>
+                <WidgetsIcon className={this.props.classes.icon} />
+                <FormattedMessage id='widgets.title' defaultMessage='Widgets' />
+            </Button>
         );
     }
 }
 
 WidgetButton.propTypes = {
-    history: PropTypes.shape({}).isRequired,
+    classes: PropTypes.shape(styles).isRequired,
 };
 
-export default withRouter(WidgetButton);
+export default withStyles(styles)(WidgetButton);
