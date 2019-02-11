@@ -17,48 +17,54 @@
  */
 
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
-import { withStyles } from '@material-ui/core/styles';
+import { FormattedMessage } from 'react-intl';
+import PropTypes from 'prop-types';
+import Link from 'react-router-dom/Link';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
-import PropTypes from 'prop-types';
+// TODO: Remove MuiThemeProviderNEW
 import MuiThemeProviderNEW from '@material-ui/core/styles/MuiThemeProvider';
+import withStyles from '@material-ui/core/styles/withStyles';
 
-import { darkTheme, newDarkTheme } from '../utils/Theme';
+import { newDarkTheme } from '../utils/Theme';
+import WidgetStoreButton from './WidgetButton';
+import PortalButton from './PortalButton';
 import UserMenu from './UserMenu';
 
-const defaultTheme = newDarkTheme;
-
 const styles = {
-    root: {
-        flexGrow: 1,
-        //zIndex: this.props.theme.zIndex.drawer + 100
-    },
     title: {
         flexGrow: 1,
-        fontSize: 16
     },
-    logo: {
-        label:{
-            alignItems: 'center',
-            display: 'flex',
-            margin: '0 15px 0 0'
-        }
-    }
 };
 
+/**
+ * Header component.
+ */
 class Header extends Component {
     render() {
+        const {
+            classes,
+            logo,
+            title,
+            extraRightElement,
+            showWidgetStoreButton,
+            showPortalButton,
+            showUserMenu,
+        } = this.props;
+
         return (
             <MuiThemeProviderNEW theme={newDarkTheme}>
                 <AppBar position='static'>
                     <Toolbar variant='dense'>
-                            {this.props.logo}
-                        <Typography color="inherit" className={this.props.classes.title}>
-                            {this.props.title}
+                        {logo}
+                        <Typography variant='h6' color='inherit' className={classes.title}>
+                            {title}
                         </Typography>
-                        {this.props.rightElement}
+                        {extraRightElement}
+                        {showWidgetStoreButton && <WidgetStoreButton />}
+                        {showPortalButton && <PortalButton />}
+                        {showUserMenu && <UserMenu />}
                     </Toolbar>
                 </AppBar>
             </MuiThemeProviderNEW>
@@ -66,46 +72,34 @@ class Header extends Component {
     }
 }
 
-//
-// <AppBar
-//     style={{ zIndex: this.props.theme.zIndex.drawer + 100 }}  XXXXXXXX
-//     title={this.props.title}   XXXXXX
-//     iconElementRight={this.props.rightElement}
-//     iconElementLeft={this.props.logo} XXXXXXXXXXXXXXXXXX
-//     onLeftIconButtonClick={this.props.onLogoClick}
-//     iconStyleLeft={{ margin: '0 15px 0 0', display: 'flex', alignItems: 'center' }} XXXXXXXXXXXXXXXX
-//     titleStyle={{ fontSize: 16 }} XXXXXXXXXXXXXXXXXXXXXXXX
-//     zDepth={2}
-// />
-
-
 Header.propTypes = {
     logo: PropTypes.element,
-    onLogoClick: PropTypes.func,
     title: PropTypes.oneOfType([
         PropTypes.string,
         PropTypes.element,
-    ]).isRequired,
-    rightElement: PropTypes.element,
-    // theme: PropTypes.shape({}),
-    classes: PropTypes.object.isRequired, // eslint-disable-line
+    ]),
+    extraRightElement: PropTypes.element,
+    showWidgetStoreButton: PropTypes.bool,
+    showPortalButton: PropTypes.bool,
+    showUserMenu: PropTypes.bool,
+    classes: PropTypes.shape({}).isRequired,
 };
 
 Header.defaultProps = {
     logo: (
-        <div stryle={{}}>
-            <Link style={{margin: '0 15px 0 0', display: 'flex', alignItems: 'center' }} to={'/'}>
-                <img
-                    height='17'
-                    src={`${window.contextPath}/public/app/images/logo.svg`}
-                    alt='logo'
-                />
-            </Link>
-        </div>
+        <Link style={{ margin: '0 15px 0 0', display: 'flex', alignItems: 'center' }} to='/'>
+            <img
+                height='17'
+                src={`${window.contextPath}/public/app/images/logo.svg`}
+                alt='logo'
+            />
+        </Link>
     ),
-    onLogoClick: null,
-    rightElement: <UserMenu />,
-    theme: defaultTheme,
+    title: <FormattedMessage id='portal.title' defaultMessage='Portal' />,
+    extraRightElement: null,
+    showWidgetStoreButton: false,
+    showPortalButton: false,
+    showUserMenu: true,
 };
 
 export default withStyles(styles)(Header);
