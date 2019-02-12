@@ -16,46 +16,43 @@
  * under the License.
  */
 
-import React, {Component} from 'react';
-import { Link } from 'react-router-dom';
-import {FormattedMessage} from 'react-intl';
+import React, { Component } from 'react';
+import { FormattedMessage } from 'react-intl';
 import PropTypes from 'prop-types';
+import Link from 'react-router-dom/Link';
+import _sortBy from 'lodash/sortBy';
 
-import { withStyles } from '@material-ui/core/styles';
-import Snackbar from '@material-ui/core/Snackbar';
 import Fab from '@material-ui/core/Fab';
-import ContentAdd from '@material-ui/icons/Add';
-import MuiThemeProviderNEW from '@material-ui/core/styles/MuiThemeProvider';
+import Grid from '@material-ui/core/Grid';
+import Snackbar from '@material-ui/core/Snackbar';
+import Typography from '@material-ui/core/Typography';
+import MuiThemeProvider from '@material-ui/core/styles/MuiThemeProvider';
+import withStyles from '@material-ui/core/styles/withStyles';
+import ContentAddIcon from '@material-ui/icons/Add';
 
 import DashboardCard from './components/DashboardCard';
 import Header from '../common/Header';
-import {darkTheme, newDarkTheme} from '../utils/Theme';
-import WidgetButton from '../common/WidgetButton';
-import UserMenu from '../common/UserMenu';
+import { newDarkTheme } from '../utils/Theme';
 import DashboardAPI from '../utils/apis/DashboardAPI';
 
-const defaultTheme = darkTheme;
 const styles = theme => ({
-    thumbnailsWrapper: {
+    grid: {
+        padding: theme.spacing.unit * 1,
+        margin: 0,
         width: '100%',
-        height: '100%',
+        maxWidth: '100%',
     },
     dashboardMessage: {
         textAlign: 'center',
-        fontSize: '2.5em',
-        fontFamily: defaultTheme.fontFamily,
         fontWeight: 'bold',
         paddingTop: '10%',
-        color: defaultTheme.appBar.color,
-    },
-    actionButton: {
-        position: 'fixed',
-        right: '16px',
-        bottom: '16px',
+        width: '100%',
     },
     fab: {
-        margin: theme.spacing.unit,
-    }
+        position: 'absolute',
+        bottom: theme.spacing.unit * 3,
+        right: theme.spacing.unit * 3,
+    },
 });
 
 /**
@@ -88,9 +85,8 @@ class DashboardListingPage extends Component {
     retrieveDashboards() {
         new DashboardAPI().getDashboardList()
             .then((response) => {
-                const dashboards = response.data;
-                dashboards.sort((dashboardA, dashboardB) => dashboardA.url > dashboardB.url);
-                this.setState({dashboards});
+                const dashboards = _sortBy(response.data, 'url');
+                this.setState({ dashboards });
             })
             .catch(function () {
                 this.setState({
@@ -105,14 +101,14 @@ class DashboardListingPage extends Component {
      * @return {XML} dashboard thumbnails
      */
     renderDashboardThumbnails() {
-        const {dashboards, error} = this.state;
-
+        const { dashboards, error } = this.state;
+        const { classes } = this.props;
         if (!dashboards) {
             // Dashboards are loading.
             return (
-                <div className={this.props.classes.dashboardMessage}>
-                    <FormattedMessage id='listing.loading' defaultMessage='Loading Dashboards...'/>
-                </div>
+                <Typography className={classes.dashboardMessage}>
+                    <FormattedMessage id='listing.loading' defaultMessage='Loading Dashboards...' />
+                </Typography>
             );
         }
 
@@ -120,13 +116,13 @@ class DashboardListingPage extends Component {
             // Error while loading dashboards.
             return (
                 <Snackbar
-                    open={this.state.error}
-                    message={
+                    open
+                    message={(
                         <FormattedMessage
                             id='listing.error.cannot-list'
                             defaultMessage='Cannot list available dashboards'
                         />
-                    }
+                    )}
                     autoHideDuration={4000}
                 />
             );
@@ -135,43 +131,46 @@ class DashboardListingPage extends Component {
         if (dashboards.length === 0) {
             // No dashboards available.
             return (
-                <div className={this.props.classes.dashboardMessage}>
-                    <FormattedMessage id='listing.error.no-dashboards' defaultMessage='No Dashboards Available'/>
-                </div>
+                <Typography className={classes.dashboardMessage}>
+                    <FormattedMessage id='listing.error.no-dashboards' defaultMessage='No Dashboards Available' />
+                </Typography>
             );
         }
 
         // Render dashboards.
-        return this.state.dashboards.map((dashboard) => {
-            return <DashboardCard key={dashboard.url} dashboard={dashboard}/>;
-        });
+        return this.state.dashboards.map(dashboard => (
+            <Grid key={dashboard.url} item xl={3} lg={3} md={3} sm={4} xs={6}>
+                <DashboardCard key={dashboard.url} dashboard={dashboard} />
+            </Grid>
+        ));
     }
 
-    /**
-     * Render dashboard listing page.
-     * @returns {XML} HTML content
-     */
     render() {
+        const { classes } = this.props;
         return (
-            <MuiThemeProviderNEW theme={newDarkTheme}>
-                <Header title={<FormattedMessage id='portal.title' defaultMessage='Portal' />}/>
-                <div className={this.props.classes.thumbnailsWrapper}>
+            <MuiThemeProvider theme={newDarkTheme}>
+                <Header showWidgetStoreButton />
+                <Grid
+                    container
+                    className={classes.grid}
+                    direction='row'
+                    justify='flex-start'
+                    alignItems='baseline'
+                    spacing={24}
+                >
                     {this.renderDashboardThumbnails()}
-                </div>
-                <div className={this.props.classes.actionButton}>
-                    <span title="Create Dashboard">
-                        <Fab color="primary" aria-label="Add" className={this.props.classes.fab} onClick={() => this.props.history.push('/create')}>
-                              <ContentAdd />
-                        </Fab>
-                    </span>
-                </div>
-            </MuiThemeProviderNEW>
+                </Grid>
+
+                <Fab color='primary' className={classes.fab} component={Link} to='/create' title='Create Dashboard'>
+                    <ContentAddIcon />
+                </Fab>
+            </MuiThemeProvider>
         );
     }
 }
 
 DashboardListingPage.propTypes = {
-    classes: PropTypes.object.isRequired
+    classes: PropTypes.shape({}).isRequired,
 };
 
 export default withStyles(styles)(DashboardListingPage);
