@@ -32,11 +32,12 @@ import WidgetStoreButton from './WidgetButton';
 import PortalButton from './PortalButton';
 import UserMenu from './UserMenu';
 
-const styles = {
+const styles = theme => ({
     title: {
         flexGrow: 1,
+        paddingLeft: theme.spacing.unit,
     },
-};
+});
 
 /**
  * Header component.
@@ -87,7 +88,7 @@ Header.propTypes = {
 
 Header.defaultProps = {
     logo: (
-        <Link style={{ margin: '0 15px 0 0', display: 'flex', alignItems: 'center' }} to='/'>
+        <Link style={{ display: 'flex', alignItems: 'center' }} to='/'>
             <img
                 height='17'
                 src={`${window.contextPath}/public/app/images/logo.svg`}
