@@ -17,85 +17,80 @@
  *
  */
 
-import { Checkbox, Snackbar, TextField, Button, FormControlLabel } from '@material-ui/core/';
-import MuiThemeProvider from '@material-ui/core/styles/MuiThemeProvider';
-import { withStyles } from '@material-ui/core/styles';
-
-import Qs from 'qs';
 import React, { Component } from 'react';
-import { Redirect } from 'react-router-dom';
+import { FormattedMessage } from 'react-intl';
+import Redirect from 'react-router-dom/Redirect';
+import Qs from 'qs';
 import PropTypes from 'prop-types';
 
-import { FormattedMessage } from 'react-intl';
+import Avatar from '@material-ui/core/Avatar';
+import Button from '@material-ui/core/Button';
+import Checkbox from '@material-ui/core/Checkbox';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Grid from '@material-ui/core/Grid';
+import Link from '@material-ui/core/Link';
+import Paper from '@material-ui/core/Paper';
+import TextField from '@material-ui/core/TextField';
+import Typography from '@material-ui/core/Typography';
+import Snackbar from '@material-ui/core/Snackbar';
+import MuiThemeProvider from '@material-ui/core/styles/MuiThemeProvider';
+import withStyles from '@material-ui/core/styles/withStyles';
+import AccountCircle from '@material-ui/icons/AccountCircle';
 
-import AuthManager from './utils/AuthManager';
 import Header from '../common/Header';
-import FormPanel from '../common/FormPanel';
-
-import { darkTheme, newDarkTheme } from '../utils/Theme';
+import AuthManager from './utils/AuthManager';
+import { newDarkTheme } from '../utils/Theme';
 
 const defaultTheme = newDarkTheme;
 
-/**
- * Style constants.
- */
-const styles = {
-    cookiePolicy: {
-        padding: '10px',
-        border: '1px solid #8a6d3b',
-        color: '#8a6d3b'
+const styles = theme => ({
+    root: {
+        width: '100%',
     },
-    cookiePolicyAnchor: {
-        fontWeight: 'bold',
-        color: '#8a6d3b'
+    avatar: {
+        margin: theme.spacing.unit * 2,
     },
-};
+    gridItem: {
+        marginTop: theme.spacing.unit * 8,
+    },
+    paper: {
+        marginTop: theme.spacing.unit * 2,
+        padding: theme.spacing.unit * 2,
+    },
+    title: {
+        padding: theme.spacing.unit * 1,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+    },
+    form: {
+        paddingBottom: theme.spacing.unit * 2,
+    },
+    submit: {
+        marginTop: theme.spacing.unit * 3,
+    },
+});
 
 /**
  * Login page.
  */
 class Login extends Component {
-    /**
-     * Constructor.
-     *
-     * @param {{}} props Props
-     */
     constructor(props) {
         super(props);
         this.state = {
             username: '',
             password: '',
-            authenticated: false,
             rememberMe: false,
-            referrer: '/',
+            authenticated: AuthManager.isLoggedIn(),
+            authenticationErrorCode: 0,
         };
         this.authenticate = this.authenticate.bind(this);
     }
 
-    /**
-     * Extract the referrer and check whether the user logged-in.
-     */
     componentDidMount() {
-        // Extract referrer from the query string.
-        const queryString = this.props.location.search.replace(/^\?/, '');
-        const params = Qs.parse(queryString);
-        if (params.referrer) {
-            this.state.referrer = params.referrer;
-        }
-
-        // If the user already logged in set the state to redirect user to the referrer page.
-        if (AuthManager.isLoggedIn()) {
-            this.state.authenticated = true;
-        }
-    }
-
-    /**
-     * Refresh the access token when the browser session is restored.
-     */
-    componentWillMount(){
         if (AuthManager.isRememberMeSet() && !AuthManager.isLoggedIn()) {
             AuthManager.authenticateWithRefreshToken()
-                .then(() => this.setState({authenticated: true}));
+                .then(() => this.setState({ authenticated: true }));
         }
     }
 
@@ -108,151 +103,193 @@ class Login extends Component {
         e.preventDefault();
         AuthManager
             .authenticate(this.state.username, this.state.password, this.state.rememberMe)
-            .then(() => this.setState({authenticated: true}))
+            .then(() => this.setState({ authenticated: true }))
             .catch((error) => {
-                const errorMessage = error.response && error.response.status === 401 ?
-                    this.context.intl.formatMessage({
-                        id: "login.error.message",
-                        defaultMessage: "Invalid username/password!"
-                    }) :
-                    this.context.intl.formatMessage({
-                        id: "login.unknown.error",
-                        defaultMessage: "Unknown error occurred!"
-                    });
                 this.setState({
                     username: '',
                     password: '',
-                    error: errorMessage,
-                    showError: true,
+                    rememberMe: false,
+                    authenticated: AuthManager.isLoggedIn(),
+                    authenticationErrorCode: error.response ? error.response.status : -1,
                 });
             });
     }
 
-    /**
-     * Renders the login page.
-     *
-     * @return {XML} HTML content
-     */
+    renderLoginFormHeader(classes) {
+        return (
+            <div className={classes.title}>
+                <Avatar className={classes.avatar}><AccountCircle /></Avatar>
+                <Typography component='h1' variant='h5'>
+                    <FormattedMessage id='login.title' defaultMessage='Login to Portal' />
+                </Typography>
+            </div>
+        );
+    }
+
+    renderLoginForm(classes) {
+        return (
+            <form className={classes.form} onSubmit={this.authenticate}>
+                <TextField
+                    margin='normal'
+                    required
+                    autoFocus
+                    fullWidth
+                    autoComplete='off'
+                    label={<FormattedMessage id='login.username' defaultMessage='Username' />}
+                    name='username'
+                    value={this.state.username}
+                    onChange={event => this.setState({ username: event.target.value })}
+                />
+                <TextField
+                    margin='normal'
+                    required
+                    fullWidth
+                    type='password'
+                    autoComplete='off'
+                    label={<FormattedMessage id='login.password' defaultMessage='Password' />}
+                    name='password'
+                    value={this.state.password}
+                    onChange={event => this.setState({ password: event.target.value })}
+                />
+                <FormControlLabel
+                    control={(
+                        <Checkbox
+                            value='remember'
+                            color='primary'
+                            checked={this.state.rememberMe}
+                            onChange={event => this.setState({ rememberMe: event.target.checked })}
+                        />
+                    )}
+                    label={<FormattedMessage id='login.rememberMe' defaultMessage='Remember Me' />}
+                />
+                <Button
+                    type='submit'
+                    fullWidth
+                    variant='contained'
+                    color='primary'
+                    className={classes.submit}
+                    disabled={this.state.username === '' || this.state.password === ''}
+                >
+                    <FormattedMessage id='login.button' defaultMessage='Login' />
+                </Button>
+            </form>
+        );
+    }
+
+    renderCookiePolicy() {
+        return (
+            <Typography variant='body2'>
+                <FormattedMessage
+                    id='login.cookie-policy'
+                    values={{
+                        link: (
+                            <Link href='/policies/cookie-policy' target='_blank'>
+                                <FormattedMessage id='login.cookie-policy.link' defaultMessage='Cookie Policy' />
+                            </Link>
+                        ),
+                    }}
+                    defaultMessage='After a successful sign in, we use a cookie in your browser to track your session.
+                    You can refer our {link} for more details.'
+                />
+            </Typography>
+        );
+    }
+
+    renderPrivacyPolicy() {
+        return (
+            <Typography variant='body2'>
+                <FormattedMessage
+                    id='login.privacy.policy'
+                    values={{
+                        link: (
+                            <Link href='/policies/privacy-policy' target='_blank'>
+                                <FormattedMessage id='login.privacy-policy.link' defaultMessage='Privacy Policy' />
+                            </Link>
+                        ),
+                    }}
+                    defaultMessage='By signing in, you agree to our {link}.'
+                />
+            </Typography>
+        );
+    }
+
+    renderErrorMessage() {
+        const { authenticationErrorCode } = this.state;
+        if (!authenticationErrorCode) {
+            return null;
+        }
+
+        let message;
+        switch (authenticationErrorCode) {
+            case 401:
+                message = <FormattedMessage id='login.error.credentials' defaultMessage='Invalid username/password' />;
+                break;
+            case 500:
+                message = <FormattedMessage id='login.error.server' defaultMessage='Server error' />;
+                break;
+            default:
+                message = <FormattedMessage id='login.error.unknown' defaultMessage='Unknown error occurred!' />;
+        }
+        return (
+            <Snackbar
+                open
+                message={message}
+                autoHideDuration={4000}
+                onClose={() => this.setState({ authenticationErrorCode: 0 })}
+            />
+        );
+    }
+
     render() {
         // If the user is already authenticated redirect to referrer link.
         if (this.state.authenticated) {
+            let { referrer } = Qs.parse(this.props.location.search, { ignoreQueryPrefix: true });
+            if (referrer) {
+                if (referrer.startsWith(window.contextPath)) {
+                    const contextPathTrimmed = referrer.substr(window.contextPath.length);
+                    referrer = (contextPathTrimmed && contextPathTrimmed.length) ? contextPathTrimmed : '/';
+                } else if (!referrer.startsWith('/')) {
+                    referrer = '/' + referrer;
+                }
+            } else {
+                referrer = '/';
+            }
             return (
-                <Redirect to={this.state.referrer}/>
+                <Redirect to={referrer} />
             );
         }
 
+        const { classes } = this.props;
         return (
-            <MuiThemeProvider theme={newDarkTheme}>
-                <div>
-                    <Header
-                        title={<FormattedMessage id='portal.title' defaultMessage='Portal' />}
-                        rightElement={<span />}
-                    />
-                    <FormPanel title={<FormattedMessage id="login.title" defaultMessage="Login"/>}
-                               onSubmit={this.authenticate}>
-                        <TextField
-                            autoFocus
-                            fullWidth
-                            autoComplete="off"
-                            label={<FormattedMessage id="login.username" defaultMessage="Username"/>}
-                            value={this.state.username}
-                            onChange={(e) => {
-                                this.setState({
-                                    username: e.target.value,
-                                });
-                            }}
-                        />
-                        <br />
-                        <TextField
-                            fullWidth
-                            type="password"
-                            autoComplete="off"
-                            label={<FormattedMessage id="login.password" defaultMessage="Password"/>}
-                            value={this.state.password}
-                            onChange={(e) => {
-                                this.setState({
-                                    password: e.target.value,
-                                });
-                            }}
-                        />
-                        <br />
-                        <FormControlLabel
-                            control={
-                                <Checkbox
-                                    checked={this.state.rememberMe}
-                                    onCheck={(e, checked) => {
-                                this.setState({
-                                    rememberMe: checked,
-                                });
-                            }}
+            <MuiThemeProvider theme={defaultTheme}>
+                <Header
+                    title={<FormattedMessage id='portal.title' defaultMessage='Portal' />}
+                    showUserMenu={false}
+                />
 
-                                />
-                            }
-                            label={<FormattedMessage id="login.rememberMe" defaultMessage="Remember Me"/>}
-                        />
-                        <br />
-                        <Button
-                            variant="contained"
-                            primary
-                            type="submit"
-                            disabled={this.state.username === '' || this.state.password === ''}
-                            disabledBackgroundColor="rgb(27, 40, 47)">
-                            {<FormattedMessage id="login.title" defaultMessage="Login"/>}
-                        </Button>
-                        <br />
-                        <br />
-                        <div className={this.props.classes.cookiePolicy}>
-                            <div>
-                                <FormattedMessage
-                                    id="login.cookie.policy.before"
-                                    defaultMessage="After a successful sign in, we use a cookie in your browser to
-                                    track your session. You can refer our "
-                                />
-                                <a
-                                    className={this.props.classes.cookiePolicyAnchor}
-                                    href="/policies/cookie-policy"
-                                    target="_blank"
-                                >
-                                    <FormattedMessage id="login.cookie.policy" defaultMessage="Cookie Policy"/>
-                                </a>
-                                <FormattedMessage id="login.cookie.policy.after" defaultMessage=" for more details."/>
-                            </div>
-                        </div>
-                        <br />
-                        <div className={this.props.classes.cookiePolicy}>
-                            <div>
-                                <FormattedMessage
-                                    id="login.privacy.policy.before"
-                                    defaultMessage="By signing in, you agree to our "
-                                />
-                                <a
-                                    className={this.props.classes.cookiePolicyAnchor}
-                                    href="/policies/privacy-policy"
-                                    target="_blank">
-                                    <FormattedMessage id="login.privacy.policy" defaultMessage="Privacy Policy"/>
-                                </a>
-                                <FormattedMessage id="login.privacy.policy.after" defaultMessage="."/>
-                            </div>
-                        </div>
-                    </FormPanel>
-                    <Snackbar
-                        message={this.state.error}
-                        open={this.state.showError}
-                        autoHideDuration={4000}
-                        onRequestClose={() => this.setState({error: '', showError: false})}
-                    />
-                </div>
+                <Grid container justify='center' className={classes.root}>
+                    <Grid item xl={2} lg={3} md={4} sm={6} xs={9} className={classes.gridItem}>
+                        <Paper elevation={2} className={classes.paper}>
+                            {this.renderLoginFormHeader(classes)}
+                            {this.renderLoginForm(classes)}
+                        </Paper>
+                        <Paper elevation={2} className={classes.paper}>
+                            {this.renderCookiePolicy()}
+                            <br />
+                            {this.renderPrivacyPolicy()}
+                        </Paper>
+                    </Grid>
+                </Grid>
+
+                {this.renderErrorMessage()}
             </MuiThemeProvider>
         );
     }
 }
 
-Login.contextTypes = {
-    intl: PropTypes.object.isRequired
-};
-
 Login.propTypes = {
-    classes: PropTypes.object.isRequired
+    location: PropTypes.shape({ search: PropTypes.string }).isRequired,
+    classes: PropTypes.shape({}).isRequired,
 };
 
 export default withStyles(styles)(Login);
