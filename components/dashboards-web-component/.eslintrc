@@ -80,6 +80,13 @@
     "no-plusplus": [
       "off"
     ],
+    "object-curly-newline": [
+      "error",
+      {
+        "consistent": true,
+        "minProperties": 10
+      }
+    ],
     "func-names": [
       "off"
     ],
@@ -113,7 +120,9 @@
     "jsx-quotes": [
       "off"
     ],
-    "no-else-return": "off"
+    "no-else-return": [
+      "off"
+    ]
   },
   "plugins": [
     "react",
