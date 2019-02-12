@@ -40,8 +40,7 @@ export const darkTheme = getMuiTheme(darkBaseTheme,
         snackbar: {
             textColor: Colors.black,
         },
-    }
-);
+    });
 
 export const lightTheme = getMuiTheme(lightBaseTheme,
     {
@@ -67,8 +66,7 @@ export const lightTheme = getMuiTheme(lightBaseTheme,
             trackOffColor: Colors.grey500,
             thumbOffColor: Colors.grey700,
         },
-    }
-);
+    });
 
 export const newDarkTheme = createMuiTheme({
     palette: {
@@ -76,7 +74,7 @@ export const newDarkTheme = createMuiTheme({
         primary: Colors.orange,
         accent1Color: Colors.cyan,
         textColor: Colors.common.white,
-        alternateTextColor: Colors.common.white
+        alternateTextColor: Colors.common.white,
     },
     typography: {
         fontFamily: ['Roboto', 'sans-serif'].join(','),
@@ -86,13 +84,13 @@ export const newDarkTheme = createMuiTheme({
             colorPrimary: {
                 backgroundColor: Colors.blueGrey[900],
                 color: Colors.grey[200],
-                height: 40
-            }
+                height: 40,
+            },
         },
-        MuiToolbar : {
+        MuiToolbar: {
             dense: {
                 minHeight: 40,
-            }
+            },
         },
     },
 });
