@@ -16,56 +16,51 @@
  * under the License.
  */
 
-import React, { Component } from 'react';
-import { Link, withRouter } from 'react-router-dom';
+import React, { Component, Fragment } from 'react';
+import Link from 'react-router-dom/Link';
 import { FormattedMessage } from 'react-intl';
 import PropTypes from 'prop-types';
-
 import Card from '@material-ui/core/Card';
+import CardActionArea from '@material-ui/core/CardActionArea';
 import CardMedia from '@material-ui/core/CardMedia';
 import CardHeader from '@material-ui/core/CardHeader';
-import Dialog from '@material-ui/core/Dialog';
-import Button from '@material-ui/core/Button';
+import IconButton from '@material-ui/core/IconButton';
 import MenuItem from '@material-ui/core/MenuItem';
 import Popover from '@material-ui/core/Popover';
 import Snackbar from '@material-ui/core/Snackbar';
-import NavigationMoreVert from '@material-ui/icons/MoreVert';
-import { withStyles } from '@material-ui/core/styles';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
+import withStyles from '@material-ui/core/styles/withStyles';
 
+import ConfirmationDialog from '../../common/ConfirmationDialog';
 import DashboardThumbnail from '../../utils/DashboardThumbnail';
 import DashboardAPI from '../../utils/apis/DashboardAPI';
 import DashboardExporter from '../../utils/DashboardExporter';
 
 const styles = {
-    card: {
-        display: 'inline-block',
-        width: 'calc(25% - 20px)',
-        minWidth: 300,
-        margin: '20px 10px 0px 10px',
+    media: {
+        height: 0,
+        paddingTop: '40%', // 50%=2:1, 56.25%=16:9
     },
-    cardTitleText: {
+    content: {
+        overflowX: 'hidden',
+    },
+    action: {
+        backgroundColor: 'red',
+    },
+    title: {
+        display: 'block',
         overflow: 'hidden',
         whiteSpace: 'nowrap',
         textOverflow: 'ellipsis',
-        fontSize: '1.125em',
     },
-    cardSubtitleText: {
+    subheader: {
+        display: 'block',
         overflow: 'hidden',
-        whiteSpace: 'nowrap',
+        whiteSpace: 'normal',
         textOverflow: 'ellipsis',
-        fontSize: '0.8em',
-    },
-    cardActions: {
-        float: 'right',
-        paddingRight: 0,
-    },
-    menuIcon: {
-        float: 'right',
-        padding: '4px',
-        cursor: 'pointer',
-    },
-    cardTitle: {
-        float: 'left',
+        height: '3em',
+        maxHeight: '3em',
+        fontSize: '0.9rem',
     },
 };
 
@@ -79,40 +74,38 @@ class DashboardCard extends Component {
         };
 
         this.handleMenuIconClick = this.handleMenuIconClick.bind(this);
-        this.handleMenuCloseRequest = this.handleMenuCloseRequest.bind(this);
-        this.hideDashboardDeleteConfirmDialog = this.hideDashboardDeleteConfirmDialog.bind(this);
+        this.hideMenu = this.hideMenu.bind(this);
         this.showDashboardDeleteConfirmDialog = this.showDashboardDeleteConfirmDialog.bind(this);
+        this.hideDashboardDeleteConfirmDialog = this.hideDashboardDeleteConfirmDialog.bind(this);
+        this.handleDashboardExport = this.handleDashboardExport.bind(this);
         this.handleDashboardDeletionConfirm = this.handleDashboardDeletionConfirm.bind(this);
-
-        this.renderDashboardDeleteConfirmDialog = this.renderDashboardDeleteConfirmDialog.bind(this);
-        this.renderDashboardDeletionSuccessMessage = this.renderDashboardDeletionSuccessMessage.bind(this);
-        this.renderDashboardDeletionFailMessage = this.renderDashboardDeletionFailMessage.bind(this);
-        this.renderMenu = this.renderMenu.bind(this);
     }
 
     handleMenuIconClick(event) {
         event.preventDefault();
+        const isMenuOpen = !!this.state.menuAnchorElement;
         this.setState({
-            isMenuOpen: !this.state.isMenuOpen,
-            menuAnchorElement: event.currentTarget,
+            menuAnchorElement: isMenuOpen ? null : event.currentTarget,
+            isDashboardDeleteConfirmDialogOpen: false,
         });
     }
 
-    handleMenuCloseRequest() {
-        this.setState({
-            isMenuOpen: false,
-        });
+    hideMenu() {
+        this.setState({ menuAnchorElement: null });
+    }
+
+    showDashboardDeleteConfirmDialog() {
+        this.setState({ isDashboardDeleteConfirmDialogOpen: true });
+        this.hideMenu();
     }
 
     hideDashboardDeleteConfirmDialog() {
         this.setState({ isDashboardDeleteConfirmDialogOpen: false });
     }
 
-    showDashboardDeleteConfirmDialog() {
-        this.setState({
-            isDashboardDeleteConfirmDialogOpen: true,
-            isMenuOpen: false,
-        });
+    handleDashboardExport(name, url) {
+        DashboardExporter.exportDashboard(name, url);
+        this.hideMenu();
     }
 
     handleDashboardDeletionConfirm(dashboard) {
@@ -123,84 +116,106 @@ class DashboardCard extends Component {
     }
 
     renderDashboardDeleteConfirmDialog(dashboard) {
-        const actionsButtons = [
-            <Button
-                primary
-                label={<FormattedMessage id='dialog-box.confirmation.no' defaultMessage='No' />}
-                onClick={this.hideDashboardDeleteConfirmDialog}
-            />,
-            <Button
-                primary
-                label={<FormattedMessage id='dialog-box.confirmation.yes' defaultMessage='Yes' />}
-                onClick={() => this.handleDashboardDeletionConfirm(dashboard)}
-            />,
-        ];
-
         return (
-            <Dialog
-                title={`Do you want to delete dashboard '${dashboard.name}'?`}
-                actions={actionsButtons}
+            <ConfirmationDialog
                 open={this.state.isDashboardDeleteConfirmDialogOpen}
-                modal={false}
-                onRequestClose={this.hideDashboardDeleteConfirmDialog}
-            >
-                This action cannot be undone
-            </Dialog>
+                title={(
+                    <FormattedMessage
+                        id='delete.dashboard.dialog.title'
+                        defaultMessage='Delete {name}?'
+                        values={{ name: dashboard.name }}
+                    />
+                )}
+                description={(
+                    <FormattedMessage
+                        id='delete.dashboard.dialog.content'
+                        defaultMessage='This action cannot be undone.'
+                    />
+                )}
+                actions={[
+                    { label: 'no', onClick: this.hideDashboardDeleteConfirmDialog },
+                    { label: 'yes', onClick: (() => this.handleDashboardDeletionConfirm(dashboard)) },
+                ]}
+            />
         );
     }
 
     renderDashboardDeletionSuccessMessage(dashboard) {
-        return (<Snackbar
-            open
-            message={`Dashboard '${dashboard.name}' deleted successfully`}
-            autoHideDuration={4000}
-        />);
+        const message = (
+            <FormattedMessage
+                id='delete.dashboard.success'
+                defaultMessage='Dashboard {name} deleted successfully'
+                values={{ name: dashboard.name }}
+            />
+        );
+        return <Snackbar open message={message} autoHideDuration={4000} />;
     }
 
     renderDashboardDeletionFailMessage(dashboard) {
-        return (<Snackbar
-            open={this.state.dashboardDeleteActionResult === 'fail'}
-            message={`Cannot delete dashboard '${dashboard.name}'`}
-            autoHideDuration={4000}
-            onRequestClose={() => this.setState({ dashboardDeleteActionResult: null })}
-        />);
+        if (this.state.dashboardDeleteActionResult !== 'fail') {
+            return null;
+        }
+
+        const message = (
+            <FormattedMessage
+                id='delete.dashboard.fail'
+                defaultMessage='Cannot delete dashboard {name}.'
+                values={{ name: dashboard.name }}
+            />
+        );
+        return (
+            <Snackbar
+                open
+                message={message}
+                autoHideDuration={4000}
+                onClose={() => this.setState({ dashboardDeleteActionResult: null })}
+            />
+        );
     }
 
     renderMenu(dashboard) {
-        if (!(dashboard.hasOwnerPermission && dashboard.hasDesignerPermission)) {
+        const { name, url, hasOwnerPermission, hasDesignerPermission } = dashboard;
+
+        if (!(hasOwnerPermission && hasDesignerPermission)) {
             return null;
         }
 
         let designMenuItem;
-        if (dashboard.hasDesignerPermission) {
-            designMenuItem = (<MenuItem  component={Link} to={`/designer/${dashboard.url}`}>
-               <FormattedMessage id='design.button' defaultMessage='Design' />
-            </MenuItem>);
+        if (hasDesignerPermission) {
+            designMenuItem = (
+                <MenuItem component={Link} to={`/designer/${url}`}>
+                    <FormattedMessage id='design.button' defaultMessage='Design' />
+                </MenuItem>
+            );
         }
         let exportMenuItem;
-        const dashboardName = dashboard.name;
-        const dashboardURL = dashboard.url;
-        if (dashboard.hasDesignerPermission) {
-            exportMenuItem = (<MenuItem onClick={() => DashboardExporter.exportDashboard(dashboardName, dashboardURL)} >
-                <FormattedMessage id="export.button" defaultMessage="Export" />
-            </MenuItem>);
+        if (hasDesignerPermission) {
+            exportMenuItem = (
+                <MenuItem onClick={() => this.handleDashboardExport(name, url)}>
+                    <FormattedMessage id='export.button' defaultMessage='Export' />
+                </MenuItem>
+            );
         }
         let settingsMenuItem;
         let deleteMenuItem;
-        if (dashboard.hasOwnerPermission) {
-            settingsMenuItem = (<MenuItem  component={Link} to={`/settings/${dashboard.url}`}>
-               <FormattedMessage id='settings.button' defaultMessage='Settings' />
-              </MenuItem>);
-            deleteMenuItem = (<MenuItem onClick={this.showDashboardDeleteConfirmDialog}>
-                 <FormattedMessage id='delete.button' defaultMessage='Delete' />
-              </MenuItem>);
+        if (hasOwnerPermission) {
+            settingsMenuItem = (
+                <MenuItem component={Link} to={`/settings/${url}`}>
+                    <FormattedMessage id='settings.button' defaultMessage='Settings' />
+                </MenuItem>
+            );
+            deleteMenuItem = (
+                <MenuItem onClick={this.showDashboardDeleteConfirmDialog}>
+                    <FormattedMessage id='delete.button' defaultMessage='Delete' />
+                </MenuItem>
+            );
         }
 
         return (
             <Popover
                 open={!!this.state.menuAnchorElement}
                 anchorEl={this.state.menuAnchorElement}
-                onClose={() => this.setState({ menuAnchorElement: null })}
+                onClose={this.hideMenu}
                 anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
                 transformOrigin={{ vertical: 'top', horizontal: 'right' }}
             >
@@ -213,57 +228,41 @@ class DashboardCard extends Component {
     }
 
     render() {
-        const dashboard = this.props.dashboard;
+        const { dashboard, classes } = this.props;
         if (this.state.dashboardDeleteActionResult === 'success') {
             return this.renderDashboardDeletionSuccessMessage(dashboard);
         }
 
-        const title = dashboard.name;
-        const subtitle = dashboard.description ? dashboard.description.trim() : null;
-        const dashboardUrl = dashboard.url;
-        const history = this.props.history;
+        const { name, description, url, hasOwnerPermission, hasDesignerPermission } = dashboard;
+        let menuButton = null;
+        if (hasOwnerPermission && hasDesignerPermission) {
+            menuButton = <IconButton onClick={this.handleMenuIconClick}><MoreVertIcon /></IconButton>;
+        }
 
         return (
-            <span>
-                <Card expanded={false} expandable={false} actAsExpander={false} className={this.props.classes.card}  zDepth={1}>
-                    <CardMedia
-                        actAsExpander={false}
-                        style={{
-                            cursor: 'pointer',
-                            width: '100%',
-                            backgroundImage: `url(${DashboardThumbnail.getDashboardThumbnail(dashboardUrl)})`,
-                            backgroundRepeat: 'no-repeat',
-                            backgroundSize: 'cover',
-                        }}
-                        onClick={() => history.push(`/dashboards/${dashboardUrl}`)}
-                    >
-                        <div style={{ height: 120 }}>&nbsp;</div>
-                    </CardMedia>
+            <Fragment>
+                <Card>
+                    <CardActionArea component={Link} to={`/dashboards/${url}`}>
+                        <CardMedia
+                            className={classes.media}
+                            image={DashboardThumbnail.getDashboardThumbnail(url)}
+                        />
+                    </CardActionArea>
                     <CardHeader
-                        actAsExpander={false}
-                        showExpandableButton={false}
-                        title={
-                            <div>
-                                <span className={this.props.classes.cardTitle}>{title}</span>
-                                {
-                                    dashboard.hasOwnerPermission && dashboard.hasDesignerPermission &&
-                                    (<NavigationMoreVert onClick={event => this.setState({menuAnchorElement: event.currentTarget })}
-                                          className={this.props.classes.menuIcon}/>)
-                                }
-                            </div>
-                        }
-                        titleStyle={this.props.classes.cardTitleText}
-                        subtitle={subtitle ? <span title={subtitle}>{subtitle}</span> : <span>&nbsp;</span>}
-                        subtitleStyle={this.props.classes.cardSubtitleText}
+                        title={name}
+                        subheader={description ? description.trim() : ''}
+                        action={menuButton}
+                        classes={{ content: classes.content, title: classes.title, subheader: classes.subheader }}
                     />
                 </Card>
                 {this.renderMenu(dashboard)}
                 {this.renderDashboardDeleteConfirmDialog(dashboard)}
                 {this.renderDashboardDeletionFailMessage(dashboard)}
-            </span>
+            </Fragment>
         );
     }
-            }
+}
+
 DashboardCard.propTypes = {
     dashboard: PropTypes.shape({
         name: PropTypes.string.isRequired,
@@ -272,11 +271,7 @@ DashboardCard.propTypes = {
         hasOwnerPermission: PropTypes.bool.isRequired,
         hasDesignerPermission: PropTypes.bool.isRequired,
     }).isRequired,
-    history: PropTypes.shape({}).isRequired,
+    classes: PropTypes.shape({}).isRequired,
 };
 
-DashboardCard.propTypes = {
-    classes: PropTypes.object.isRequired
-};
-
-export default  withStyles(styles)(withRouter(DashboardCard));
+export default withStyles(styles)(DashboardCard);
