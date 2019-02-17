@@ -26,13 +26,17 @@ export const muiRender = createRender();
 export class MockPromise {
     /**
      * Returns a mock, non-sync Promise-like object then resolves.
-     * @param {function(function(Promise.resolve))} handler 'then' handler for the mock promise
+     * @param {function(function(Promise.resolve))} [handler] 'then' handler for the mock promise
      * @returns {{then: (function(*=): {catch: (function(): null)})}} a Promise-like object
      */
     static resolve(handler) {
         return {
             then: (promiseResolve) => {
-                handler(promiseResolve);
+                if (handler) {
+                    handler(promiseResolve);
+                } else {
+                    promiseResolve();
+                }
                 return { catch: () => null };
             },
         };
@@ -40,13 +44,15 @@ export class MockPromise {
 
     /**
      * Returns a mock, non-sync Promise-like object then rejects.
-     * @param {function(function(Promise.catch))} handler 'catch' handler for the mock promise
+     * @param {function(function(Promise.catch))} [handler] 'catch' handler for the mock promise
      * @returns {{then: (function(): {catch: (function(*): *)})}} a Promise-like object
      */
     static reject(handler) {
         return {
             then: () => {
-                return { catch: promiseReject => handler(promiseReject) };
+                return {
+                    catch: promiseReject => (handler ? handler(promiseReject) : promiseReject()),
+                };
             },
         };
     }
