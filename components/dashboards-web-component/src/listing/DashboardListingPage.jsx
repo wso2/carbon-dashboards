@@ -83,12 +83,12 @@ class DashboardListingPage extends Component {
      * Retrieve dashboards from the dashboard repository.
      */
     retrieveDashboards() {
-        new DashboardAPI().getDashboardList()
+        DashboardAPI.getDashboardList()
             .then((response) => {
                 const dashboards = _sortBy(response.data, 'url');
                 this.setState({ dashboards });
             })
-            .catch(function () {
+            .catch(() => {
                 this.setState({
                     dashboards: [],
                     error: true,

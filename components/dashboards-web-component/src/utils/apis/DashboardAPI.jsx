@@ -19,6 +19,7 @@
 
 import Axios from 'axios';
 import AuthManager from '../../auth/utils/AuthManager';
+import { HttpStatus } from '../Constants';
 
 const baseURL = `${window.location.origin}${window.contextPath}/apis/dashboards`;
 
@@ -32,25 +33,26 @@ export default class DashboardAPI {
     }
 
     /**
-     * This method will return the AXIOS http client.
-     * @returns httpClient
+     * Returns a HTTP client for the dashboard API.
+     * @returns {AxiosInstance} a HTTP client for the dashboard API
      */
-    getHTTPClient() {
-        let httpClient = Axios.create({
-            baseURL: baseURL,
+    static getHTTPClient() {
+        const httpClient = Axios.create({
+            baseURL,
             timeout: 2000,
-            headers: {"Authorization": "Bearer " + AuthManager.getUser().SDID}
+            headers: { Authorization: 'Bearer ' + AuthManager.getUser().SDID }
         });
         httpClient.defaults.headers.post['Content-Type'] = 'application/json';
-        httpClient.interceptors.response.use(function (response) {
-            return response;
-        }, function (error) {
-            if (401 === error.response.status) {
-                AuthManager.discardSession();
-                window.handleSessionInvalid();
-            }
-            return Promise.reject(error);
-        });
+        httpClient.interceptors.response.use(
+            response => response,
+            (error) => {
+                if (error.response.status === HttpStatus.UNAUTHORIZED) {
+                    AuthManager.discardSession();
+                    window.handleSessionInvalid();
+                }
+                return Promise.reject(error);
+            },
+        );
 
         return httpClient;
     }
@@ -61,14 +63,14 @@ export default class DashboardAPI {
      * @returns {*}
      */
     createDashboard(dashboard) {
-        return this.getHTTPClient().post("", dashboard)
+        return DashboardAPI.getHTTPClient().post('', dashboard);
     }
 
     /**
      * This method will return a list of dashboards meta data.
      */
-    getDashboardList() {
-        return this.getHTTPClient().get();
+    static getDashboardList() {
+        return DashboardAPI.getHTTPClient().get();
     }
 
     /**
@@ -77,16 +79,16 @@ export default class DashboardAPI {
      */
     getDashboardByID(dashboardId) {
         switch (this.originComponent) {
-            case "designer": {
-                this.getHTTPClient().defaults.headers.common['X-Dashboard-Origin-Component'] = "designer";
+            case 'designer': {
+                DashboardAPI.getHTTPClient().defaults.headers.common['X-Dashboard-Origin-Component'] = 'designer';
                 break;
             }
-            case "settings": {
-                this.getHTTPClient().defaults.headers.common['X-Dashboard-Origin-Component'] = "settings";
+            case 'settings': {
+                DashboardAPI.getHTTPClient().defaults.headers.common['X-Dashboard-Origin-Component'] = 'settings';
                 break;
             }
         }
-        return this.getHTTPClient().get(dashboardId);
+        return DashboardAPI.getHTTPClient().get(dashboardId);
     }
 
     /**
@@ -95,16 +97,16 @@ export default class DashboardAPI {
      * @param dashboard
      */
     updateDashboardByID(dashboardId, dashboard) {
-        return this.getHTTPClient().put(dashboardId, dashboard);
+        return DashboardAPI.getHTTPClient().put(dashboardId, dashboard);
     }
 
     /**
-     * This method will delete the dashboard with given ID
-     * @param dashboardId
-     * @returns {boolean}
+     * Deletes the dashboard identified by the given ID.
+     * @param {string} dashboardId ID of the dashboard to be deleted
+     * @returns {AxiosPromise} HTTP response promise
      */
-    deleteDashboardByID(dashboardId) {
-        return this.getHTTPClient().delete(dashboardId);
+    static deleteDashboardByID(dashboardId) {
+        return DashboardAPI.getHTTPClient().delete(dashboardId);
     }
 
     /**
@@ -114,9 +116,7 @@ export default class DashboardAPI {
      * @returns {{}} Roles
      */
     static getDashboardRoles(dashboardId) {
-        return new DashboardAPI()
-            .getHTTPClient()
-            .get(`${dashboardId}/roles`);
+        return DashboardAPI.getHTTPClient().get(`${dashboardId}/roles`);
     }
 
     /**
@@ -127,9 +127,7 @@ export default class DashboardAPI {
      * @returns {Promise} Promise
      */
     static updateDashboardRoles(dashboardId, roles) {
-        return new DashboardAPI()
-            .getHTTPClient()
-            .post(`${dashboardId}/roles`, roles);
+        return DashboardAPI.getHTTPClient().post(`${dashboardId}/roles`, roles);
     }
 
     /**
@@ -140,9 +138,7 @@ export default class DashboardAPI {
      * @returns {Promise} Promise
      */
     static getDashboardReportPdfConfigs() {
-        return new DashboardAPI()
-            .getHTTPClient()
-            .get(`/report-config`);
+        return DashboardAPI.getHTTPClient().get('/report-config');
     }
 
     /**
@@ -152,8 +148,6 @@ export default class DashboardAPI {
      * @returns {Promise} Promise
      */
     static exportDashboardByID(dashboardId) {
-        return new DashboardAPI()
-            .getHTTPClient()
-            .get(`${dashboardId}/export`);
+        return DashboardAPI.getHTTPClient().get(`${dashboardId}/export`);
     }
 }
