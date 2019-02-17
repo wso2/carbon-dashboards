@@ -139,9 +139,7 @@ class DashboardListingPage extends Component {
 
         // Render dashboards.
         return this.state.dashboards.map(dashboard => (
-            <Grid key={dashboard.url} item xl={3} lg={3} md={3} sm={4} xs={6}>
-                <DashboardCard key={dashboard.url} dashboard={dashboard} />
-            </Grid>
+            <DashboardCard key={dashboard.url} dashboard={dashboard} />
         ));
     }
 
