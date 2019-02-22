@@ -19,7 +19,9 @@
          xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
          xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
          id="Shindig"
-         version="2.5">
+         version="2.5" metadata-complete="true">
+    <absolute-ordering />
+
     <display-name>Shindig</display-name>
     <!-- configuration -->
     <!-- If you have your own Guice module(s), put them here as a colon-separated list. -->
