@@ -196,7 +196,7 @@ public class SiddhiAppsApiServiceImpl extends SiddhiAppsApiService {
                 }
             });
         } else {
-            log.error("No workers are configured for Data Search Feature");
+            log.warn("No workers are configured for Data Search Feature");
         }
 
         if (!siddhiAppsMap.isEmpty()) {
