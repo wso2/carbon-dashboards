@@ -68,7 +68,6 @@ queries:
       update_dashboard_content: UPDATE DASHBOARD_RESOURCE SET NAME = ?, DESCRIPTION = ?, CONTENT = ?, PARENT_ID = ?, LANDING_PAGE = ? WHERE URL = ?
     type: MySQL
     version: default
-
   -
     mappings:
       table_check: SELECT 1 FROM {{TABLE_NAME}} LIMIT 1
