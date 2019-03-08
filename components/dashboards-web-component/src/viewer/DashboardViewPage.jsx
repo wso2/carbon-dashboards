@@ -274,7 +274,10 @@ class DashboardViewPage extends Component {
                     insetChildren={!isLandingPage}
                     nestedItems={subPagesList}
                     open={!!subPagesList}
-                    onClick={() => history.push(this.getNavigationToPage(page.id))}
+                    onClick={() => {
+                        history.push(this.getNavigationToPage(page.id));
+                        this.setState({isSidePaneOpen: false});
+                    }}
                     className={isLandingPage ? 'list-item homePage' : 'list-item'}
                 />
             );
