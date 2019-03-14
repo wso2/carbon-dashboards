@@ -21,7 +21,7 @@
 
     <groupId>org.wso2.carbon.dashboards</groupId>
     <artifactId>carbon-dashboards</artifactId>
-    <version>4.0.56-SNAPSHOT</version>
+    <version>4.0.56</version>
     <packaging>pom</packaging>
 
     <name>WSO2 Carbon Dashboards - Parent</name>
@@ -393,7 +393,7 @@
     </dependencyManagement>
 
     <properties>
-        <carbon.dashboards.version>4.0.56-SNAPSHOT</carbon.dashboards.version>
+        <carbon.dashboards.version>4.0.56</carbon.dashboards.version>
 
         <!-- Datasource -->
         <carbon.datasource.core.version>1.1.4</carbon.datasource.core.version>
@@ -491,7 +491,7 @@
         <url>https://github.com/wso2/carbon-dashboards.git</url>
         <developerConnection>scm:git:https://github.com/wso2/carbon-dashboards.git</developerConnection>
         <connection>scm:git:https://github.com/wso2/carbon-dashboards.git</connection>
-        <tag>HEAD</tag>
+        <tag>v4.0.56</tag>
     </scm>
 
     <build>
