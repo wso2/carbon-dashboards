@@ -38,7 +38,7 @@ const passwordGrantType = 'password';
 /**
  * App context sans starting forward slash.
  */
-const appContext = window.contextPath.substr(1);
+const appContext = window.location.pathname;
 
 /**
  * Authentication API client.
@@ -64,15 +64,16 @@ export default class AuthenticationAPI {
      * @param {string} username Username
      * @param {string} password Password
      * @param {boolean} rememberMe Remember me flag
+     * @param {string} grantType Grant type
      * @return {AxiosPromise} Axios promise
      */
-    static login(username, password, rememberMe = false) {
+    static login(username, password, rememberMe = false, grantType) {
         return AuthenticationAPI
             .getHttpClient()
-            .post(`/login/${appContext}`, Qs.stringify({
+            .post(`/login${appContext}`, Qs.stringify({
                 username,
                 password,
-                grantType: passwordGrantType,
+                grantType: grantType,
                 rememberMe,
                 appId: 'dash-' + DashboardUtils.generateUuid(),
             }), {
@@ -90,7 +91,7 @@ export default class AuthenticationAPI {
     static getAccessTokenWithRefreshToken() {
         return AuthenticationAPI
             .getHttpClient()
-            .post(`/login/${appContext}`, Qs.stringify({
+            .post(`/login${appContext}`, Qs.stringify({
                 grantType: 'refresh_token',
                 rememberMe: true
             }), {
@@ -116,6 +117,20 @@ export default class AuthenticationAPI {
                     Authorization: `Bearer ${token}`,
                 },
             });
+    }
+
+    static ssoLogout(token) {
+        return AuthenticationAPI
+            .getHttpClient()
+            .get(`/logout/slo`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+    }
+
+    static isSSOEnable() {
+        return AuthenticationAPI.getHttpClient().get('/login/auth-type');
     }
 
     /**

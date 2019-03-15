@@ -30,6 +30,7 @@ import org.wso2.carbon.analytics.permissions.bean.Role;
 import org.wso2.carbon.analytics.permissions.exceptions.PermissionException;
 import org.wso2.carbon.dashboards.core.DashboardMetadataProvider;
 import org.wso2.carbon.dashboards.core.WidgetMetadataProvider;
+import org.wso2.carbon.dashboards.core.bean.AuthConfigurations;
 import org.wso2.carbon.dashboards.core.bean.DashboardConfigurations;
 import org.wso2.carbon.dashboards.core.bean.DashboardMetadata;
 import org.wso2.carbon.dashboards.core.bean.importer.DashboardArtifact;
@@ -77,6 +78,7 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
     private final DashboardConfigurations dashboardConfigurations;
     private final PermissionProvider permissionProvider;
     private final IdPClient identityClient;
+    private AuthConfigurations authConfigurations = new AuthConfigurations();
 
     private WidgetMetadataProvider widgetMetadataProvider;
 
@@ -95,6 +97,14 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
         this.identityClient = identityClient;
     }
 
+    public DashboardMetadataProviderImpl(DataSourceService dataSourceService,
+                                         DashboardConfigurations dashboardConfigurations,
+                                         PermissionProvider permissionProvider, IdPClient identityClient,
+                                         AuthConfigurations authConfigurations) {
+        this(dataSourceService, dashboardConfigurations, permissionProvider, identityClient);
+        this.authConfigurations = authConfigurations;
+    }
+
     DashboardMetadataProviderImpl(DashboardMetadataDao dao, DashboardConfigurations dashboardConfigurations,
                                   PermissionProvider permissionProvider, IdPClient identityClient) {
         this.dao = dao;
@@ -106,7 +116,7 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
     @Override
     public void init(App dashboardApp) {
         this.widgetMetadataProvider = new WidgetMetadataProviderImpl(dashboardApp, dataSourceService,
-                                                                     dashboardConfigurations);
+                dashboardConfigurations);
         DashboardImporter dashboardImporter = new DashboardImporter(this, widgetMetadataProvider);
         dashboardImporter.importDashboards();
     }
@@ -172,7 +182,7 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
         dao.add(dashboardMetadata);
         for (Permission permission : buildDashboardPermissions(dashboardMetadata.getUrl())) {
             permissionProvider.addPermission(permission);
-            for (String roleId: rolesProvider.getCreatorRoleIds()) {
+            for (String roleId : rolesProvider.getCreatorRoleIds()) {
                 permissionProvider.grantPermission(permission, new Role(roleId, ""));
             }
         }
@@ -448,7 +458,7 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
         return permissionProvider.hasPermission(user, new Permission(PERMISSION_APP_NAME, dashboardUrl +
                 permissionSuffix));
     }
-  
+
     /**
      * Returns dashboardConfigurations for report generation
      * @return DashboardConfigurations
@@ -456,5 +466,13 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
     @Override
     public DashboardConfigurations getReportGenerationConfigurations() {
         return this.dashboardConfigurations;
+    }
+
+    /**
+     * Returns whether SSO enabled or disabled
+     * @return boolean
+     */
+    public boolean ssoEnabled() {
+        return authConfigurations.isSsoEnabled();
     }
 }
