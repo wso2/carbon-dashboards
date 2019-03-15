@@ -21,7 +21,7 @@
 
     <groupId>org.wso2.carbon.dashboards</groupId>
     <artifactId>carbon-dashboards</artifactId>
-    <version>4.0.55-SNAPSHOT</version>
+    <version>4.0.57-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>WSO2 Carbon Dashboards - Parent</name>
@@ -393,7 +393,7 @@
     </dependencyManagement>
 
     <properties>
-        <carbon.dashboards.version>4.0.55-SNAPSHOT</carbon.dashboards.version>
+        <carbon.dashboards.version>4.0.57-SNAPSHOT</carbon.dashboards.version>
 
         <!-- Datasource -->
         <carbon.datasource.core.version>1.1.4</carbon.datasource.core.version>
@@ -410,11 +410,11 @@
         <carbon.utils.version.range>[2.0.2, 3.0.0)</carbon.utils.version.range>
 
         <!--UI Server-->
-        <carbon.uiserver.version>0.19.5</carbon.uiserver.version>
+        <carbon.uiserver.version>0.19.7</carbon.uiserver.version>
         <carbon.uiserver.version.range>[0.19.5, 1.0.0]</carbon.uiserver.version.range>
 
         <!--MSF4J-->
-        <msf4j-core.version>2.5.2</msf4j-core.version>
+        <msf4j-core.version>2.7.0</msf4j-core.version>
         <msf4j-core.version.range>[2.5.0, 3.0.0)</msf4j-core.version.range>
         <javax.ws.rs.version>2.0</javax.ws.rs.version>
         <javax.ws.rs.version.range>[2.0.0, 3.0.0)</javax.ws.rs.version.range>
@@ -428,10 +428,10 @@
         <carbon.datasources.version>1.1.4</carbon.datasources.version>
 
         <!--Analytics-->
-        <carbon.analytics.version>2.0.488</carbon.analytics.version>
+        <carbon.analytics.version>2.0.491</carbon.analytics.version>
         <carbon.analytics.version.range>[2.0.395, 3.0.0)</carbon.analytics.version.range>
         <!--Analytics common-->
-        <carbon.analytics-common.version>6.0.74</carbon.analytics-common.version>
+        <carbon.analytics-common.version>6.1.1</carbon.analytics-common.version>
         <carbon.analytics-common.version.range>[6.0.65, 7.0.0)</carbon.analytics-common.version.range>
 
         <!--OSGi-->
