@@ -84,7 +84,7 @@ public class DashboardRestApiProvider implements RestApiProvider {
         Map<String, Microservice> microservices = new HashMap<>(2);
         microservices.put(DashboardRestApi.API_CONTEXT_PATH, new DashboardRestApi(dashboardMetadataProvider));
         microservices.put(WidgetRestApi.API_CONTEXT_PATH,
-                          new WidgetRestApi(dashboardMetadataProvider.getWidgetMetadataProvider()));
+                new WidgetRestApi(dashboardMetadataProvider.getWidgetMetadataProvider()));
         return microservices;
     }
 }

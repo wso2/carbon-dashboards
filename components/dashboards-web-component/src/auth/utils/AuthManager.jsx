@@ -25,6 +25,20 @@ import AuthenticationAPI from '../../utils/apis/AuthenticationAPI';
 const SESSION_USER_COOKIE = 'DASHBOARD_USER';
 
 /**
+ * Name of the SP token 1 cookie
+ */
+const WSO2_SP_TOKEN_1 = 'JID';
+
+/**
+ * Name of the SP token 2 cookie
+ */
+const WSO2_SP_TOKEN_2 = 'HID';
+
+/**
+ *  Name of the USER_DTO cookie
+ */
+const WSO2_USER_DTO = "USER_DTO";
+/**
  * Name of the refresh token cookie.
  */
 const REFRESH_TOKEN_COOKIE = 'PRT';
@@ -74,6 +88,12 @@ export default class AuthManager {
     static isLoggedIn() {
         return !!AuthManager.getUser();
     }
+    /**
+     *  Check whether the sso authenticated
+     */
+    static isSSOAuthenticated() {
+        return (!!AuthManager.getWSO2UserDTO());
+    }
 
     /**
      * Check whether the rememberMe is set
@@ -107,9 +127,9 @@ export default class AuthManager {
     static authenticate(username, password, rememberMe) {
         return new Promise((resolve, reject) => {
             AuthenticationAPI
-                .login(username, password, rememberMe)
+                .login(username, password, rememberMe, "password")
                 .then((response) => {
-                    const { authUser, pID, lID, validityPeriod } = response.data;
+                    const {authUser, pID, lID, validityPeriod} = response.data;
 
                     window.localStorage.setItem('rememberMe', rememberMe);
                     if (rememberMe) {
@@ -131,17 +151,32 @@ export default class AuthManager {
         });
     }
 
+    static ssoAuthenticate() {
+        return new Promise((resolve, reject) => {
+            AuthenticationAPI.login("", "", true, "authorization_code").then((response) => {
+            }).catch((error) => {
+                if (error.response.status === 302) {
+                    const rec = error.response.data.redirectUrl + "?response_type=code&client_id=" +
+                        error.response.data.clientId + "&redirect_uri=" + error.response.data.callbackUrl + "";
+                    resolve(rec);
+                } else {
+                    reject(error);
+                }
+            })
+        })
+    }
+
     /**
      * Authenticate the session using refresh token.
      *
      * @returns {Promise}
      */
-    static authenticateWithRefreshToken(){
+    static authenticateWithRefreshToken() {
         return new Promise((resolve, reject) => {
             AuthenticationAPI
                 .getAccessTokenWithRefreshToken()
                 .then((response) => {
-                    const { pID, lID, validityPeriod } = response.data;
+                    const {pID, lID, validityPeriod} = response.data;
 
                     const username = AuthManager.isRememberMeSet() ?
                         window.localStorage.getItem('username') : AuthManager.getUser().username;
@@ -157,7 +192,7 @@ export default class AuthManager {
                     resolve();
                 })
                 .catch(error => reject(error));
-        }); 
+        });
     }
 
     /**
@@ -175,6 +210,26 @@ export default class AuthManager {
                 })
                 .catch(error => reject(error));
         });
+    }
+
+    static ssoLogout() {
+        return new Promise((resolve, reject) =>{
+            AuthenticationAPI.ssoLogout(AuthManager.getUser().SDID)
+                .then((response) => {
+                    const redirectUrl = response.data.externalLogoutUrl;
+                    console.log(redirectUrl);
+                    resolve(redirectUrl)
+                }).catch(error =>reject(error));
+        })
+    }
+
+    static isSSOEEnabled() {
+        return AuthenticationAPI.isSSOEnable();
+    }
+
+    static getWSO2UserDTO() {
+        const buffer = AuthManager.getCookie(WSO2_USER_DTO);
+        return buffer ? JSON.parse(buffer) : null;
     }
 
     /**
@@ -198,7 +253,7 @@ export default class AuthManager {
     }
 
     /**
-     * Set a cookie with given name and value assigned to it. 
+     * Set a cookie with given name and value assigned to it.
      * @param {String} name : Name of the cookie which need to be set
      * @param {String} value : Value of the cookie, expect it to be URLEncoded
      * @param {number} validityPeriod :  (Optional) Validity period of the cookie in seconds

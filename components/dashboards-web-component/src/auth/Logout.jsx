@@ -30,14 +30,23 @@ export default class Logout extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            redirectToLogin: false
+            redirectToLogin: false,
+            redirectUrl :''
         }
     }
 
     componentDidMount() {
         DashboardThumbnail.deleteDashboardThumbnails();
+        if(AuthManager.isSSOEEnabled()){
+            AuthManager.ssoLogout().then((result) => {
+                this.setState({ redirectUrl:result})
+            });
+        }
         AuthManager.logout()
-            .then(() => this.setState({ redirectToLogin: true }));
+            .then(() => {
+                this.setState({ redirectToLogin: true });
+                location.href = this.state.redirectUrl;
+            })
     }
 
     /**

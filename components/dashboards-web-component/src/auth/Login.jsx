@@ -35,11 +35,16 @@ import defaultTheme from '../utils/Theme';
  * Style constants.
  */
 const styles = {
-    cookiePolicy: { padding: '10px', fontFamily: defaultTheme.fontFamily,
-        border: '1px solid #8a6d3b', color: '#8a6d3b'},
-    cookiePolicyAnchor: { fontWeight: 'bold', color: '#8a6d3b' },
+    cookiePolicy: {
+        padding: '10px', fontFamily: defaultTheme.fontFamily,
+        border: '1px solid #8a6d3b', color: '#8a6d3b'
+    },
+    cookiePolicyAnchor: {fontWeight: 'bold', color: '#8a6d3b'},
 };
 
+const REFRESH_TOKEN_COOKIE = 'PRT';
+
+const WSO2_USER_DTO_COOKIE = "USER_DTO";
 /**
  * Login page.
  */
@@ -57,6 +62,8 @@ export default class Login extends Component {
             authenticated: false,
             rememberMe: false,
             referrer: '/',
+            ssoEnabled: false,
+            redirectUrl: '',
         };
         this.authenticate = this.authenticate.bind(this);
     }
@@ -65,27 +72,49 @@ export default class Login extends Component {
      * Extract the referrer and check whether the user logged-in.
      */
     componentDidMount() {
+        if (AuthManager.isSSOAuthenticated()) {
+            this.setState({authenticated: true});
+            const {username, PID, LID, validity} = AuthManager.getWSO2UserDTO();
+            window.localStorage.setItem('rememberMe', true);
+            window.localStorage.setItem('username', username);
+            AuthManager.setUser({
+                username: username,
+                SDID: PID,
+                validity: validity,
+                expires: AuthManager.calculateExpiryTime(validity),
+            });
+            AuthManager.setCookie(REFRESH_TOKEN_COOKIE, LID, 604800, window.contextPath);
+            AuthManager.deleteCookie(WSO2_USER_DTO_COOKIE);
+
+        } else if (AuthManager.isRememberMeSet() && !AuthManager.isLoggedIn()) {
+            AuthManager.authenticateWithRefreshToken()
+                .then(() => this.setState({authenticated: true}));
+        }
         // Extract referrer from the query string.
         const queryString = this.props.location.search.replace(/^\?/, '');
         const params = Qs.parse(queryString);
         if (params.referrer) {
             this.state.referrer = params.referrer;
         }
-
         // If the user already logged in set the state to redirect user to the referrer page.
         if (AuthManager.isLoggedIn()) {
             this.state.authenticated = true;
         }
-    }
 
-    /**
-     * Refresh the access token when the browser session is restored.
-     */
-    componentWillMount(){
-        if (AuthManager.isRememberMeSet() && !AuthManager.isLoggedIn()) {
-            AuthManager.authenticateWithRefreshToken()
-                .then(() => this.setState({authenticated: true}));
-        }
+        AuthManager.isSSOEEnabled().then((response) => {
+            if (response.status === 200) {
+                if (response.data === true) {
+                    AuthManager.ssoAuthenticate().then((result) => {
+                        this.setState({
+                            redirectUrl: result,
+                            ssoEnabled: true
+                        });
+                    }).catch((error) => {
+                        console.error("Error occurred while authenticating", error);
+                    })
+                }
+            }
+        });
     }
 
     /**
@@ -130,12 +159,17 @@ export default class Login extends Component {
             );
         }
 
+        if (this.state.ssoEnabled) {
+            location.href = this.state.redirectUrl;
+        }
+
+        console.log("this is before render");
         return (
             <MuiThemeProvider muiTheme={defaultTheme}>
                 <div>
                     <Header
-                        title={<FormattedMessage id='portal.title' defaultMessage='Portal' />}
-                        rightElement={<span />}
+                        title={<FormattedMessage id='portal.title' defaultMessage='Portal'/>}
+                        rightElement={<span/>}
                     />
                     <FormPanel title={<FormattedMessage id="login.title" defaultMessage="Login"/>}
                                onSubmit={this.authenticate}>
@@ -151,7 +185,7 @@ export default class Login extends Component {
                                 });
                             }}
                         />
-                        <br />
+                        <br/>
                         <TextField
                             fullWidth
                             type="password"
@@ -164,7 +198,7 @@ export default class Login extends Component {
                                 });
                             }}
                         />
-                        <br />
+                        <br/>
                         <Checkbox
                             label={<FormattedMessage id="login.rememberMe" defaultMessage="Remember Me"/>}
                             checked={this.state.rememberMe}
@@ -173,9 +207,9 @@ export default class Login extends Component {
                                     rememberMe: checked,
                                 });
                             }}
-                            style={{'margin':'30px 0'}}
+                            style={{'margin': '30px 0'}}
                         />
-                        <br />
+                        <br/>
                         <RaisedButton
                             primary
                             type="submit"
@@ -183,8 +217,8 @@ export default class Login extends Component {
                             label={<FormattedMessage id="login.title" defaultMessage="Login"/>}
                             disabledBackgroundColor="rgb(27, 40, 47)"
                         />
-                        <br />
-                        <br />
+                        <br/>
+                        <br/>
                         <div style={styles.cookiePolicy}>
                             <div>
                                 <FormattedMessage
@@ -202,7 +236,7 @@ export default class Login extends Component {
                                 <FormattedMessage id="login.cookie.policy.after" defaultMessage=" for more details."/>
                             </div>
                         </div>
-                        <br />
+                        <br/>
                         <div style={styles.cookiePolicy}>
                             <div>
                                 <FormattedMessage
