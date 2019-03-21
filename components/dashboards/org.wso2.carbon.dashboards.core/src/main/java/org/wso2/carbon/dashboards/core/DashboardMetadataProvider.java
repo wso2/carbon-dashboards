@@ -129,5 +129,4 @@ public interface DashboardMetadataProvider {
 
     DashboardConfigurations getReportGenerationConfigurations();
 
-    boolean ssoEnabled();
 }

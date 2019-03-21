@@ -33,12 +33,13 @@ const basePath = window.location.origin;
 /**
  * Password grant type.
  */
-const passwordGrantType = 'password';
+const GRANT_TYPE_PASSWORD = 'password';
+const GRANT_TYPE_REFRESH = 'refresh_token';
 
 /**
  * App context sans starting forward slash.
  */
-const appContext = window.location.pathname;
+const appContext = window.contextPath.substr(1);
 
 /**
  * Authentication API client.
@@ -67,13 +68,13 @@ export default class AuthenticationAPI {
      * @param {string} grantType Grant type
      * @return {AxiosPromise} Axios promise
      */
-    static login(username, password, rememberMe = false, grantType) {
+    static login(username, password, rememberMe = false, grantType = GRANT_TYPE_PASSWORD) {
         return AuthenticationAPI
             .getHttpClient()
-            .post(`/login${appContext}`, Qs.stringify({
+            .post(`/login/${appContext}`, Qs.stringify({
                 username,
                 password,
-                grantType: grantType,
+                grantType,
                 rememberMe,
                 appId: 'dash-' + DashboardUtils.generateUuid(),
             }), {
@@ -91,14 +92,14 @@ export default class AuthenticationAPI {
     static getAccessTokenWithRefreshToken() {
         return AuthenticationAPI
             .getHttpClient()
-            .post(`/login${appContext}`, Qs.stringify({
-                grantType: 'refresh_token',
+            .post(`/login/${appContext}`, Qs.stringify({
+                grantType: GRANT_TYPE_REFRESH,
                 rememberMe: true
             }), {
                 headers: {
                     'Content-Type': MediaType.APPLICATION_WWW_FORM_URLENCODED,
                     'Authorization': "Bearer " + AuthManager.getCookie(REFRESH_TOKEN_COOKIE),
-                    'Accept': 'application/json'
+                    'Accept': MediaType.APPLICATION_JSON
                 },
             });
     }
@@ -120,8 +121,7 @@ export default class AuthenticationAPI {
     }
 
     static ssoLogout(token) {
-        return AuthenticationAPI
-            .getHttpClient()
+        return AuthenticationAPI.getHttpClient()
             .get(`/logout/slo`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -129,8 +129,9 @@ export default class AuthenticationAPI {
             });
     }
 
-    static isSSOEnable() {
-        return AuthenticationAPI.getHttpClient().get('/login/auth-type');
+    static getAuthType() {
+        return AuthenticationAPI.getHttpClient()
+            .get('/login/auth-type');
     }
 
     /**

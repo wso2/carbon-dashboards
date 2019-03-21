@@ -19,7 +19,6 @@
 
 import { Checkbox, RaisedButton, Snackbar, TextField } from 'material-ui';
 import { MuiThemeProvider } from 'material-ui/styles';
-import Qs from 'qs';
 import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
 import PropTypes from 'prop-types';
@@ -30,21 +29,24 @@ import { FormattedMessage } from 'react-intl';
 import AuthManager from './utils/AuthManager';
 import Header from '../common/Header';
 import defaultTheme from '../utils/Theme';
+import { Constants } from './Constants';
 
 /**
  * Style constants.
  */
 const styles = {
     cookiePolicy: {
-        padding: '10px', fontFamily: defaultTheme.fontFamily,
-        border: '1px solid #8a6d3b', color: '#8a6d3b'
+        padding: '10px',
+        fontFamily: defaultTheme.fontFamily,
+        border: '1px solid #8a6d3b',
+        color: '#8a6d3b'
     },
-    cookiePolicyAnchor: {fontWeight: 'bold', color: '#8a6d3b'},
+    cookiePolicyAnchor: {
+        fontWeight: 'bold',
+        color: '#8a6d3b'
+    },
 };
 
-const REFRESH_TOKEN_COOKIE = 'PRT';
-
-const WSO2_USER_DTO_COOKIE = "USER_DTO";
 /**
  * Login page.
  */
@@ -62,59 +64,88 @@ export default class Login extends Component {
             authenticated: false,
             rememberMe: false,
             referrer: '/',
-            ssoEnabled: false,
-            redirectUrl: '',
+            authType: Constants.AUTH_TYPE_UNKNOWN
         };
         this.authenticate = this.authenticate.bind(this);
     }
 
-    /**
-     * Extract the referrer and check whether the user logged-in.
-     */
-    componentDidMount() {
-        if (AuthManager.isSSOAuthenticated()) {
-            this.setState({authenticated: true});
-            const {username, PID, LID, validity} = AuthManager.getWSO2UserDTO();
-            window.localStorage.setItem('rememberMe', true);
-            window.localStorage.setItem('username', username);
-            AuthManager.setUser({
-                username: username,
-                SDID: PID,
-                validity: validity,
-                expires: AuthManager.calculateExpiryTime(validity),
+    componentWillMount() {
+        AuthManager.getAuthType()
+            .then((response) => {
+                if (response.data.authType === Constants.AUTH_TYPE_SSO) {
+                    // initialize sso authentication flow
+                    this.initSSOAuthenticationFlow();
+                } else {
+                    // initialize default authentication flow
+                    this.initDefaultAuthenticationFlow();
+                }
+                // Once the auth type has been changed asynchronously, login page needs to be re-rendered to show the
+                // login form.
+                this.setState({ authType: response.data.authType });
+            }).catch((e) => {
+                console.error('Unable to get the authentication type.');
             });
-            AuthManager.setCookie(REFRESH_TOKEN_COOKIE, LID, 604800, window.contextPath);
-            AuthManager.deleteCookie(WSO2_USER_DTO_COOKIE);
+    }
 
-        } else if (AuthManager.isRememberMeSet() && !AuthManager.isLoggedIn()) {
+    /**
+     * Initializes the default authentication flow.
+     */
+    initDefaultAuthenticationFlow() {
+        if (AuthManager.isRememberMeSet() && !AuthManager.isLoggedIn()) {
             AuthManager.authenticateWithRefreshToken()
-                .then(() => this.setState({authenticated: true}));
+                .then(() =>
+                    this.setState({
+                        authenticated: true,
+                        referrer: this.getReferrer()
+                    })
+                );
         }
+    }
+
+    /**
+     * Initializes the SSO authentication flow.
+     */
+    initSSOAuthenticationFlow() {
+        // check if the userDTO is available. if so try to authenticate the user. instead forward the user to the idp.
+        // USER_DTO={"authUser":"admin","pID":"0918c1ad-fc0a-35fa","lID":"3ca21853-bd3c-3dfa","validityPeriod":3381};
+        if (AuthManager.isSSOAuthenticated()) {
+            const { authUser, pID, lID, validityPeriod } = AuthManager.getSSOUserCookie();
+            localStorage.setItem('rememberMe', true);
+            localStorage.setItem('username', authUser);
+            AuthManager.setUser({
+                username: authUser,
+                SDID: pID,
+                validity: validityPeriod,
+                expires: AuthManager.calculateExpiryTime(validityPeriod)
+            });
+            AuthManager.setCookie(Constants.REFRESH_TOKEN_COOKIE, lID, 604800, window.contextPath);
+            AuthManager.deleteCookie(Constants.USER_DTO_COOKIE);
+            this.setState({
+                authenticated: true,
+                referrer: this.getReferrer()
+            });
+        } else {
+            // redirect the user to the service providers auth url
+            AuthManager.ssoAuthenticate()
+                .then((url) => {
+                    location.href = url;
+                })
+                .catch((e) => {
+                    console.error('Error getting SSO auth URL.');
+                });
+        }
+    }
+
+    /**
+     * Get the referrer URL for the redirection after successful login.
+     *
+     * @returns {string|*|string} referrer URL
+     */
+    getReferrer() {
         // Extract referrer from the query string.
         const queryString = this.props.location.search.replace(/^\?/, '');
         const params = Qs.parse(queryString);
-        if (params.referrer) {
-            this.state.referrer = params.referrer;
-        }
-        // If the user already logged in set the state to redirect user to the referrer page.
-        if (AuthManager.isLoggedIn()) {
-            this.state.authenticated = true;
-        }
-
-        AuthManager.isSSOEEnabled().then((response) => {
-            if (response.status === 200) {
-                if (response.data === true) {
-                    AuthManager.ssoAuthenticate().then((result) => {
-                        this.setState({
-                            redirectUrl: result,
-                            ssoEnabled: true
-                        });
-                    }).catch((error) => {
-                        console.error("Error occurred while authenticating", error);
-                    })
-                }
-            }
-        });
+        return params.referrer;
     }
 
     /**
@@ -147,29 +178,17 @@ export default class Login extends Component {
     }
 
     /**
-     * Renders the login page.
+     * Render default login page.
      *
      * @return {XML} HTML content
      */
-    render() {
-        // If the user is already authenticated redirect to referrer link.
-        if (this.state.authenticated) {
-            return (
-                <Redirect to={this.state.referrer}/>
-            );
-        }
-
-        if (this.state.ssoEnabled) {
-            location.href = this.state.redirectUrl;
-        }
-
-        console.log("this is before render");
+    renderDefaultLogin() {
         return (
             <MuiThemeProvider muiTheme={defaultTheme}>
                 <div>
                     <Header
-                        title={<FormattedMessage id='portal.title' defaultMessage='Portal'/>}
-                        rightElement={<span/>}
+                        title={<FormattedMessage id='portal.title' defaultMessage='Portal' />}
+                        rightElement={<span />}
                     />
                     <FormPanel title={<FormattedMessage id="login.title" defaultMessage="Login"/>}
                                onSubmit={this.authenticate}>
@@ -185,7 +204,7 @@ export default class Login extends Component {
                                 });
                             }}
                         />
-                        <br/>
+                        <br />
                         <TextField
                             fullWidth
                             type="password"
@@ -198,7 +217,7 @@ export default class Login extends Component {
                                 });
                             }}
                         />
-                        <br/>
+                        <br />
                         <Checkbox
                             label={<FormattedMessage id="login.rememberMe" defaultMessage="Remember Me"/>}
                             checked={this.state.rememberMe}
@@ -207,9 +226,9 @@ export default class Login extends Component {
                                     rememberMe: checked,
                                 });
                             }}
-                            style={{'margin': '30px 0'}}
+                            style={{'margin':'30px 0'}}
                         />
-                        <br/>
+                        <br />
                         <RaisedButton
                             primary
                             type="submit"
@@ -217,8 +236,8 @@ export default class Login extends Component {
                             label={<FormattedMessage id="login.title" defaultMessage="Login"/>}
                             disabledBackgroundColor="rgb(27, 40, 47)"
                         />
-                        <br/>
-                        <br/>
+                        <br />
+                        <br />
                         <div style={styles.cookiePolicy}>
                             <div>
                                 <FormattedMessage
@@ -236,7 +255,7 @@ export default class Login extends Component {
                                 <FormattedMessage id="login.cookie.policy.after" defaultMessage=" for more details."/>
                             </div>
                         </div>
-                        <br/>
+                        <br />
                         <div style={styles.cookiePolicy}>
                             <div>
                                 <FormattedMessage
@@ -262,6 +281,34 @@ export default class Login extends Component {
                 </div>
             </MuiThemeProvider>
         );
+    }
+
+    /**
+     * Renders the login page.
+     *
+     * @return {XML} HTML content
+     */
+    render() {
+        let { authenticated, authType } = this.state;
+        // If the user is already authenticated redirect to referrer link.
+        if (authenticated) {
+            return (
+                <Redirect to={this.state.referrer}/>
+            );
+        }
+
+        // If the authType is not defined, show a blank page (or loading gif).
+        if (authType === Constants.AUTH_TYPE_UNKNOWN) {
+            return <div />;
+        }
+
+        // If the authType is sso, show a blank page since the redirection is pending.
+        if (authType === Constants.AUTH_TYPE_SSO) {
+            return <div />;
+        }
+
+        // Render the default login form.
+        return this.renderDefaultLogin();
     }
 }
 

@@ -326,17 +326,4 @@ public class DashboardRestApi implements Microservice {
                                                                   .getReportConfigs();
         return Response.ok().entity(reportConfigurations).build();
     }
-
-    /**
-     * Gets the auth type if the sso enabled
-     *
-     * @return response
-     */
-    @GET
-    @Path("/auth-type")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getAuthType() {
-       boolean ssoEnabled = dashboardDataProvider.ssoEnabled();
-        return Response.ok().entity(ssoEnabled).build();
-    }
 }

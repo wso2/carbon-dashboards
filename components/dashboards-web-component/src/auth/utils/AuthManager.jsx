@@ -17,31 +17,10 @@
  *
  */
 
+import Qs from 'qs';
+
 import AuthenticationAPI from '../../utils/apis/AuthenticationAPI';
-
-/**
- * Name of the session cookie.
- */
-const SESSION_USER_COOKIE = 'DASHBOARD_USER';
-
-/**
- * Name of the SP token 1 cookie
- */
-const WSO2_SP_TOKEN_1 = 'JID';
-
-/**
- * Name of the SP token 2 cookie
- */
-const WSO2_SP_TOKEN_2 = 'HID';
-
-/**
- *  Name of the USER_DTO cookie
- */
-const WSO2_USER_DTO = "USER_DTO";
-/**
- * Name of the refresh token cookie.
- */
-const REFRESH_TOKEN_COOKIE = 'PRT';
+import { Constants } from '../Constants';
 
 /**
  * Refresh token validity period.
@@ -58,7 +37,7 @@ export default class AuthManager {
      * @returns {{}|null} User object
      */
     static getUser() {
-        const buffer = AuthManager.getCookie(SESSION_USER_COOKIE);
+        const buffer = AuthManager.getCookie(Constants.SESSION_USER_COOKIE);
         return buffer ? JSON.parse(buffer) : null;
     }
 
@@ -68,15 +47,15 @@ export default class AuthManager {
      * @param {{}} user  User object
      */
     static setUser(user) {
-        AuthManager.setCookie(SESSION_USER_COOKIE, JSON.stringify(user), null, window.contextPath);
+        AuthManager.setCookie(Constants.SESSION_USER_COOKIE, JSON.stringify(user), null, window.contextPath);
     }
 
     /**
      * Discard active user session.
      */
     static discardSession() {
-        AuthManager.deleteCookie(SESSION_USER_COOKIE);
-        AuthManager.deleteCookie(REFRESH_TOKEN_COOKIE);
+        AuthManager.deleteCookie(Constants.SESSION_USER_COOKIE);
+        AuthManager.deleteCookie(Constants.REFRESH_TOKEN_COOKIE);
         window.localStorage.clear();
     }
 
@@ -88,11 +67,14 @@ export default class AuthManager {
     static isLoggedIn() {
         return !!AuthManager.getUser();
     }
+
     /**
-     *  Check whether the sso authenticated
+     * Check if SSO authenticated.
+     *
+     * @returns {boolean}
      */
     static isSSOAuthenticated() {
-        return (!!AuthManager.getWSO2UserDTO());
+        return !!this.getSSOUserCookie();
     }
 
     /**
@@ -127,9 +109,9 @@ export default class AuthManager {
     static authenticate(username, password, rememberMe) {
         return new Promise((resolve, reject) => {
             AuthenticationAPI
-                .login(username, password, rememberMe, "password")
+                .login(username, password, rememberMe)
                 .then((response) => {
-                    const {authUser, pID, lID, validityPeriod} = response.data;
+                    const { authUser, pID, lID, validityPeriod } = response.data;
 
                     window.localStorage.setItem('rememberMe', rememberMe);
                     if (rememberMe) {
@@ -144,26 +126,34 @@ export default class AuthManager {
                     });
                     // If rememberMe, set refresh token into a persistent cookie else session cookie.
                     const refreshTokenValidityPeriod = rememberMe ? REFRESH_TOKEN_VALIDITY_PERIOD : null;
-                    AuthManager.setCookie(REFRESH_TOKEN_COOKIE, lID, refreshTokenValidityPeriod, window.contextPath);
+                    AuthManager.setCookie(Constants.REFRESH_TOKEN_COOKIE, lID, refreshTokenValidityPeriod, window.contextPath);
                     resolve();
                 })
                 .catch(error => reject(error));
         });
     }
 
+    /**
+     * Authenticate user via SSO.
+     *
+     * @returns {Promise<any>}
+     */
     static ssoAuthenticate() {
         return new Promise((resolve, reject) => {
-            AuthenticationAPI.login("", "", true, "authorization_code").then((response) => {
-            }).catch((error) => {
-                if (error.response.status === 302) {
-                    const rec = error.response.data.redirectUrl + "?response_type=code&client_id=" +
-                        error.response.data.clientId + "&redirect_uri=" + error.response.data.callbackUrl + "";
-                    resolve(rec);
-                } else {
-                    reject(error);
-                }
-            })
-        })
+            AuthenticationAPI.login('', '', true, 'authorization_code')
+                .catch((e) => {
+                    if (e.response.status === 302) {
+                        let redirectUrl = e.response.data.redirectUrl + '?' + Qs.stringify({
+                            response_type: 'code',
+                            client_id: e.response.data.clientId,
+                            redirect_uri: e.response.data.callbackUrl
+                        });
+                        resolve(redirectUrl);
+                    } else {
+                        reject(e);
+                    }
+                });
+        });
     }
 
     /**
@@ -171,12 +161,13 @@ export default class AuthManager {
      *
      * @returns {Promise}
      */
-    static authenticateWithRefreshToken() {
+    static authenticateWithRefreshToken(){
         return new Promise((resolve, reject) => {
             AuthenticationAPI
                 .getAccessTokenWithRefreshToken()
                 .then((response) => {
-                    const {pID, lID, validityPeriod} = response.data;
+                    console.log(response.data);
+                    const { pID, lID, validityPeriod } = response.data;
 
                     const username = AuthManager.isRememberMeSet() ?
                         window.localStorage.getItem('username') : AuthManager.getUser().username;
@@ -188,7 +179,7 @@ export default class AuthManager {
                     });
                     // If rememberMe, set refresh token into a persistent cookie else session cookie.
                     const refreshTokenValidityPeriod = AuthManager.isRememberMeSet() ? REFRESH_TOKEN_VALIDITY_PERIOD : null;
-                    AuthManager.setCookie(REFRESH_TOKEN_COOKIE, lID, refreshTokenValidityPeriod, window.contextPath);
+                    AuthManager.setCookie(Constants.REFRESH_TOKEN_COOKIE, lID, refreshTokenValidityPeriod, window.contextPath);
                     resolve();
                 })
                 .catch(error => reject(error));
@@ -212,23 +203,35 @@ export default class AuthManager {
         });
     }
 
+    /**
+     * Loogut user via SSO.
+     *
+     * @returns {Promise<any>}
+     */
     static ssoLogout() {
         return new Promise((resolve, reject) =>{
             AuthenticationAPI.ssoLogout(AuthManager.getUser().SDID)
-                .then((response) => {
-                    const redirectUrl = response.data.externalLogoutUrl;
-                    console.log(redirectUrl);
-                    resolve(redirectUrl)
-                }).catch(error =>reject(error));
+                .then((response) => resolve(response.data.externalLogoutUrl))
+                .catch((error) => reject(error));
         })
     }
 
-    static isSSOEEnabled() {
-        return AuthenticationAPI.isSSOEnable();
+    /**
+     * Get authentication type.
+     *
+     * @returns {*}
+     */
+    static getAuthType() {
+        return AuthenticationAPI.getAuthType();
     }
 
-    static getWSO2UserDTO() {
-        const buffer = AuthManager.getCookie(WSO2_USER_DTO);
+    /**
+     * Get SSO user cookie.
+     *
+     * @returns {null}
+     */
+    static getSSOUserCookie() {
+        const buffer = AuthManager.getCookie(Constants.USER_DTO_COOKIE);
         return buffer ? JSON.parse(buffer) : null;
     }
 

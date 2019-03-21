@@ -22,6 +22,7 @@ import { Redirect } from 'react-router-dom';
 
 import DashboardThumbnail from '../utils/DashboardThumbnail';
 import AuthManager from './utils/AuthManager';
+import { Constants } from "./Constants";
 
 /**
  * Logout.
@@ -30,33 +31,35 @@ export default class Logout extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            redirectToLogin: false,
             redirectUrl :''
         }
     }
 
     componentDidMount() {
         DashboardThumbnail.deleteDashboardThumbnails();
-        if(AuthManager.isSSOEEnabled()){
-            AuthManager.ssoLogout().then((result) => {
-                this.setState({ redirectUrl:result})
+
+        // Logout the user
+        AuthManager.getAuthType()
+            .then((response) => {
+                if (response.data.authType === Constants.AUTH_TYPE_SSO) {
+                    AuthManager.ssoLogout().then((redirectUrl) => {
+                        location.href = redirectUrl;
+                    });
+                } else {
+                    AuthManager.logout()
+                        .then(() => {
+                            this.setState({ redirectUrl: '/login' });
+                        });
+                }
             });
-        }
-        AuthManager.logout()
-            .then(() => {
-                this.setState({ redirectToLogin: true });
-                location.href = this.state.redirectUrl;
-            })
     }
 
     /**
      * Renders logout component.
+     *
      * @returns {XML} HTML content
      */
     render() {
-        if (this.state.redirectToLogin) {
-            return <Redirect to={{ pathname: '/login' }} />;
-        }
-        return null;
+        return <Redirect to={{ pathname: this.state.redirectUrl }} />;
     }
 }

@@ -33,7 +33,6 @@ import org.wso2.carbon.analytics.permissions.PermissionProvider;
 import org.wso2.carbon.config.ConfigurationException;
 import org.wso2.carbon.config.provider.ConfigProvider;
 import org.wso2.carbon.dashboards.core.DashboardMetadataProvider;
-import org.wso2.carbon.dashboards.core.bean.AuthConfigurations;
 import org.wso2.carbon.dashboards.core.bean.DashboardConfigurations;
 import org.wso2.carbon.datasource.core.api.DataSourceService;
 
@@ -49,12 +48,11 @@ public class StartupListener {
     private DashboardConfigurations dashboardConfigurations;
     private PermissionProvider permissionProvider;
     private IdPClient idPClient;
-    private AuthConfigurations authConfigurations;
 
     @Reference(service = DataSourceService.class,
-            cardinality = ReferenceCardinality.AT_LEAST_ONE,
-            policy = ReferencePolicy.DYNAMIC,
-            unbind = "unsetDataSourceService")
+               cardinality = ReferenceCardinality.AT_LEAST_ONE,
+               policy = ReferencePolicy.DYNAMIC,
+               unbind = "unsetDataSourceService")
     protected void setDataSourceService(DataSourceService dataSourceService) {
         this.dataSourceService = dataSourceService;
     }
@@ -64,29 +62,27 @@ public class StartupListener {
     }
 
     @Reference(service = ConfigProvider.class,
-            cardinality = ReferenceCardinality.MANDATORY,
-            policy = ReferencePolicy.DYNAMIC,
-            unbind = "unsetConfigProvider")
+               cardinality = ReferenceCardinality.MANDATORY,
+               policy = ReferencePolicy.DYNAMIC,
+               unbind = "unsetConfigProvider")
     protected void setConfigProvider(ConfigProvider configProvider) {
         try {
             this.dashboardConfigurations = configProvider.getConfigurationObject(DashboardConfigurations.class);
-            this.authConfigurations = configProvider.getConfigurationObject(AuthConfigurations.class);
         } catch (ConfigurationException e) {
             LOGGER.error("Cannot load dashboard configurations from 'deployment.yaml'. Falling-back to defaults.", e);
             this.dashboardConfigurations = new DashboardConfigurations();
-            this.authConfigurations = new AuthConfigurations();
         }
     }
 
     protected void unsetConfigProvider(ConfigProvider configProvider) {
         LOGGER.debug("An instance of class '{}' unregistered as a config provider.",
-                configProvider.getClass().getName());
+                     configProvider.getClass().getName());
     }
 
     @Reference(service = PermissionManager.class,
-            cardinality = ReferenceCardinality.MANDATORY,
-            policy = ReferencePolicy.DYNAMIC,
-            unbind = "unsetPermissionManager"
+               cardinality = ReferenceCardinality.MANDATORY,
+               policy = ReferencePolicy.DYNAMIC,
+               unbind = "unsetPermissionManager"
     )
     protected void setPermissionManager(PermissionManager permissionManager) {
         this.permissionProvider = permissionManager.getProvider();
@@ -113,7 +109,7 @@ public class StartupListener {
     @Activate
     protected void activate(BundleContext bundleContext) {
         DashboardMetadataProvider dashboardMetadataProvider = new DashboardMetadataProviderImpl(dataSourceService,
-                dashboardConfigurations, permissionProvider, idPClient, authConfigurations);
+                dashboardConfigurations, permissionProvider, idPClient);
         bundleContext.registerService(DashboardMetadataProvider.class, dashboardMetadataProvider, null);
         LOGGER.debug("{} activated.", this.getClass().getName());
     }
