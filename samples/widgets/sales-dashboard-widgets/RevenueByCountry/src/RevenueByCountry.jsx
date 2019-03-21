@@ -66,7 +66,7 @@ class RevenueByCountry extends Widget {
 
         this.mapConfig = {
             x: 'Country',
-            charts: [{type: 'map', y: 'Revenue', mapType: 'world', colorScale: ['#ccc', '#0082ea']}],
+            charts: [{type: 'map', y: 'Revenue', mapType: 'world', colorScale: ['#80CBC4', '#00796B']}],
             width: this.state.width,
             height: this.state.height,
             style: {

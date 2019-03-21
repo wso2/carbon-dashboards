@@ -25,12 +25,10 @@ class RevenuePercentage extends Widget {
     constructor(props) {
         super(props);
         this.config = {
-            charts: [{type: 'arc', x: 'Percentage', color: 'Percentage', colorScale: ['#c15832', '#dc8d48']}],
+            charts: [{type: 'arc', x: 'Percentage', color: 'Percentage', colorScale: ['#4DB6AC', '#173b4e']}],
             percentage: true,
             animate: true,
             labelColor:'#5d6e77',
-            innerRadius: 20,
-            labelFontSize: 90,
         };
 
         this.state = {
@@ -82,7 +80,6 @@ class RevenuePercentage extends Widget {
 
     render() {
         return (
-            <div style={{ width: this.props.glContainer.width, height: this.props.glContainer.height, marginBottom: 10 }}>
                 <VizG
                     config={this.state.config}
                     metadata={this.metadata}
@@ -90,7 +87,6 @@ class RevenuePercentage extends Widget {
                     append={false}
                     onClick={this.handleClickEvent}
                 />
-            </div>
         );
     }
 }
