@@ -156,11 +156,11 @@ class RevenueByRegion extends Widget {
                 x: 'Revenue',
                 color: 'Region',
                 mode: 'pie',
-                colorScale: ['#4659f9', '#00dffc ', '#00b1e1', '#6f2e71', '#c43a5d', '#303869', '#3847c3']
             }],
             width: props.glContainer.width,
             height: props.glContainer.height,
             animate: true,
+            legend: true,
             style: {legendTitleColor: "#5d6e77", legendTextColor: "#5d6e77", legendTextSize: 14}
         };
 
@@ -170,11 +170,11 @@ class RevenueByRegion extends Widget {
                 x: 'Revenue',
                 color: 'Product',
                 mode: 'pie',
-                colorScale: ['#4659f9', '#00dffc ', '#00b1e1', '#6f2e71', '#c43a5d', '#303869', '#3847c3']
             }],
             width: props.glContainer.width,
             height: props.glContainer.height,
             animate: true,
+            legend: true,
             style: {legendTitleColor: "#5d6e77", legendTextColor: "#5d6e77", legendTextSize: 14}
         };
 
@@ -228,24 +228,18 @@ class RevenueByRegion extends Widget {
     render() {
         return (
             <MuiThemeProvider>
-                <IconButton
-                    onClick={this.handleClickEvent}
-                    disabled={!this.state.isDrillDowned}
-                    iconStyle={{
-                        color: '#fff',
-                        cursor: 'default',
-                        fill: '#fff',
-                    }}
-                >
-                    <RevertIcon />
-                </IconButton>
-                <div
-                    style={{
-                        width: this.props.glContainer.width,
-                        height: this.props.glContainer.height,
-                        marginBottom: 10
-                    }}
-                >
+                <div>
+                    <IconButton
+                        onClick={this.handleClickEvent}
+                        disabled={!this.state.isDrillDowned}
+                        iconStyle={{
+                            color: '#fff',
+                            fill: '#fff',
+                        }}
+                        style={{ position: 'absolute'}}
+                    >
+                        <RevertIcon />
+                    </IconButton>
                     <VizG
                         config={this.state.config}
                         metadata={this.metadata}

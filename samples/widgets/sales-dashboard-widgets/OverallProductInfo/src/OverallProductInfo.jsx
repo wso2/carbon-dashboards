@@ -155,8 +155,8 @@ class OverallProductInfo extends Widget {
 
         this.stackedBarChartConfig = {
             x: 'Product',
-            charts: [{type: 'bar', y: 'Downloads', fill: '#4659f9'},
-                {type: 'bar', y: 'Customers', fill: '#00b7ee'}],
+            charts: [{type: 'bar', y: 'Downloads'},
+                {type: 'bar', y: 'Customers'}],
             maxLength: 6,
             width: this.props.glContainer.width,
             height: this.props.glContainer.height,

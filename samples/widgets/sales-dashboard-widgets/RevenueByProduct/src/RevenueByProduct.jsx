@@ -84,7 +84,7 @@ class RevenueByProduct extends Widget {
 
         this.barChartConfig = {
             x: 'Product',
-            charts: [{type: 'bar', y: 'Revenue', fill: '#10c469'}],
+            charts: [{type: 'bar', y: 'Revenue'}],
             maxLength: 5,
             width: props.glContainer.width,
             height: props.glContainer.height,

@@ -162,12 +162,12 @@ class OverallRevenueInfo extends Widget {
                 x: 'Revenue',
                 color: 'Product',
                 mode: 'pie',
-                colorScale: ['#4659f9', '#00dffc ', '#00b1e1', '#6f2e71', '#c43a5d']
+                colorScale: ['#3366cc', '#4DB6AC ', '#ff9900', '#109618', '#990099']
             }],
-            width:515,
             animate: true,
             style: {legendTitleColor: "#5d6e77", legendTextColor: "#5d6e77"},
             append: false,
+            legend: true,
         };
 
 
