@@ -99,7 +99,6 @@ class DashboardSettingsPage extends Component {
         }
 
         // Save dashboard metadata.
-        dashboard.pages = JSON.parse(dashboard.pages);
         new DashboardAPI()
             .updateDashboardByID(dashboard.url, dashboard)
             .then((response) => {

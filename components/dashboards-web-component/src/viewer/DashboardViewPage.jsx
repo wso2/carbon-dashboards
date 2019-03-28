@@ -86,8 +86,8 @@ class DashboardViewPage extends Component {
         new DashboardAPI().getDashboardByID(this.props.match.params.dashboardId)
             .then((response) => {
                 this.dashboard = response.data;
-                if (_.isString(this.dashboard.pages)) {
-                    this.dashboard.pages = JSON.parse(this.dashboard.pages);
+                if (_.isString(this.dashboard.content.pages)) {
+                    this.dashboard.content.pages = JSON.parse(this.dashboard.content.pages);
                 }
                 this.setState({ dashboardFetchStatus: HttpStatus.OK });
             })
@@ -226,7 +226,7 @@ class DashboardViewPage extends Component {
                 <br />
                 <Divider />
                 <DashboardReportGenerationCard
-                    pages={this.dashboard.pages}
+                    pages={this.dashboard.content.pages}
                     dashboardName={this.dashboard ? this.dashboard.name : this.props.match.params.dashboardId}
                 />
             </Drawer>
@@ -242,7 +242,7 @@ class DashboardViewPage extends Component {
         const landingPage = this.dashboard.landingPage;
         const history = this.props.history;
         let pagesList = [];
-        this.dashboard.pages.forEach((page) => {
+        this.dashboard.content.pages.forEach((page) => {
             if (page.hidden) {
                 return;
             }
@@ -299,7 +299,7 @@ class DashboardViewPage extends Component {
 
     renderDashboard(theme) {
         const { pageId, subPageId } = this.props.match.params;
-        let page = this.dashboard.pages.find(page => (page.id === pageId));
+        let page = this.dashboard.content.pages.find(page => (page.id === pageId));
         if (page) {
             if (page.pages && subPageId) {
                 page = page.pages.find(page => (page.id === subPageId));

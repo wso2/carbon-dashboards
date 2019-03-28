@@ -19,7 +19,7 @@
 import GoldenLayoutContentUtils from 'src/utils/GoldenLayoutContentUtils';
 import salesDashboard from 'test/sales-dashboard';
 
-const homePageGoldenLayoutContent = salesDashboard.dashboard.pages[0].content;
+const homePageGoldenLayoutContent = salesDashboard.dashboard.content.pages[0].content;
 
 describe('GoldenLayoutContentUtils', () => {
     describe('getWidgetContent', () => {

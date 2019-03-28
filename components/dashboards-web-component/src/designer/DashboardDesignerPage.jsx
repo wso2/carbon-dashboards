@@ -62,8 +62,8 @@ export default class DashboardDesignerPage extends Component {
         new DashboardAPI('designer').getDashboardByID(this.props.match.params.dashboardId)
             .then((response) => {
                 this.dashboard = response.data;
-                if (_.isString(this.dashboard.pages)) {
-                    this.dashboard.pages = JSON.parse(this.dashboard.pages);
+                if (_.isString(this.dashboard.content.pages)) {
+                    this.dashboard.content.pages = JSON.parse(this.dashboard.content.pages);
                 }
                 this.setState({ dashboardFetchStatus: HttpStatus.OK });
             })

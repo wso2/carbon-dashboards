@@ -20,7 +20,6 @@ package org.wso2.carbon.dashboards.core.bean;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wso2.carbon.dashboards.core.exception.DashboardException;
 
 /**
  * Class to represent a DashboardMetadata(Dashboard JSON).
@@ -35,7 +34,7 @@ public class DashboardMetadata {
     protected String description;
     protected String landingPage;
     protected String parentId;
-    protected Object pages;
+    protected DashboardMetadataContent content;
     protected boolean hasOwnerPermission;
     protected boolean hasDesignerPermission;
     protected boolean hasViewerPermission;
@@ -203,21 +202,21 @@ public class DashboardMetadata {
     }
 
     /**
-     * This method is to get the content/dashbord json
+     * Returns the dashboard content (pages and properties).
      *
-     * @return Object returns the content of dashboard
+     * @return dashboard content
      */
-    public Object getPages() throws DashboardException {
-        return pages;
+    public DashboardMetadataContent getContent() {
+        return content;
     }
 
     /**
-     * This method is used to set the content/dashboard json
+     * Set dashboard content (pages and properties).
      *
-     * @param pages content of dashboard
+     * @param content dashboard content
      */
-    public void setPages(Object pages) {
-        this.pages = pages;
+    public void setContent(DashboardMetadataContent content) {
+        this.content = content;
     }
 
     @Override
