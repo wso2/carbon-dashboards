@@ -227,6 +227,9 @@ export default class WidgetRenderer extends Component {
                     pubSubHub: this.props.glContainer.layoutManager.pubSubHub,
                     muiTheme: this.state.currentTheme,
                     channelManager: getWidgetChannelManager(),
+                    dashboard: {
+                        id: ((location.pathname.startsWith('/') ? '' : '/') + location.pathname).split('/')[3]
+                    }
                 };
                 return React.createElement(this.widgetClass, widgetProps);
             }

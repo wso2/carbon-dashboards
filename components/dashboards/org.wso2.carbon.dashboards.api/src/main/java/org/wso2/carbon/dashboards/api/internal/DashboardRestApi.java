@@ -35,6 +35,7 @@ import org.wso2.msf4j.interceptor.annotation.RequestInterceptor;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -64,6 +65,7 @@ public class DashboardRestApi implements Microservice {
     public static final String API_CONTEXT_PATH = "/apis/dashboards";
     private static final Logger LOGGER = LoggerFactory.getLogger(DashboardRestApi.class);
     private static final Gson GSON = new Gson();
+    private static final String HEADER_DASHBOARD_ORIGIN_COMP = "X-Dashboard-Origin-Component";
 
     private final DashboardMetadataProvider dashboardDataProvider;
 
@@ -109,7 +111,7 @@ public class DashboardRestApi implements Microservice {
     public Response get(@PathParam("id") String id, @Context Request request) {
         try {
             return dashboardDataProvider.getDashboardByUser(getUserName(request), id,
-                                                            request.getHeader("X-Dashboard-Origin-Component")).map(
+                                                            request.getHeader(HEADER_DASHBOARD_ORIGIN_COMP)).map(
                     metadata ->
                             Response.ok().entity(metadata).build())
                     .orElse(Response.status(NOT_FOUND).entity("Cannot find a dashboard for ID '" + id + "'.").build());
@@ -119,6 +121,66 @@ public class DashboardRestApi implements Microservice {
         } catch (DashboardException e) {
             LOGGER.error(String.format("An error occurred when retrieving" +
                                        " dashboard for ID %s.", replaceCRLFCharacters(id)), e);
+            return Response.serverError().entity("Cannot retrieve dashboard for ID '" + id + "'.").build();
+        }
+    }
+
+    /**
+     * Get dashboard properties for the given ID.
+     *
+     * @param id Dashboard ID
+     * @param request Request object
+     * @return Dashboard properties
+     */
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/{id}/properties")
+    public Response getDashboardProperties(@PathParam("id") String id, @Context Request request) {
+        try {
+            return dashboardDataProvider.getDashboardByUser(getUserName(request), id,
+                    request.getHeader(HEADER_DASHBOARD_ORIGIN_COMP))
+                    .map(d -> Response.ok().entity(d.getContent().getProperties()).build())
+                    .orElse(Response.status(NOT_FOUND).entity("Cannot find the dashboard for ID '" + id + "'.")
+                            .build());
+        } catch (UnauthorizedException e) {
+            return Response.status(FORBIDDEN).entity("Insufficient permissions to retrieve dashboard with ID : " + id)
+                    .build();
+        } catch (DashboardException e) {
+            LOGGER.error(String.format("An error occurred when retrieving dashboard for ID %s.",
+                    replaceCRLFCharacters(id)), e);
+            return Response.serverError().entity("Cannot retrieve dashboard for ID '" + id + "'.").build();
+        }
+    }
+
+    /**
+     * Get dashboard property for the given dashboard ID and key
+     *
+     * @param id Dashboard ID
+     * @param request Request object
+     * @return Dashboard properties
+     */
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/{id}/properties/{key}")
+    public Response getDashboardProperties(@PathParam("id") String id, @PathParam("key") String key,
+                                           @Context Request request) {
+        try {
+            Optional<DashboardMetadata> dashboard = dashboardDataProvider.getDashboardByUser(getUserName(request), id,
+                    request.getHeader(HEADER_DASHBOARD_ORIGIN_COMP));
+            if (dashboard.isPresent()) {
+                String value = dashboard.get().getContent().getProperties().get(key);
+                if (value != null) {
+                    return Response.ok().entity(value).build();
+                }
+                Response.status(NOT_FOUND).entity("Cannot find the property for key '" + key + "'.").build();
+            }
+            return Response.status(NOT_FOUND).entity("Cannot find the dashboard for ID '" + id + "'.").build();
+        } catch (UnauthorizedException e) {
+            return Response.status(FORBIDDEN).entity("Insufficient permissions to retrieve dashboard with ID : " + id)
+                    .build();
+        } catch (DashboardException e) {
+            LOGGER.error(String.format("An error occurred when retrieving dashboard for ID %s.",
+                    replaceCRLFCharacters(id)), e);
             return Response.serverError().entity("Cannot retrieve dashboard for ID '" + id + "'.").build();
         }
     }
