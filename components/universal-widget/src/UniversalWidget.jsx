@@ -27,8 +27,6 @@ const renderers = {
     SearchRenderer: SearchRenderer,
 };
 
-let granularity = "";
-
 export default class UniversalWidget extends Widget {
     constructor(props) {
         super(props);
@@ -39,6 +37,7 @@ export default class UniversalWidget extends Widget {
             metadata: null,
             data: [],
             config: null,
+            granularity: null,
             widgetInputs: [],
             systemInputs: [],
             providerConfigs: {},
@@ -157,7 +156,7 @@ export default class UniversalWidget extends Widget {
             this.widgetContext.handleWidgetData, this.widgetContext.state.providerConfigs);
         this.widgetContext.setState({ config: this.widgetContext.state.config });
         if (receivedData.granularity) {
-            granularity = receivedData.granularity;
+            this.widgetContext.setState({granularity: receivedData.granularity});
         }
     }
 
@@ -198,8 +197,8 @@ export default class UniversalWidget extends Widget {
     getRenderer() {
         if(this.state.config) {
             const RendererComponent = renderers[this.getRendererType()];
-            if (this.state.config.x === "Time") {
-                this.state.config.timeFormat = UniversalWidget.getTimeFormatRegex(granularity);
+            if (this.state.config.x === "Time" && this.state.granularity !== null) {
+                this.state.config.timeFormat = UniversalWidget.getTimeFormatRegex(this.state.granularity);
                 this.state.config.tipTimeFormat = "%c";
             }
             return (
