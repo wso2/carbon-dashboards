@@ -197,7 +197,7 @@ export default class UniversalWidget extends Widget {
     getRenderer() {
         if(this.state.config) {
             const RendererComponent = renderers[this.getRendererType()];
-            if (this.state.config.x === "Time" && this.state.granularity !== null) {
+            if (this.state.config.x === 'Time' && this.state.granularity !== null) {
                 this.state.config.timeFormat = UniversalWidget.getTimeFormatRegex(this.state.granularity);
                 this.state.config.tipTimeFormat = "%c";
             }
