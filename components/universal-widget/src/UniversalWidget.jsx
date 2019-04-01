@@ -37,6 +37,7 @@ export default class UniversalWidget extends Widget {
             metadata: null,
             data: [],
             config: null,
+            granularity: null,
             widgetInputs: [],
             systemInputs: [],
             providerConfigs: {},
@@ -154,6 +155,9 @@ export default class UniversalWidget extends Widget {
         this.widgetContext.channelManager.subscribeWidget(this.widgetContext.props.id,
             this.widgetContext.handleWidgetData, this.widgetContext.state.providerConfigs);
         this.widgetContext.setState({ config: this.widgetContext.state.config });
+        if (receivedData.granularity) {
+            this.widgetContext.setState({granularity: receivedData.granularity});
+        }
     }
 
     componentWillUnmount() {
@@ -193,6 +197,10 @@ export default class UniversalWidget extends Widget {
     getRenderer() {
         if(this.state.config) {
             const RendererComponent = renderers[this.getRendererType()];
+            if (this.state.config.x === 'Time' && this.state.granularity !== null) {
+                this.state.config.timeFormat = UniversalWidget.getTimeFormatRegex(this.state.granularity);
+                this.state.config.tipTimeFormat = '%c';
+            }
             return (
                 <RendererComponent
                     id={this.state.id}
@@ -235,6 +243,28 @@ export default class UniversalWidget extends Widget {
         });
         httpClient.defaults.headers.post['Content-Type'] = 'application/json';
         return httpClient;
+    }
+
+    /**
+     * Get timeFormat Regex according to the granularity
+     **/
+    static getTimeFormatRegex(granularity) {
+        switch (granularity) {
+            case 'year':
+                return '%Y';
+            case 'month':
+                return '%b';
+            case 'day':
+                return '%x';
+            case 'hour':
+                return '%H';
+            case 'minute':
+                return '%M';
+            case 'second':
+                return '%S';
+            default:
+                return null;
+        }
     }
 }
 
