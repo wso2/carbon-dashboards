@@ -30,7 +30,7 @@ export default class WidgetAPI {
     static getHTTPClient() {
         const httpClient = Axios.create({
             baseURL: `${window.location.origin}${window.contextPath}/apis/widgets`,
-            timeout: 2000,
+            timeout: 300000,
             headers: { Authorization: 'Bearer ' + AuthManager.getUser().SDID },
         });
         httpClient.interceptors.response.use(response => response, (error) => {
