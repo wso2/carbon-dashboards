@@ -311,6 +311,7 @@ class DashboardViewPage extends Component {
                     dashboardPageContents={page.content}
                     dashboardPageHeight={page.height}
                     theme={theme}
+                    dashboard={this.dashboard}
                 />
             );
         } else {

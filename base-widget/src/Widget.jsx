@@ -181,57 +181,14 @@ export default class Widget extends Component {
         return this.channelManager;
     }
 
-    /**
-     * Get widget configurations
-     *
-     * @param widgetId Widget ID
-     * @returns {AxiosPromise<any>}
-     */
     getWidgetConfiguration(widgetId) {
-        const httpClient = this.getHttpClient();
-        httpClient.defaults.headers.post['Content-Type'] = 'application/json';
-        return httpClient.get(`/apis/widgets/${widgetId}`);
-    }
-
-    /**
-     * Get properties of the current dashboard.
-     *
-     * @returns {Promise<any>}
-     */
-    getDashboardProperties() {
-        const dashboardId = this.props.dashboard.id;
-        return new Promise((resolve, reject) => {
-            return this.getHttpClient().get(`/apis/dashboards/${dashboardId}/properties`)
-                .then(resp => resolve(resp.data))
-                .catch(() => reject())
-        });
-    }
-
-    /**
-     * Get dashboard property by key.
-     *
-     * @param key Key of the property
-     * @returns {Promise<any>}
-     */
-    getDashboardProperty(key) {
-        const dashboardId = this.props.dashboard.id;
-        return new Promise((resolve, reject) => {
-            return this.getHttpClient().get(`/apis/dashboards/${dashboardId}/properties/${key}`)
-                .then(resp => resolve(resp.data))
-                .catch(() => reject())
-        });
-    }
-
-    /**
-     * Get HTTP client
-     * @returns {AxiosInstance}
-     */
-    getHttpClient() {
-        return Axios.create({
+        let httpClient = Axios.create({
             baseURL: window.location.origin + window.contextPath,
             timeout: 2000,
-            headers: {'Authorization': 'Bearer ' + JSON.parse(Widget._getSessionCookie(SESSION_USER)).SDID},
+            headers: {"Authorization": "Bearer " + JSON.parse(Widget._getSessionCookie(SESSION_USER)).SDID},
         });
+        httpClient.defaults.headers.post['Content-Type'] = 'application/json';
+        return httpClient.get(`/apis/widgets/${widgetId}`);
     }
 }
 

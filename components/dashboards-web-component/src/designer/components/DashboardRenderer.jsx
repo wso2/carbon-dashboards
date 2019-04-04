@@ -267,7 +267,8 @@ export default class DashboardRenderer extends Component {
         }
 
         const goldenLayoutContents = this.getRenderingPage().content;
-        const goldenLayout = GoldenLayoutFactory.createForDesigner(dashboardContainerId, goldenLayoutContents);
+        const goldenLayout = GoldenLayoutFactory.createForDesigner(dashboardContainerId, goldenLayoutContents,
+            this.props.dashboard);
 
         goldenLayout.on('initialised', this.onGoldenLayoutInitializedEvent);
         goldenLayout.on('stackCreated', blockDropOnStack);
