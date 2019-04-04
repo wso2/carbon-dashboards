@@ -29,9 +29,15 @@ export default class GoldenLayoutFactory {
      * @param {{settings: object, dimensions: object, content: object}} glConfig config
      * @returns {module:golden-layout.GoldenLayout} created GoldenLayout
      */
-    static create(dashboardContainerId, glConfig) {
+    static create(dashboardContainerId, glConfig, dashboard) {
         const dashboardContainer = document.getElementById(dashboardContainerId);
         const goldenLayout = new GoldenLayout(glConfig, dashboardContainer);
+        // Set dashboard content to be passed into a widget (as props)
+        if (dashboard) {
+            goldenLayout.dashboard = {
+                properties: dashboard.content.properties || {}
+            }
+        }
 
         const renderingWidgetClassNames = GoldenLayoutContentUtils.getReferredWidgetClassNames(glConfig.content);
         renderingWidgetClassNames.forEach(widgetName => goldenLayout.registerComponent(widgetName, WidgetRenderer));
@@ -83,7 +89,7 @@ export default class GoldenLayoutFactory {
      * @param {object} glContent content
      * @returns {module:golden-layout.GoldenLayout} created GoldenLayout
      */
-    static createForViewer(dashboardContainerId, glContent) {
+    static createForViewer(dashboardContainerId, glContent, dashboard) {
         const config = {
             settings: {
                 constrainDragToContainer: false,
@@ -103,7 +109,7 @@ export default class GoldenLayoutFactory {
             },
             content: glContent || [],
         };
-        return GoldenLayoutFactory.create(dashboardContainerId, config);
+        return GoldenLayoutFactory.create(dashboardContainerId, config, dashboard);
     }
 
     /**
@@ -112,7 +118,7 @@ export default class GoldenLayoutFactory {
      * @param {object} glContent content
      * @returns {module:golden-layout.GoldenLayout} created GoldenLayout
      */
-    static createForDesigner(dashboardContainerId, glContent) {
+    static createForDesigner(dashboardContainerId, glContent, dashboard) {
         const config = {
             settings: {
                 constrainDragToContainer: false,
@@ -132,7 +138,7 @@ export default class GoldenLayoutFactory {
             },
             content: glContent || [],
         };
-        return GoldenLayoutFactory.create(dashboardContainerId, config);
+        return GoldenLayoutFactory.create(dashboardContainerId, config, dashboard);
     }
 
     /**

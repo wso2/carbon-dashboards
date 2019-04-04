@@ -81,7 +81,7 @@ export default class DashboardListingPage extends Component {
                 dashboards.sort((dashboardA, dashboardB) => dashboardA.url > dashboardB.url);
                 this.setState({ dashboards });
             })
-            .catch(function () {
+            .catch(() => {
                 this.setState({
                     dashboards: [],
                     error: true,

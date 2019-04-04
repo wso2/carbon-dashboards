@@ -18,8 +18,6 @@
 package org.wso2.carbon.dashboards.core.internal;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.analytics.idp.client.core.api.IdPClient;
@@ -32,6 +30,7 @@ import org.wso2.carbon.dashboards.core.DashboardMetadataProvider;
 import org.wso2.carbon.dashboards.core.WidgetMetadataProvider;
 import org.wso2.carbon.dashboards.core.bean.DashboardConfigurations;
 import org.wso2.carbon.dashboards.core.bean.DashboardMetadata;
+import org.wso2.carbon.dashboards.core.bean.DashboardMetadataContent;
 import org.wso2.carbon.dashboards.core.bean.importer.DashboardArtifact;
 import org.wso2.carbon.dashboards.core.bean.importer.Page;
 import org.wso2.carbon.dashboards.core.bean.importer.PageContent;
@@ -319,11 +318,9 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
 
         // Set JSON parsed content to pages.
         DashboardMetadata dashboardMetadata = dashboardMetadataOptional.get();
-        // Convert stringified pages object to proper JSONElement before exporting.
-        dashboardMetadata.setPages(new JsonParser().parse((String) dashboardMetadata.getPages()));
         artifact.setDashboard(dashboardMetadata);
 
-        Map<WidgetType, Set<String>> widgets = findWidgets(dashboardMetadata);
+        Map<WidgetType, Set<String>> widgets = findWidgets(dashboardMetadata.getContent());
 
         // Set metadata of generated widgets
         Set<GeneratedWidgetConfigs> generatedWidgetConfigs = widgetMetadataProvider
@@ -340,13 +337,16 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
     /**
      * Find widgets by analyzing a dashboard pages.
      *
-     * @param dashboardMetadata Dashboard definition
+     * @param dashboardMetadataContent Dashboard content
      * @return Set of widget IDs
      * @throws DashboardException If an error occurred while reading or processing dashboards
      */
-    private Map<WidgetType, Set<String>> findWidgets(DashboardMetadata dashboardMetadata) throws DashboardException {
-        Page[] dashboardPages = new Gson().fromJson((JsonElement) dashboardMetadata.getPages(),
-                Page[].class);
+    private Map<WidgetType, Set<String>> findWidgets(DashboardMetadataContent dashboardMetadataContent)
+            throws DashboardException {
+        Page[] dashboardPages = new Page[dashboardMetadataContent.getPages().length];
+        for (int i = 0; i < dashboardMetadataContent.getPages().length; i++) {
+            dashboardPages[i] = new Gson().fromJson(dashboardMetadataContent.getPages()[i], Page.class);
+        }
         Map<WidgetType, Set<String>> widgets = new HashMap<>();
         widgets.put(WidgetType.GENERATED, new HashSet<>());
         widgets.put(WidgetType.CUSTOM, new HashSet<>());

@@ -147,7 +147,8 @@ export default class DashboardRenderer extends Component {
             }
         });
 
-        const goldenLayout = GoldenLayoutFactory.createForViewer(dashboardContainerId, goldenLayoutContents);
+        const goldenLayout = GoldenLayoutFactory.createForViewer(dashboardContainerId, goldenLayoutContents,
+            this.props.dashboard);
         const numberOfWidgets = GoldenLayoutContentUtils.getReferredWidgetClassNames(goldenLayoutContents).length;
         goldenLayout.on('componentCreated', this.onGoldenLayoutComponentCreateEvent);
         goldenLayout.eventHub.on(Event.DASHBOARD_VIEWER_WIDGET_LOADED,

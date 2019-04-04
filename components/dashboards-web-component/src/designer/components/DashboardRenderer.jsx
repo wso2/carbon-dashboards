@@ -96,13 +96,13 @@ export default class DashboardRenderer extends Component {
     shouldComponentUpdate(nextProps, nextState) {
         if (this.props.pageId !== nextProps.pageId) {
             // Receiving new page to render.
-            this.pageHeight = nextProps.dashboard.pages.find(p => p.id == nextProps.pageId).height;
+            this.pageHeight = nextProps.dashboard.content.pages.find(p => p.id == nextProps.pageId).height;
             this.destroyGoldenLayout();
             return true;
         }
         if (this.props.pageId === nextProps.pageId) {
             // Check whether the page height is difference for the same page.
-            let changingPage = nextProps.dashboard.pages.find(p => p.id === nextProps.pageId);
+            let changingPage = nextProps.dashboard.content.pages.find(p => p.id === nextProps.pageId);
             let newHeight = (changingPage === undefined) ? undefined:changingPage.height;
             if(newHeight != undefined){
                 if (this.pageHeight !== newHeight) {
@@ -160,7 +160,7 @@ export default class DashboardRenderer extends Component {
     }
 
     getRenderingPage() {
-        return this.props.dashboard.pages.find(page => (page.id === this.props.pageId));
+        return this.props.dashboard.content.pages.find(page => (page.id === this.props.pageId));
     }
 
     addWidgetSettingsButton(component) {
@@ -267,7 +267,8 @@ export default class DashboardRenderer extends Component {
         }
 
         const goldenLayoutContents = this.getRenderingPage().content;
-        const goldenLayout = GoldenLayoutFactory.createForDesigner(dashboardContainerId, goldenLayoutContents);
+        const goldenLayout = GoldenLayoutFactory.createForDesigner(dashboardContainerId, goldenLayoutContents,
+            this.props.dashboard);
 
         goldenLayout.on('initialised', this.onGoldenLayoutInitializedEvent);
         goldenLayout.on('stackCreated', blockDropOnStack);

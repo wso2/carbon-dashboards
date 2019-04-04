@@ -129,13 +129,16 @@ class DashboardCreatePage extends Component {
             description: this.state.dashboard.description,
             parentId: 0,
             landingPage: 'home',
-            pages: [
-                {
-                    id: 'home',
-                    name: this.context.intl.formatMessage({id: "home", defaultMessage: "Home"}),
-                    content: [],
-                },
-            ],
+            content: {
+                pages: [
+                    {
+                        id: 'home',
+                        name: this.context.intl.formatMessage({id: "home", defaultMessage: "Home"}),
+                        content: [],
+                    },
+                ],
+                properties: []
+            },
         };
         new DashboardAPI()
             .createDashboard(dashboard)

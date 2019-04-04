@@ -18,9 +18,12 @@
 package org.wso2.carbon.dashboards.core.internal.database;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.dashboards.core.bean.DashboardMetadata;
+import org.wso2.carbon.dashboards.core.bean.DashboardMetadataContent;
 import org.wso2.carbon.dashboards.core.exception.DashboardException;
 
 import java.nio.charset.StandardCharsets;
@@ -125,7 +128,7 @@ public class DashboardMetadataDao {
             ps.setString(1, dashboardMetadata.getName());
             ps.setString(2, dashboardMetadata.getDescription());
             Blob blob = connection.createBlob();
-            blob.setBytes(1, toJsonBytes(dashboardMetadata.getPages()));
+            blob.setBytes(1, toJsonBytes(dashboardMetadata.getContent()));
             ps.setBlob(3, blob);
             ps.setString(4, dashboardMetadata.getParentId());
             ps.setString(5, dashboardMetadata.getLandingPage());
@@ -151,14 +154,14 @@ public class DashboardMetadataDao {
             query = queryManager.getQuery(connection, QueryManager.ADD_DASHBOARD_CONTENT_QUERY);
             connection.setAutoCommit(false);
             ps = connection.prepareStatement(query);
-            Blob blob = connection.createBlob();
             ps.setString(1, dashboardMetadata.getUrl());
             ps.setString(2, dashboardMetadata.getOwner());
             ps.setString(3, dashboardMetadata.getName());
             ps.setString(4, dashboardMetadata.getDescription());
             ps.setString(5, dashboardMetadata.getParentId());
             ps.setString(6, dashboardMetadata.getLandingPage());
-            blob.setBytes(1, toJsonBytes(dashboardMetadata.getPages()));
+            Blob blob = connection.createBlob();
+            blob.setBytes(1, toJsonBytes(dashboardMetadata.getContent()));
             ps.setBlob(7, blob);
             ps.executeUpdate();
             connection.commit();
@@ -206,7 +209,8 @@ public class DashboardMetadataDao {
 
             if (result.next()) {
                 DashboardMetadata dashboardMetadata = toDashboardMetadata(result);
-                dashboardMetadata.setPages(fromJasonBytes(result.getBlob(COLUMN_DASHBOARD_CONTENT)));
+                dashboardMetadata.setContent(
+                        parseDashboardMetadataContent(result.getBlob(COLUMN_DASHBOARD_CONTENT)));
                 return Optional.of(dashboardMetadata);
             } else {
                 return Optional.empty();
@@ -251,8 +255,15 @@ public class DashboardMetadataDao {
         return GSON.toJson(dashboardPages).getBytes(StandardCharsets.UTF_8);
     }
 
-    private static Object fromJasonBytes(Blob byteBlob) throws SQLException {
-        return new String(byteBlob.getBytes(1, (int) byteBlob.length()), StandardCharsets.UTF_8);
+    private static DashboardMetadataContent parseDashboardMetadataContent(Blob blob) throws SQLException {
+        String content = new String(blob.getBytes(1, (int) blob.length()), StandardCharsets.UTF_8);
+        try {
+            return new Gson().fromJson(content, DashboardMetadataContent.class);
+        } catch (JsonParseException e) {
+            DashboardMetadataContent dashboardMetadataContent = new DashboardMetadataContent();
+            dashboardMetadataContent.setPages(new Gson().fromJson(content, JsonElement[].class));
+            return dashboardMetadataContent;
+        }
     }
 
     private static DashboardMetadata toDashboardMetadata(ResultSet result) throws SQLException {

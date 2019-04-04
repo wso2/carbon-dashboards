@@ -24,6 +24,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.wso2.carbon.dashboards.core.bean.DashboardMetadata;
+import org.wso2.carbon.dashboards.core.bean.DashboardMetadataContent;
 import org.wso2.carbon.dashboards.core.exception.DashboardException;
 
 import java.sql.Blob;
@@ -273,7 +274,7 @@ public class DashboardMetadataDaoTest {
 
     private static DashboardMetadata createDashboardMetadata() {
         DashboardMetadata dashboardMetadata = new DashboardMetadata();
-        dashboardMetadata.setPages("{}");
+        dashboardMetadata.setContent(new DashboardMetadataContent());
         return dashboardMetadata;
     }
 }

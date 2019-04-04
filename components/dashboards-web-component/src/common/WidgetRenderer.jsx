@@ -222,6 +222,7 @@ export default class WidgetRenderer extends Component {
             } else {
                 const widgetProps = {
                     ...this.props,
+                    dashboard: this.props.glContainer.layoutManager.dashboard,
                     width: this.props.glContainer.width,
                     height: this.props.glContainer.height,
                     pubSubHub: this.props.glContainer.layoutManager.pubSubHub,

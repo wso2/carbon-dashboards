@@ -48,7 +48,7 @@ class PagesSidePane extends Component {
     }
 
     getPageById(pageId) {
-        return this.props.dashboard.pages.find(page => (page.id === pageId));
+        return this.props.dashboard.content.pages.find(page => (page.id === pageId));
     }
 
     getPageUrl(pageId) {
@@ -139,7 +139,7 @@ class PagesSidePane extends Component {
 
     handlePageAdd() {
         return new Promise((resolve, reject) => {
-            const pages = this.props.dashboard.pages;
+            const pages = this.props.dashboard.content.pages;
             const count = pages.length + 1;
             const newPage = {
                 id: `new-page-${count}`,
@@ -168,12 +168,12 @@ class PagesSidePane extends Component {
                 this.setValidationErrorMessage('Cannot delete landing page!');
                 reject();
             }
-            const currentPages = this.props.dashboard.pages;
-            _.remove(this.props.dashboard.pages, page => (page.id === pageId));
+            const currentPages = this.props.dashboard.content.pages;
+            _.remove(this.props.dashboard.content.pages, page => (page.id === pageId));
             this.props.updateDashboard()
                 .then(() => resolve())
                 .catch(() => {
-                    this.props.dashboard.pages = currentPages;
+                    this.props.dashboard.content.pages = currentPages;
                     reject();
                 });
         });
@@ -250,7 +250,7 @@ class PagesSidePane extends Component {
     }
 
     render() {
-        const pages = this.props.dashboard.pages;
+        const pages = this.props.dashboard.content.pages;
         const landingPageId = this.props.dashboard.landingPage;
 
         return (
