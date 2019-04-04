@@ -109,9 +109,7 @@ public class StartupListener {
     @Activate
     protected void activate(BundleContext bundleContext) {
         DashboardMetadataProvider dashboardMetadataProvider = new DashboardMetadataProviderImpl(dataSourceService,
-                                                                                                dashboardConfigurations,
-                                                                                                permissionProvider,
-                                                                                                idPClient);
+                dashboardConfigurations, permissionProvider, idPClient);
         bundleContext.registerService(DashboardMetadataProvider.class, dashboardMetadataProvider, null);
         LOGGER.debug("{} activated.", this.getClass().getName());
     }

@@ -448,7 +448,7 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
         return permissionProvider.hasPermission(user, new Permission(PERMISSION_APP_NAME, dashboardUrl +
                 permissionSuffix));
     }
-  
+
     /**
      * Returns dashboardConfigurations for report generation
      * @return DashboardConfigurations
