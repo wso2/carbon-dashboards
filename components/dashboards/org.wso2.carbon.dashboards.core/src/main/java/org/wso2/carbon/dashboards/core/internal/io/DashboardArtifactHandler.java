@@ -19,6 +19,8 @@
 package org.wso2.carbon.dashboards.core.internal.io;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,6 +70,15 @@ public class DashboardArtifactHandler {
             try {
                 String fileContent = new String(Files.readAllBytes(filePath), StandardCharsets.UTF_8);
                 DashboardArtifact dashboardArtifact = GSON.fromJson(fileContent, DashboardArtifact.class);
+
+                // If the $.dashboard.content.pages is null, check for $.dashboard.pages
+                if (dashboardArtifact.getDashboard().getContent().getPages() == null) {
+                    JsonObject root = GSON.fromJson(fileContent, JsonObject.class);
+                    JsonArray pages = root.getAsJsonObject("dashboard").getAsJsonArray("pages");
+                    if (!pages.isJsonNull()) {
+                        dashboardArtifact.getDashboard().getContent().setPages(pages);
+                    }
+                }
                 dashboardArtifacts.put(filePath.toAbsolutePath().toString(), dashboardArtifact);
             } catch (IOException e) {
                 throw new DashboardException("Cannot read dashboard artifact '" + filePath + "'.", e);

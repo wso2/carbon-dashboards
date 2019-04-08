@@ -137,7 +137,7 @@ class DashboardCreatePage extends Component {
                         content: [],
                     },
                 ],
-                properties: []
+                properties: {}
             },
         };
         new DashboardAPI()

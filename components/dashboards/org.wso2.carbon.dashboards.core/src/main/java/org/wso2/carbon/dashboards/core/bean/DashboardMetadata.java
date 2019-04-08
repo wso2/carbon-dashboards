@@ -34,7 +34,7 @@ public class DashboardMetadata {
     protected String description;
     protected String landingPage;
     protected String parentId;
-    protected DashboardMetadataContent content;
+    protected DashboardMetadataContent content = new DashboardMetadataContent();
     protected boolean hasOwnerPermission;
     protected boolean hasDesignerPermission;
     protected boolean hasViewerPermission;

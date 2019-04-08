@@ -7,7 +7,7 @@
     "landingPage": "overview",
     "parentId": "0",
     "content": {
-      "properties": [],
+      "properties": {},
       "pages": [
         {
           "id": "overview",
