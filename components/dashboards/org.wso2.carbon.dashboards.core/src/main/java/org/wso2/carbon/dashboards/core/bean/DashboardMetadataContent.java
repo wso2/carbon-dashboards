@@ -18,7 +18,7 @@
  */
 package org.wso2.carbon.dashboards.core.bean;
 
-import com.google.gson.JsonElement;
+import com.google.gson.JsonArray;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,7 +30,14 @@ import java.util.Map;
  */
 public class DashboardMetadataContent {
     private Map<String, String> properties = new HashMap<>();
-    private JsonElement[] pages;
+    private JsonArray pages;
+
+    public DashboardMetadataContent() {
+    }
+
+    public DashboardMetadataContent(JsonArray pages) {
+        this.pages = pages;
+    }
 
     /**
      * Get dashboard properties.
@@ -55,7 +62,7 @@ public class DashboardMetadataContent {
      *
      * @return Array of pages
      */
-    public JsonElement[] getPages() {
+    public JsonArray getPages() {
         return pages;
     }
 
@@ -64,7 +71,7 @@ public class DashboardMetadataContent {
      *
      * @param pages Array of pages
      */
-    public void setPages(JsonElement[] pages) {
+    public void setPages(JsonArray pages) {
         this.pages = pages;
     }
 }

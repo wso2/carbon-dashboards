@@ -18,6 +18,7 @@
 package org.wso2.carbon.dashboards.core.internal;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.analytics.idp.client.core.api.IdPClient;
@@ -341,16 +342,13 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
      * @return Set of widget IDs
      * @throws DashboardException If an error occurred while reading or processing dashboards
      */
-    private Map<WidgetType, Set<String>> findWidgets(DashboardMetadataContent dashboardMetadataContent)
-            throws DashboardException {
-        Page[] dashboardPages = new Page[dashboardMetadataContent.getPages().length];
-        for (int i = 0; i < dashboardMetadataContent.getPages().length; i++) {
-            dashboardPages[i] = new Gson().fromJson(dashboardMetadataContent.getPages()[i], Page.class);
-        }
+    private Map<WidgetType, Set<String>> findWidgets(DashboardMetadataContent dashboardMetadataContent) {
         Map<WidgetType, Set<String>> widgets = new HashMap<>();
         widgets.put(WidgetType.GENERATED, new HashSet<>());
         widgets.put(WidgetType.CUSTOM, new HashSet<>());
-        for (Page page : dashboardPages) {
+        Gson gson = new Gson();
+        for (JsonElement element : dashboardMetadataContent.getPages()) {
+            Page page = gson.fromJson(element, Page.class);
             findWidgets(page.getContent(), widgets);
         }
         return widgets;

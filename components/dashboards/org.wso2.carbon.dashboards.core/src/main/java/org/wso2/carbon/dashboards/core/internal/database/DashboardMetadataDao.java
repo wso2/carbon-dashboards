@@ -18,7 +18,7 @@
 package org.wso2.carbon.dashboards.core.internal.database;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonElement;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -260,8 +260,8 @@ public class DashboardMetadataDao {
         try {
             return new Gson().fromJson(content, DashboardMetadataContent.class);
         } catch (JsonParseException e) {
-            DashboardMetadataContent dashboardMetadataContent = new DashboardMetadataContent();
-            dashboardMetadataContent.setPages(new Gson().fromJson(content, JsonElement[].class));
+            JsonArray pages = new Gson().fromJson(content, JsonArray.class);
+            DashboardMetadataContent dashboardMetadataContent = new DashboardMetadataContent(pages);
             return dashboardMetadataContent;
         }
     }
