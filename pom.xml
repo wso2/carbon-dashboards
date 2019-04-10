@@ -401,17 +401,17 @@
         <h2.database.engine.version>1.2.140.wso2v3</h2.database.engine.version>
 
         <!--Config-->
-        <carbon.config.version>2.1.5</carbon.config.version>
+        <carbon.config.version>2.1.10</carbon.config.version>
         <carbon.config.version.range>[2.0.3, 3.0.0)</carbon.config.version.range>
-        <carbon.securevault.version>5.0.11</carbon.securevault.version>
+        <carbon.securevault.version>5.0.13</carbon.securevault.version>
 
         <!--Utils-->
         <carbon.utils.version>2.0.8</carbon.utils.version>
         <carbon.utils.version.range>[2.0.2, 3.0.0)</carbon.utils.version.range>
 
         <!--UI Server-->
-        <carbon.uiserver.version>0.19.8</carbon.uiserver.version>
-        <carbon.uiserver.version.range>[0.19.5, 1.0.0]</carbon.uiserver.version.range>
+        <carbon.uiserver.version>1.0.1</carbon.uiserver.version>
+        <carbon.uiserver.version.range>[1.0.1, 2.0.0]</carbon.uiserver.version.range>
 
         <!--MSF4J-->
         <msf4j-core.version>2.7.2</msf4j-core.version>
@@ -428,10 +428,10 @@
         <carbon.datasources.version>1.1.4</carbon.datasources.version>
 
         <!--Analytics-->
-        <carbon.analytics.version>2.0.506</carbon.analytics.version>
+        <carbon.analytics.version>2.0.514</carbon.analytics.version>
         <carbon.analytics.version.range>[2.0.395, 3.0.0)</carbon.analytics.version.range>
         <!--Analytics common-->
-        <carbon.analytics-common.version>6.1.4</carbon.analytics-common.version>
+        <carbon.analytics-common.version>6.1.10</carbon.analytics-common.version>
         <carbon.analytics-common.version.range>[6.0.65, 7.0.0)</carbon.analytics-common.version.range>
 
         <!--OSGi-->
