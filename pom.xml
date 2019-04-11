@@ -401,7 +401,7 @@
         <h2.database.engine.version>1.2.140.wso2v3</h2.database.engine.version>
 
         <!--Config-->
-        <carbon.config.version>2.1.10</carbon.config.version>
+        <carbon.config.version>2.1.12</carbon.config.version>
         <carbon.config.version.range>[2.0.3, 3.0.0)</carbon.config.version.range>
         <carbon.securevault.version>5.0.13</carbon.securevault.version>
 
@@ -410,13 +410,13 @@
         <carbon.utils.version.range>[2.0.2, 3.0.0)</carbon.utils.version.range>
 
         <!--UI Server-->
-        <carbon.uiserver.version>1.0.1</carbon.uiserver.version>
+        <carbon.uiserver.version>1.0.2</carbon.uiserver.version>
         <carbon.uiserver.version.range>[1.0.1, 2.0.0]</carbon.uiserver.version.range>
 
         <!--MSF4J-->
         <msf4j-core.version>2.7.2</msf4j-core.version>
         <msf4j-core.version.range>[2.5.0, 3.0.0)</msf4j-core.version.range>
-        <javax.ws.rs.version>2.0</javax.ws.rs.version>
+        <javax.ws.rs.version>2.1.1</javax.ws.rs.version>
         <javax.ws.rs.version.range>[2.0.0, 3.0.0)</javax.ws.rs.version.range>
         <javax.websocket.version>1.1</javax.websocket.version>
         <javax.websocket.version.range>[1.1.0, 2.0.0)</javax.websocket.version.range>
@@ -431,7 +431,7 @@
         <carbon.analytics.version>2.0.514</carbon.analytics.version>
         <carbon.analytics.version.range>[2.0.395, 3.0.0)</carbon.analytics.version.range>
         <!--Analytics common-->
-        <carbon.analytics-common.version>6.1.10</carbon.analytics-common.version>
+        <carbon.analytics-common.version>6.1.15</carbon.analytics-common.version>
         <carbon.analytics-common.version.range>[6.0.65, 7.0.0)</carbon.analytics-common.version.range>
 
         <!--OSGi-->
@@ -450,7 +450,7 @@
         <slf4j.log4j.version.range>[1.6.0, 2.0.0)</slf4j.log4j.version.range>
 
         <!--Gson-->
-        <gson.version>2.6.2</gson.version>
+        <gson.version>2.8.5</gson.version>
         <gson.version.range>[2.6.2, 3.0.0)</gson.version.range>
         <!--Snake YAML-->
         <org.snakeyaml.version>1.17</org.snakeyaml.version>
