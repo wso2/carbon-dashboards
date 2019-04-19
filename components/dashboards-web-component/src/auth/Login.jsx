@@ -21,10 +21,10 @@ import { Checkbox, RaisedButton, Snackbar, TextField } from 'material-ui';
 import { MuiThemeProvider } from 'material-ui/styles';
 import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
+import Qs from 'qs';
 import PropTypes from 'prop-types';
-import FormPanel from '../common/FormPanel';
-
 import { FormattedMessage } from 'react-intl';
+import FormPanel from '../common/FormPanel';
 
 import AuthManager from './utils/AuthManager';
 import Header from '../common/Header';
@@ -47,6 +47,8 @@ const styles = {
     },
 };
 
+const REFERRER_KEY = 'referrer';
+
 /**
  * Login page.
  */
@@ -63,12 +65,15 @@ export default class Login extends Component {
             password: '',
             authenticated: false,
             rememberMe: false,
-            referrer: '/',
-            authType: Constants.AUTH_TYPE_UNKNOWN
+            authType: Constants.AUTH_TYPE_UNKNOWN,
         };
+        this.setReferrer(this.getReferrerFromQueryString());
         this.authenticate = this.authenticate.bind(this);
     }
 
+    /**
+     * Check authentication type and initialize the respective flow.
+     */
     componentWillMount() {
         AuthManager.getAuthType()
             .then((response) => {
@@ -95,8 +100,7 @@ export default class Login extends Component {
             AuthManager.authenticateWithRefreshToken()
                 .then(() =>
                     this.setState({
-                        authenticated: true,
-                        referrer: this.getReferrer()
+                        authenticated: true
                     })
                 );
         }
@@ -116,19 +120,18 @@ export default class Login extends Component {
                 username: authUser,
                 SDID: pID,
                 validity: validityPeriod,
-                expires: AuthManager.calculateExpiryTime(validityPeriod)
+                expires: AuthManager.calculateExpiryTime(validityPeriod),
             });
             AuthManager.setCookie(Constants.REFRESH_TOKEN_COOKIE, lID, 604800, window.contextPath);
             AuthManager.deleteCookie(Constants.USER_DTO_COOKIE);
             this.setState({
                 authenticated: true,
-                referrer: this.getReferrer()
             });
         } else {
             // redirect the user to the service providers auth url
             AuthManager.ssoAuthenticate()
                 .then((url) => {
-                    location.href = url;
+                    window.location.href = url;
                 })
                 .catch((e) => {
                     console.error('Error getting SSO auth URL.');
@@ -139,13 +142,33 @@ export default class Login extends Component {
     /**
      * Get the referrer URL for the redirection after successful login.
      *
-     * @returns {string|*|string} referrer URL
+     * @returns {string} referrer URL
      */
     getReferrer() {
-        // Extract referrer from the query string.
+        const referrer = localStorage.getItem(REFERRER_KEY);
+        localStorage.removeItem(REFERRER_KEY);
+        return referrer || '/';
+    }
+
+    /**
+     * Set referrer URL to the local storage.
+     *
+     * @param {String} referrer Referrer URL
+     */
+    setReferrer(referrer) {
+        if (localStorage.getItem(REFERRER_KEY) == null) {
+            localStorage.setItem(REFERRER_KEY, referrer);
+        }
+    }
+
+    /**
+     * Extract referrer URL from the query string.
+     *
+     * @returns {string} referrer URL
+     */
+    getReferrerFromQueryString() {
         const queryString = this.props.location.search.replace(/^\?/, '');
-        const params = Qs.parse(queryString);
-        return params.referrer;
+        return Qs.parse(queryString).referrer;
     }
 
     /**
@@ -154,20 +177,16 @@ export default class Login extends Component {
      * @param {{}} e event
      */
     authenticate(e) {
+        const { intl } = this.context;
+        const { username, password, rememberMe } = this.state;
         e.preventDefault();
         AuthManager
-            .authenticate(this.state.username, this.state.password, this.state.rememberMe)
-            .then(() => this.setState({authenticated: true}))
+            .authenticate(username, password, rememberMe)
+            .then(() => this.setState({ authenticated: true }))
             .catch((error) => {
-                const errorMessage = error.response && error.response.status === 401 ?
-                    this.context.intl.formatMessage({
-                        id: "login.error.message",
-                        defaultMessage: "Invalid username/password!"
-                    }) :
-                    this.context.intl.formatMessage({
-                        id: "login.unknown.error",
-                        defaultMessage: "Unknown error occurred!"
-                    });
+                const errorMessage = error.response && error.response.status === 401
+                    ? intl.formatMessage({ id: 'login.error.message', defaultMessage: 'Invalid username/password!' })
+                    : intl.formatMessage({ id: 'login.unknown.error', defaultMessage: 'Unknown error occurred!' });
                 this.setState({
                     username: '',
                     password: '',
@@ -183,6 +202,7 @@ export default class Login extends Component {
      * @return {XML} HTML content
      */
     renderDefaultLogin() {
+        const { username, password } = this.state;
         return (
             <MuiThemeProvider muiTheme={defaultTheme}>
                 <div>
@@ -190,14 +210,16 @@ export default class Login extends Component {
                         title={<FormattedMessage id='portal.title' defaultMessage='Portal' />}
                         rightElement={<span />}
                     />
-                    <FormPanel title={<FormattedMessage id="login.title" defaultMessage="Login"/>}
-                               onSubmit={this.authenticate}>
+                    <FormPanel
+                        title={<FormattedMessage id="login.title" defaultMessage="Login" />}
+                        onSubmit={this.authenticate}
+                    >
                         <TextField
                             autoFocus
                             fullWidth
                             autoComplete="off"
                             floatingLabelText={<FormattedMessage id="login.username" defaultMessage="Username"/>}
-                            value={this.state.username}
+                            value={username}
                             onChange={(e) => {
                                 this.setState({
                                     username: e.target.value,
@@ -210,7 +232,7 @@ export default class Login extends Component {
                             type="password"
                             autoComplete="off"
                             floatingLabelText={<FormattedMessage id="login.password" defaultMessage="Password"/>}
-                            value={this.state.password}
+                            value={password}
                             onChange={(e) => {
                                 this.setState({
                                     password: e.target.value,
@@ -226,13 +248,13 @@ export default class Login extends Component {
                                     rememberMe: checked,
                                 });
                             }}
-                            style={{'margin':'30px 0'}}
+                            style={{ margin: '30px 0' }}
                         />
                         <br />
                         <RaisedButton
                             primary
                             type="submit"
-                            disabled={this.state.username === '' || this.state.password === ''}
+                            disabled={username === '' || password === ''}
                             label={<FormattedMessage id="login.title" defaultMessage="Login"/>}
                             disabledBackgroundColor="rgb(27, 40, 47)"
                         />
@@ -276,7 +298,7 @@ export default class Login extends Component {
                         message={this.state.error}
                         open={this.state.showError}
                         autoHideDuration="4000"
-                        onRequestClose={() => this.setState({error: '', showError: false})}
+                        onRequestClose={() => this.setState({ error: '', showError: false })}
                     />
                 </div>
             </MuiThemeProvider>
@@ -289,11 +311,11 @@ export default class Login extends Component {
      * @return {XML} HTML content
      */
     render() {
-        let { authenticated, authType } = this.state;
+        const { authenticated, authType } = this.state;
         // If the user is already authenticated redirect to referrer link.
         if (authenticated) {
             return (
-                <Redirect to={this.state.referrer}/>
+                <Redirect to={this.getReferrer()} />
             );
         }
 
