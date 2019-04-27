@@ -120,12 +120,12 @@ export default class AuthenticationAPI {
             });
     }
 
-    static ssoLogout(token1,token2) {
+    static ssoLogout(accessToken,idToken) {
         return AuthenticationAPI.getHttpClient()
             .get(`/logout/slo/${appContext}`, {
                 headers: {
-                    Authorization: `Bearer ${token2}`,
-                    Fid: token1,
+                    Authorization: `Bearer ${accessToken}`,
+                    Fid: idToken,
                 },
             });
     }

@@ -168,7 +168,7 @@ export default class AuthManager {
                 .getAccessTokenWithRefreshToken()
                 .then((response) => {
                     console.log(response.data);
-                    const { pID, lID, validityPeriod, iID } = response.data;
+                    const { pID, lID, validityPeriod } = response.data;
 
                     const username = AuthManager.isRememberMeSet() ?
                         window.localStorage.getItem('username') : AuthManager.getUser().username;
@@ -177,7 +177,6 @@ export default class AuthManager {
                         SDID: pID,
                         validity: validityPeriod,
                         expires: AuthManager.calculateExpiryTime(validityPeriod),
-                        IID:iID,
                     });
                     // If rememberMe, set refresh token into a persistent cookie else session cookie.
                     const refreshTokenValidityPeriod = AuthManager.isRememberMeSet() ? REFRESH_TOKEN_VALIDITY_PERIOD : null;
@@ -212,7 +211,7 @@ export default class AuthManager {
      */
     static ssoLogout() {
         return new Promise((resolve, reject) =>{
-            AuthenticationAPI.ssoLogout(AuthManager.getUser().IID,AuthManager.getUser().SDID)
+            AuthenticationAPI.ssoLogout(AuthManager.getUser().SDID,AuthManager.getCookie(Constants.ID_TOKEN_COOKIE))
                 .then((response) => resolve(response.data.externalLogoutUrl))
                 .catch((error) => reject(error));
         })
