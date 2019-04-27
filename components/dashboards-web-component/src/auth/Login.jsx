@@ -121,9 +121,9 @@ export default class Login extends Component {
                 SDID: pID,
                 validity: validityPeriod,
                 expires: AuthManager.calculateExpiryTime(validityPeriod),
-                IID: iID,
             });
             AuthManager.setCookie(Constants.REFRESH_TOKEN_COOKIE, lID, 604800, window.contextPath);
+            AuthManager.setCookie(Constants.ID_TOKEN_COOKIE, iID, 604800, window.contextPath);
             AuthManager.deleteCookie(Constants.USER_DTO_COOKIE);
             this.setState({
                 authenticated: true,

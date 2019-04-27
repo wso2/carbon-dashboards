@@ -27,6 +27,7 @@ export const Constants = {
 
     // Cookies
     REFRESH_TOKEN_COOKIE: 'PRT',
+    ID_TOKEN_COOKIE: 'ORT',
     USER_DTO_COOKIE: 'USER_DTO',
     SESSION_USER_COOKIE: 'DASHBOARD_USER'
 };
