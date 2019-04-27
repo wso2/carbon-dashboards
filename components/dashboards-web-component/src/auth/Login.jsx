@@ -88,8 +88,8 @@ export default class Login extends Component {
                 // login form.
                 this.setState({ authType: response.data.authType });
             }).catch((e) => {
-                console.error('Unable to get the authentication type.');
-            });
+            console.error('Unable to get the authentication type.', e);
+        });
     }
 
     /**
@@ -113,7 +113,7 @@ export default class Login extends Component {
         // check if the userDTO is available. if so try to authenticate the user. instead forward the user to the idp.
         // USER_DTO={"authUser":"admin","pID":"0918c1ad-fc0a-35fa","lID":"3ca21853-bd3c-3dfa","validityPeriod":3381};
         if (AuthManager.isSSOAuthenticated()) {
-            const { authUser, pID, lID, validityPeriod } = AuthManager.getSSOUserCookie();
+            const {authUser, pID, lID, validityPeriod, iID} = AuthManager.getSSOUserCookie();
             localStorage.setItem('rememberMe', true);
             localStorage.setItem('username', authUser);
             AuthManager.setUser({
@@ -121,6 +121,7 @@ export default class Login extends Component {
                 SDID: pID,
                 validity: validityPeriod,
                 expires: AuthManager.calculateExpiryTime(validityPeriod),
+                IID: iID,
             });
             AuthManager.setCookie(Constants.REFRESH_TOKEN_COOKIE, lID, 604800, window.contextPath);
             AuthManager.deleteCookie(Constants.USER_DTO_COOKIE);

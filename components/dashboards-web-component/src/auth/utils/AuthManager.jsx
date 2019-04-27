@@ -146,7 +146,8 @@ export default class AuthManager {
                         let redirectUrl = e.response.data.redirectUrl + '?' + Qs.stringify({
                             response_type: 'code',
                             client_id: e.response.data.clientId,
-                            redirect_uri: e.response.data.callbackUrl
+                            redirect_uri: e.response.data.callbackUrl,
+                            scope:'openid',
                         });
                         resolve(redirectUrl);
                     } else {
@@ -167,7 +168,7 @@ export default class AuthManager {
                 .getAccessTokenWithRefreshToken()
                 .then((response) => {
                     console.log(response.data);
-                    const { pID, lID, validityPeriod } = response.data;
+                    const { pID, lID, validityPeriod, iID } = response.data;
 
                     const username = AuthManager.isRememberMeSet() ?
                         window.localStorage.getItem('username') : AuthManager.getUser().username;
@@ -176,6 +177,7 @@ export default class AuthManager {
                         SDID: pID,
                         validity: validityPeriod,
                         expires: AuthManager.calculateExpiryTime(validityPeriod),
+                        IID:iID,
                     });
                     // If rememberMe, set refresh token into a persistent cookie else session cookie.
                     const refreshTokenValidityPeriod = AuthManager.isRememberMeSet() ? REFRESH_TOKEN_VALIDITY_PERIOD : null;
@@ -210,7 +212,7 @@ export default class AuthManager {
      */
     static ssoLogout() {
         return new Promise((resolve, reject) =>{
-            AuthenticationAPI.ssoLogout(AuthManager.getUser().SDID)
+            AuthenticationAPI.ssoLogout(AuthManager.getUser().IID,AuthManager.getUser().SDID)
                 .then((response) => resolve(response.data.externalLogoutUrl))
                 .catch((error) => reject(error));
         })
