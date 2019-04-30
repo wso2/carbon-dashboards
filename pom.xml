@@ -428,10 +428,10 @@
         <carbon.datasources.version>1.1.4</carbon.datasources.version>
 
         <!--Analytics-->
-        <carbon.analytics.version>2.1.9</carbon.analytics.version>
+        <carbon.analytics.version>2.1.11</carbon.analytics.version>
         <carbon.analytics.version.range>[2.0.395, 3.0.0)</carbon.analytics.version.range>
         <!--Analytics common-->
-        <carbon.analytics-common.version>6.1.22</carbon.analytics-common.version>
+        <carbon.analytics-common.version>6.1.23</carbon.analytics-common.version>
         <carbon.analytics-common.version.range>[6.0.65, 7.0.0)</carbon.analytics-common.version.range>
 
         <!--OSGi-->
