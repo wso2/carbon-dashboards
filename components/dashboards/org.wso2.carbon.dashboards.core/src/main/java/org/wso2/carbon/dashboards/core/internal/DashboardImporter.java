@@ -102,20 +102,20 @@ public class DashboardImporter {
 
             // Deploy generated widgets if not available.
             for (GeneratedWidgetConfigs widgetConfigs : dashboardArtifact.getWidgets().getGenerated()) {
-                String widgetName = widgetConfigs.getName();
+                String widgetConfigsId = widgetConfigs.getId();
                 try {
-                    if (!widgetMetadataProvider.isWidgetPresent(widgetName, WidgetType.GENERATED)) {
+                    if (!widgetMetadataProvider.isWidgetPresent(widgetConfigsId, WidgetType.GENERATED)) {
                         widgetMetadataProvider.addGeneratedWidgetConfigs(widgetConfigs);
                     } else {
                         widgetMetadataProvider.updateGeneratedWidgetConfigs(widgetConfigs);
                     }
-                    LOGGER.debug("Successfully imported generated widget '{}' from dashboard '{}'.", widgetName,
+                    LOGGER.debug("Successfully imported generated widget '{}' from dashboard '{}'.", widgetConfigsId,
                             dashboardArtifactPath);
                 } catch (DashboardException e) {
                     LOGGER.warn(
                             "Cannot load generated widget '{}' which is included in the importing dashboard '{}'. " +
                             "Hence, dashboard will be imported partially.",
-                            widgetName, dashboardArtifactPath, e);
+                            widgetConfigsId, dashboardArtifactPath, e);
                     importedSuccessfully = false;
                 }
             }
