@@ -94,6 +94,10 @@
                                     <fileset dir="src/main/resources" includes="error-pages/**">
                                     </fileset>
                                 </copy>
+                                <!-- Remove xercesImpl jar files to avoid possible security vulnerabilities.-->
+                                <delete>
+                                    <fileset dir="${tempdir}/shindig/WEB-INF/lib" includes="xercesImpl*.jar"/>
+                                </delete>
                                 <!--apache-commons-fileupload.1.3.1.jar is a vulnerable jar. It is removed here-->
                                 <delete file="${tempdir}/shindig/WEB-INF/lib/commons-fileupload-${apache.commons.fileupload.version}.jar" />
                                 <zip destfile="${tempdir}/shindig/WEB-INF/lib/shindig-extras-${shindig.version}.jar" basedir="${tempdir}/shindig/WEB-INF/lib/shindig-extras-${shindig.version}" />
