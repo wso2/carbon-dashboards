@@ -18,14 +18,14 @@
     <parent>
         <artifactId>carbon-dashboards</artifactId>
         <groupId>org.wso2.carbon.dashboards</groupId>
-        <version>2.0.24</version>
+        <version>2.0.25-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>org.wso2.carbon.dashboard.migration.tool</artifactId>
     <packaging>bundle</packaging>
-    <version>2.0.24</version>
+    <version>2.0.25-SNAPSHOT</version>
     <name>WSO2 Carbon - Dashboard Migration Tool</name>
     <url>http://maven.apache.org</url>
 
