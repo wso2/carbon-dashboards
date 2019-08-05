@@ -19,7 +19,7 @@
 
 package org.wso2.carbon.siddhi.apps.api.rest.bean;
 
-import org.wso2.siddhi.query.api.definition.Attribute;
+import io.siddhi.query.api.definition.Attribute;
 import java.util.List;
 import java.util.Objects;
 

@@ -21,6 +21,8 @@ package org.wso2.carbon.siddhi.apps.api.rest.impl;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import io.siddhi.query.api.SiddhiApp;
+import io.siddhi.query.compiler.SiddhiCompiler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.analytics.permissions.PermissionProvider;
@@ -31,8 +33,6 @@ import org.wso2.carbon.siddhi.apps.api.rest.bean.SiddhiStoreElement;
 import org.wso2.carbon.siddhi.apps.api.rest.internal.SiddhiAppsDataHolder;
 import org.wso2.carbon.siddhi.apps.api.rest.worker.WorkerServiceFactory;
 import org.wso2.msf4j.Request;
-import org.wso2.siddhi.query.api.SiddhiApp;
-import org.wso2.siddhi.query.compiler.SiddhiCompiler;
 import java.io.IOException;
 import java.io.Reader;
 import java.lang.reflect.Type;
