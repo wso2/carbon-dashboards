@@ -88,7 +88,7 @@
             org.wso2.carbon.config.*; version="${carbon.config.version.range}",
             org.osgi.service.component.annotations.*; version="${org.osgi.service.component.annotations.version.range}",
             org.slf4j.*; version="${slf4j.version.range}",
-            org.wso2.siddhi.*; version="${siddhi.version.range}",
+            io.siddhi.*; version="${siddhi.version.range}",
             feign.*; version="${openfeign.version}",
             javax.ws.rs.*; version="${javax.ws.rs.version.range}",
             com.google.gson.*; version="${gson.version.range}",
