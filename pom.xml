@@ -414,7 +414,7 @@
         <carbon.uiserver.version.range>[1.0.1, 2.0.0]</carbon.uiserver.version.range>
 
         <!--MSF4J-->
-        <msf4j-core.version>2.7.2</msf4j-core.version>
+        <msf4j-core.version>2.7.3</msf4j-core.version>
         <msf4j-core.version.range>[2.5.0, 3.0.0)</msf4j-core.version.range>
         <javax.ws.rs.version>2.1.1</javax.ws.rs.version>
         <javax.ws.rs.version.range>[2.0.0, 3.0.0)</javax.ws.rs.version.range>
@@ -431,7 +431,7 @@
         <carbon.analytics.version>3.0.2</carbon.analytics.version>
         <carbon.analytics.version.range>[3.0.0, 4.0.0)</carbon.analytics.version.range>
         <!--Analytics common-->
-        <carbon.analytics-common.version>6.1.26</carbon.analytics-common.version>
+        <carbon.analytics-common.version>6.1.27</carbon.analytics-common.version>
         <carbon.analytics-common.version.range>[6.0.65, 7.0.0)</carbon.analytics-common.version.range>
 
         <!--OSGi-->
@@ -473,7 +473,7 @@
         <openfeign.version>9.3.1</openfeign.version>
 
         <!--Siddhi-->
-        <siddhi.version.range>[5.0.1, 6.0.0)</siddhi.version.range>
+        <siddhi.version.range>[5.0.0, 6.0.0)</siddhi.version.range>
 
         <!--Character encoding for source files-->
         <!--See: https://maven.apache.org/general.html#encoding-warning-->
