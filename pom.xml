@@ -410,7 +410,7 @@
         <carbon.utils.version.range>[2.0.2, 3.0.0)</carbon.utils.version.range>
 
         <!--UI Server-->
-        <carbon.uiserver.version>1.0.2</carbon.uiserver.version>
+        <carbon.uiserver.version>1.0.3</carbon.uiserver.version>
         <carbon.uiserver.version.range>[1.0.1, 2.0.0]</carbon.uiserver.version.range>
 
         <!--MSF4J-->
@@ -428,10 +428,10 @@
         <carbon.datasources.version>1.1.4</carbon.datasources.version>
 
         <!--Analytics-->
-        <carbon.analytics.version>3.0.2</carbon.analytics.version>
+        <carbon.analytics.version>3.0.3</carbon.analytics.version>
         <carbon.analytics.version.range>[3.0.0, 4.0.0)</carbon.analytics.version.range>
         <!--Analytics common-->
-        <carbon.analytics-common.version>6.1.27</carbon.analytics-common.version>
+        <carbon.analytics-common.version>6.1.30</carbon.analytics-common.version>
         <carbon.analytics-common.version.range>[6.0.65, 7.0.0)</carbon.analytics-common.version.range>
 
         <!--OSGi-->
