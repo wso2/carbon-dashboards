@@ -26,6 +26,7 @@ import WidgetButton from '../common/WidgetButton';
 import UserMenu from '../common/UserMenu';
 import defaultTheme from '../utils/Theme';
 import DashboardAPI from '../utils/apis/DashboardAPI';
+import AuthManager from "../auth/utils/AuthManager";
 
 const styles = {
     thumbnailsWrapper: {
@@ -59,8 +60,10 @@ export default class DashboardListingPage extends Component {
         this.state = {
             dashboards: undefined,
             error: false,
+            hasCreatorPermission: false,
         };
         this.retrieveDashboards = this.retrieveDashboards.bind(this);
+        this.checkCreatorPermission = this.checkCreatorPermission.bind(this);
         this.renderDashboardThumbnails = this.renderDashboardThumbnails.bind(this);
     }
 
@@ -69,6 +72,7 @@ export default class DashboardListingPage extends Component {
      */
     componentDidMount() {
         this.retrieveDashboards();
+        this.checkCreatorPermission();
     }
 
     /**
@@ -87,6 +91,20 @@ export default class DashboardListingPage extends Component {
                     error: true,
                 });
             });
+    }
+
+    /**
+     * Check if the current user has creator permissions.
+     */
+    checkCreatorPermission() {
+        let username = AuthManager.getUser().username;
+        new DashboardAPI().hasCreatorPermission(username)
+            .then((response) => {
+                this.setState({hasCreatorPermission: !!response.data});
+            })
+            .catch(() => {
+                this.setState({hasCreatorPermission: false});
+            })
     }
 
     /**
@@ -150,13 +168,18 @@ export default class DashboardListingPage extends Component {
                 <div style={styles.thumbnailsWrapper}>
                     {this.renderDashboardThumbnails()}
                 </div>
-                <div style={styles.actionButton}>
-                    <span title="Create Dashboard">
-                        <FloatingActionButton onClick={() => this.props.history.push('/create')} >
-                            <ContentAdd />
-                        </FloatingActionButton>
-                    </span>
-                </div>
+                {
+                    this.state.hasCreatorPermission &&
+                    (
+                        <div style={styles.actionButton}>
+                            <span title="Create Dashboard">
+                                <FloatingActionButton onClick={() => this.props.history.push('/create')} >
+                                    <ContentAdd />
+                                </FloatingActionButton>
+                            </span>
+                        </div>
+                    )
+                }
             </MuiThemeProvider>
         );
     }
