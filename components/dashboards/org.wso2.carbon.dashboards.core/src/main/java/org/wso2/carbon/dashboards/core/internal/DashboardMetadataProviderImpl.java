@@ -455,4 +455,26 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
     public DashboardConfigurations getReportGenerationConfigurations() {
         return this.dashboardConfigurations;
     }
+
+    @Override
+    public boolean isCreator(String username) throws DashboardException {
+        List<org.wso2.carbon.analytics.idp.client.core.models.Role> userRoles;
+        boolean isCreator = false;
+        try {
+            userRoles = identityClient.getUserRoles(username);
+        } catch (IdPClientException e) {
+            throw new DashboardException("Unable to get roles for the username.");
+        }
+        RolesProvider rolesProvider = new RolesProvider(dashboardConfigurations);
+        List<String> creatorRoleIds = rolesProvider.getCreatorRoleIds();
+        for (org.wso2.carbon.analytics.idp.client.core.models.Role userRole : userRoles) {
+            for (String creatorRoleId : creatorRoleIds) {
+                if (userRole.getId().equalsIgnoreCase(creatorRoleId)) {
+                    isCreator = true;
+                    break;
+                }
+            }
+        }
+        return isCreator;
+    }
 }

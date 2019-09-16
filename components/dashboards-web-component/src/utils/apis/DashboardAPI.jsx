@@ -108,6 +108,17 @@ export default class DashboardAPI {
     }
 
     /**
+     * Check if the user has creator permissions.
+     *
+     * @param {string} username Username
+     */
+    hasCreatorPermission(username) {
+        return new DashboardAPI()
+            .getHTTPClient()
+            .get(`roles/${username}/iscreator`);
+    }
+
+    /**
      * Get roles associated for a particular dashboard.
      *
      * @param {string} dashboardId Dashboard ID

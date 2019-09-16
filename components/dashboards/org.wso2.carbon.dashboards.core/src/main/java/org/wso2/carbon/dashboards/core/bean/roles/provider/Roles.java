@@ -34,5 +34,4 @@ public class Roles {
     public List<String> getCreators() {
         return creators;
     }
-
 }

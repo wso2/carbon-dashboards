@@ -23,6 +23,8 @@ import WidgetStoreCard from './components/WidgetStoreCard';
 import defaultTheme from '../utils/Theme';
 import WidgetAPI from '../utils/apis/WidgetAPI';
 import WidgetStoreHeader from './components/WidgetStoreHeader';
+import DashboardAPI from "../utils/apis/DashboardAPI";
+import AuthManager from "../auth/utils/AuthManager";
 
 
 const styles = {
@@ -98,7 +100,9 @@ export default class WidgetStore extends Component {
                 generated: [],
                 custom: [],
             },
+            hasCreatorPermission: false,
         };
+        this.checkCreatorPermission = this.checkCreatorPermission.bind(this);
         this.retrieveWidgets = this.retrieveWidgets.bind(this);
         this.filterWidgets = this.filterWidgets.bind(this);
     }
@@ -107,11 +111,26 @@ export default class WidgetStore extends Component {
      * Retrieve widgets from the widget repository.
      */
     componentDidMount() {
+        this.checkCreatorPermission();
         this.retrieveWidgets();
     }
 
     handleWidgets(widget) {
         return widget.configs.isGenerated ? 'generated' : 'custom';
+    }
+
+    /**
+     * Check if the current user has creator permissions.
+     */
+    checkCreatorPermission() {
+        let username = AuthManager.getUser().username;
+        new DashboardAPI().hasCreatorPermission(username)
+            .then((response) => {
+                this.setState({hasCreatorPermission: !!response.data});
+            })
+            .catch(() => {
+                this.setState({hasCreatorPermission: false});
+            })
     }
 
     /**
@@ -128,10 +147,12 @@ export default class WidgetStore extends Component {
             .then((response) => {
                 response.data.forEach((element) => {
                     widgets.all.push(
-                        <WidgetStoreCard key={element.id} widget={element}/>,
+                        <WidgetStoreCard key={element.id} widget={element}
+                                         deletable={this.state.hasCreatorPermission}/>,
                     );
                     widgets[this.handleWidgets(element)].push(
-                        <WidgetStoreCard key={element.id} widget={element}/>,
+                        <WidgetStoreCard key={element.id} widget={element}
+                                         deletable={this.state.hasCreatorPermission}/>,
                     );
                 });
                 widgets.generated.sort((widgetA, widgetB) => {
@@ -161,12 +182,12 @@ export default class WidgetStore extends Component {
         allwidgets.forEach((widget) => {
             const element = widget.props.widget;
             filteredWidgets.all.push(
-                <WidgetStoreCard key={element.id} widget={element}/>,
+                <WidgetStoreCard key={element.id} widget={element} deletable={this.state.hasCreatorPermission}/>,
             );
             if (!(filterName && filterName.length > 0 &&
                 element.name.toLowerCase().indexOf(filterName.toLowerCase()) === -1)) {
                 filteredWidgets[this.handleWidgets(element)].push(
-                    <WidgetStoreCard key={element.id} widget={element}/>,
+                    <WidgetStoreCard key={element.id} widget={element} deletable={this.state.hasCreatorPermission}/>,
                 );
             }
         });
@@ -247,11 +268,16 @@ export default class WidgetStore extends Component {
                         (<FormattedMessage id="see.less" defaultMessage="See Less"/>) :
                         (<FormattedMessage id="see.more" defaultMessage="See More"/>))}
                 </p>
-                   <span style={styles.actionButton} title="Create Widget">
-                      <FloatingActionButton onClick={() => this.props.history.push("/createGadget")}>
-                        <ContentAdd/>
-                      </FloatingActionButton>
-                   </span>
+                {
+                    this.state.hasCreatorPermission &&
+                    (
+                        <span style={styles.actionButton} title="Create Widget">
+                            <FloatingActionButton onClick={() => this.props.history.push("/createGadget")}>
+                                <ContentAdd/>
+                            </FloatingActionButton>
+                        </span>
+                    )
+                }
             </MuiThemeProvider>
         );
     }
