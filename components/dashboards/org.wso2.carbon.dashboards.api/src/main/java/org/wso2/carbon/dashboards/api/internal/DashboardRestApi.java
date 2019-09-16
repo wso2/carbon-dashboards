@@ -235,6 +235,21 @@ public class DashboardRestApi implements Microservice {
     }
 
     @GET
+    @Path("/roles/{username}/iscreator")
+    public Response isCreator(@PathParam("username") String username) {
+        try {
+            boolean isCreator = dashboardDataProvider.isCreator(username);
+            return Response.ok()
+                    .entity(isCreator)
+                    .build();
+        } catch (DashboardException e) {
+            return Response.serverError()
+                    .entity("Cannot read user roles for '" + username + "'.")
+                    .build();
+        }
+    }
+
+    @GET
     @Path("/{url}/roles")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getDashboardRoles(@PathParam("url") String url) {

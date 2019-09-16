@@ -218,7 +218,7 @@ class WidgetStoreCard extends Component {
                                     {title}
                                 </span>
                                 <div>
-                                    {config.isGenerated && (
+                                    {config.isGenerated && this.props.deletable && (
                                         <ActionDelete
                                             onClick={this.showDeleteConfirmDialog}
                                             style={Object.assign(styles.deleteIcon,
@@ -257,6 +257,7 @@ WidgetStoreCard.propTypes = {
         thumbnailURL: PropTypes.string.isRequired,
         configs: PropTypes.array.isRequired,
     }).isRequired,
+    deletable: PropTypes.bool.isRequired,
 };
 
 export default withRouter(WidgetStoreCard);
