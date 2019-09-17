@@ -143,11 +143,15 @@ export default class AuthManager {
             AuthenticationAPI.login('', '', true, 'authorization_code')
                 .catch((e) => {
                     if (e.response.status === 302) {
+                        let scope = 'openid';
+                        if (e.response.data.scope) {
+                            scope = e.response.data.scope;
+                        }
                         let redirectUrl = e.response.data.redirectUrl + '?' + Qs.stringify({
                             response_type: 'code',
                             client_id: e.response.data.clientId,
+                            scope: scope,
                             redirect_uri: e.response.data.callbackUrl,
-                            scope:'openid',
                         });
                         resolve(redirectUrl);
                     } else {
