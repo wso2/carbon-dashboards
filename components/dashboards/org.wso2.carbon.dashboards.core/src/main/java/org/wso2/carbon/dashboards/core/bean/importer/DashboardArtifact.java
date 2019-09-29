@@ -20,6 +20,10 @@ package org.wso2.carbon.dashboards.core.bean.importer;
 
 import org.wso2.carbon.dashboards.core.bean.DashboardMetadata;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * Defines a dashboard data format to import/export a dashboard.
  *
@@ -28,6 +32,7 @@ import org.wso2.carbon.dashboards.core.bean.DashboardMetadata;
 public class DashboardArtifact {
     private DashboardMetadata dashboard;
     private WidgetCollection widgets = new WidgetCollection();
+    private Map<String, List<String>> permissions = new HashMap<>();
 
     /**
      * Returns dashboard metadata object.
@@ -63,5 +68,17 @@ public class DashboardArtifact {
      */
     public void setWidgets(WidgetCollection widgets) {
         this.widgets = widgets;
+    }
+
+    public Map<String, List<String>> getPermissions() {
+        return permissions;
+    }
+
+    public void setPermissions(Map<String, List<String>> permissions) {
+        this.permissions = permissions;
+    }
+
+    public void addPermissions(String permission, List<String> roles) {
+        permissions.put(permission, roles);
     }
 }

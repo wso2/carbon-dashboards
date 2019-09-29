@@ -33,6 +33,7 @@ import org.wso2.carbon.utils.Utils;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -44,6 +45,12 @@ import java.util.Map;
 public class DashboardImporter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DashboardImporter.class);
+    public static final String PERMISSION_VIEWERS = "viewers";
+    public static final String PERMISSION_EDITORS = "editors";
+    public static final String PERMISSION_OWNERS = "owners";
+    public static final String PERMISSION_VIEWER = "viewer";
+    public static final String PERMISSION_EDITOR = "editor";
+    public static final String PERMISSION_OWNER = "owner";
 
     private final DashboardMetadataProvider dashboardMetadataProvider;
     private final WidgetMetadataProvider widgetMetadataProvider;
@@ -77,6 +84,20 @@ public class DashboardImporter {
                 } else {
                     dashboardMetadataProvider.add(dashboard);
                 }
+
+                // Fix keys before saving
+                Map<String, List<String>> permissionMap = dashboardArtifact.getPermissions();
+                if (permissionMap.containsKey(PERMISSION_VIEWERS)) {
+                    permissionMap.put(PERMISSION_VIEWER, permissionMap.remove(PERMISSION_VIEWERS));
+                }
+                if (permissionMap.containsKey(PERMISSION_EDITORS)) {
+                    permissionMap.put(PERMISSION_EDITOR, permissionMap.remove(PERMISSION_EDITORS));
+                }
+                if (permissionMap.containsKey(PERMISSION_OWNERS)) {
+                    permissionMap.put(PERMISSION_OWNER, permissionMap.remove(PERMISSION_OWNERS));
+                }
+                dashboardMetadataProvider.updateDashboardRoles(dashboard.getUrl(), dashboardArtifact.getPermissions());
+
             } catch (DashboardException e) {
                 LOGGER.warn("Cannot save dashboard importing from '{}' to the database.", dashboardArtifactPath, e);
                 continue;

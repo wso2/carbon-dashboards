@@ -300,10 +300,10 @@ public class DashboardRestApi implements Microservice {
     @GET
     @Path("/{url}/export")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response exportDashboard(@PathParam("url") String url, @QueryParam("download") boolean download) {
-
+    public Response exportDashboard(@PathParam("url") String url, @QueryParam("download") boolean download,
+                                    @QueryParam("permissions") boolean permissions) {
         try {
-            DashboardArtifact artifact = dashboardDataProvider.exportDashboard(url);
+            DashboardArtifact artifact = dashboardDataProvider.exportDashboard(url, permissions);
             Response.ResponseBuilder responseBuilder = Response.ok(artifact);
             if (download) {
                 responseBuilder.header("Content-Disposition", "attachment; filename=\""
