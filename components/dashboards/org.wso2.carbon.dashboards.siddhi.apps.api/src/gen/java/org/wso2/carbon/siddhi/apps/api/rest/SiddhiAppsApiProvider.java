@@ -37,7 +37,7 @@ import java.util.Map;
 @Component(service = RestApiProvider.class,
         immediate = true)
 public class SiddhiAppsApiProvider implements RestApiProvider {
-    private static final String DASHBOARD_PORTAL_APP_NAME = "portal";
+    private static final String DASHBOARD_PORTAL_APP_NAME = "analytics-dashboard";
     private static final Logger LOGGER = LoggerFactory.getLogger(SiddhiAppsApiProvider.class);
 
     @Activate

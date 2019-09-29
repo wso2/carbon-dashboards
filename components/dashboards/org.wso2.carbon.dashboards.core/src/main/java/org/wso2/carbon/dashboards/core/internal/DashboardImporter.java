@@ -109,7 +109,7 @@ public class DashboardImporter {
                     if (!widgetMetadataProvider.isWidgetPresent(widgetId, WidgetType.ALL)) {
                         LOGGER.warn(
                                 "Widget '{}' does not exists. Please copy the widget to " +
-                                "'deployment/web-ui-apps/portal/extensions/widgets/' directory.",
+                                "'deployment/web-ui-apps/analytics-dashboard/extensions/widgets/' directory.",
                                 widgetId);
                     }
                 } catch (DashboardException e) {

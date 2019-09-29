@@ -69,7 +69,7 @@
                                     <version>${project.version}</version>
                                     <type>jar</type>
                                     <overWrite>true</overWrite>
-                                    <outputDirectory>${project.build.directory}/target/portal/public/</outputDirectory>
+                                    <outputDirectory>${project.build.directory}/target/analytics-dashboard/public/</outputDirectory>
                                     <includes>js/**</includes>
                                 </artifactItem>
                                 <artifactItem>
@@ -78,7 +78,7 @@
                                     <version>${project.version}</version>
                                     <type>jar</type>
                                     <overWrite>true</overWrite>
-                                    <outputDirectory>${project.build.directory}/target/portal/public/</outputDirectory>
+                                    <outputDirectory>${project.build.directory}/target/analytics-dashboard/public/</outputDirectory>
                                     <includes>locales/**</includes>
                                 </artifactItem>
                                 <artifactItem>
@@ -87,7 +87,7 @@
                                     <version>${project.version}</version>
                                     <type>jar</type>
                                     <overWrite>true</overWrite>
-                                    <outputDirectory>${project.build.directory}/target/portal/</outputDirectory>
+                                    <outputDirectory>${project.build.directory}/target/analytics-dashboard/</outputDirectory>
                                     <includes>pages/index.hbs</includes>
                                 </artifactItem>
                                 <artifactItem>
@@ -96,7 +96,7 @@
                                     <version>${project.version}</version>
                                     <type>jar</type>
                                     <overWrite>true</overWrite>
-                                    <outputDirectory>${project.build.directory}/target/portal/extensions/widgets/</outputDirectory>
+                                    <outputDirectory>${project.build.directory}/target/analytics-dashboard/extensions/widgets/</outputDirectory>
                                     <includes>UniversalWidget/**</includes>
                                 </artifactItem>
                             </artifactItems>

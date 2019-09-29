@@ -9,7 +9,7 @@
     "dev": "NODE_ENV=development webpack --mode development --progress --devtool source-map",
     "lint": "eslint . --ext .jsx --ext .js",
     "build": "webpack --mode production",
-    "deploy": "cp ./dist/bundle.js $DS_HOME/wso2/dashboard/deployment/web-ui-apps/portal/public/js/"
+    "deploy": "cp ./dist/bundle.js $DS_HOME/wso2/dashboard/deployment/web-ui-apps/analytics-dashboard/public/js/"
   },
   "repository": {
     "type": "git",

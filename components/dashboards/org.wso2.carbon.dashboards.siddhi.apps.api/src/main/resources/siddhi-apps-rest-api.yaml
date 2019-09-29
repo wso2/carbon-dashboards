@@ -10,12 +10,12 @@ info:
 schemes:
 - https
 host: localhost
-basePath: /portal/apis/datasearch
+basePath: /analytics-dashboard/apis/datasearch
 paths:
   /siddhi-apps:
     get:
-      x-wso2-curl: 'curl -k -X GET https://localhost:9643/portal/apis/datasearch/siddhi-apps'
-      x-wso2-request: 'GET https://localhost:9643/portal/apis/datasearch/siddhi-apps'
+      x-wso2-curl: 'curl -k -X GET https://localhost:9643/analytics-dashboard/apis/datasearch/siddhi-apps'
+      x-wso2-request: 'GET https://localhost:9643/analytics-dashboard/apis/datasearch/siddhi-apps'
       x-wso2-response: |-
         HTTP/1.1 200 OK Content-Type: application/json
         ["ShipmentHistoryApp","SweetProductionApp"]
@@ -34,8 +34,8 @@ paths:
           description: Insufficient permission to view siddhi apps.
   'siddhi-apps/{appName}':
     get:
-      x-wso2-curl: 'curl -k -X GET https://localhost:9643/portal/apis/datasearch/siddhi-apps/{appName}'
-      x-wso2-request: 'GET https://localhost:9643/portal/apis/datasearch/siddhi-apps/{appName}'
+      x-wso2-curl: 'curl -k -X GET https://localhost:9643/analytics-dashboard/apis/datasearch/siddhi-apps/{appName}'
+      x-wso2-request: 'GET https://localhost:9643/analytics-dashboard/apis/datasearch/siddhi-apps/{appName}'
       x-wso2-response: >-
         HTTP/1.1 200 OK Content-Type: application/json
         [

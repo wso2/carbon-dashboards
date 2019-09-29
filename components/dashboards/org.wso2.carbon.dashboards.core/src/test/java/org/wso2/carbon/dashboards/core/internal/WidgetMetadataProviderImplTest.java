@@ -58,7 +58,7 @@ public class WidgetMetadataProviderImplTest {
 
     private static App createPortalApp() {
         Extension chartWidget = new Extension("LineChart", "widgets", "src/test/resources/LineChart");
-        return new App("portal", "/portal", Collections.emptySortedSet(), Collections.singleton(chartWidget),
+        return new App("portal", "/analytics-dashboard", Collections.emptySortedSet(), Collections.singleton(chartWidget),
                        Collections.emptySet(), Collections.emptySet(), null, null);
     }
 
