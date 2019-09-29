@@ -273,31 +273,36 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
             throws DashboardException {
         if (permissionProvider.hasPermission(user, new Permission(PERMISSION_APP_NAME,
                 dashboardUrl + PERMISSION_SUFFIX_OWNER))) {
-            List<org.wso2.carbon.analytics.idp.client.core.models.Role> allRoles = null;
-            try {
-                allRoles = identityClient.getAllRoles();
-            } catch (IdPClientException e) {
-                throw new DashboardException("Unable to get all user roles.", e);
-            }
-            Map<String, Role> allRoleMap = new HashMap<>();
-            for (org.wso2.carbon.analytics.idp.client.core.models.Role role : allRoles) {
-                allRoleMap.put(role.getDisplayName(), new Role(role.getId(), role.getDisplayName()));
-            }
-
-            Iterator iterator = roleIdMap.entrySet().iterator();
-            while (iterator.hasNext()) {
-                Map.Entry entry = (Map.Entry) iterator.next();
-                Permission permission = new Permission(PERMISSION_APP_NAME, dashboardUrl + "." + entry.getKey()
-                        .toString());
-                permissionProvider.revokePermission(permission);
-                for (String roleId : (List<String>) entry.getValue()) {
-                    permissionProvider.grantPermission(permission, allRoleMap.get(roleId));
-                }
-                iterator.remove();
-            }
+            updateDashboardRoles(dashboardUrl, roleIdMap);
         } else {
             throw new UnauthorizedException("Insufficient permissions to update roles of the dashboard with ID" +
                     dashboardUrl);
+        }
+    }
+
+    public void updateDashboardRoles(String dashboardUrl, Map<String, List<String>> roleIdMap)
+            throws DashboardException {
+        List<org.wso2.carbon.analytics.idp.client.core.models.Role> allRoles;
+        try {
+            allRoles = identityClient.getAllRoles();
+        } catch (IdPClientException e) {
+            throw new DashboardException("Unable to get all user roles.", e);
+        }
+        Map<String, Role> allRoleMap = new HashMap<>();
+        for (org.wso2.carbon.analytics.idp.client.core.models.Role role : allRoles) {
+            allRoleMap.put(role.getDisplayName(), new Role(role.getId(), role.getDisplayName()));
+        }
+
+        Iterator iterator = roleIdMap.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry entry = (Map.Entry) iterator.next();
+            Permission permission = new Permission(PERMISSION_APP_NAME, dashboardUrl + "." + entry.getKey()
+                    .toString());
+            permissionProvider.revokePermission(permission);
+            for (String roleId : (List<String>) entry.getValue()) {
+                permissionProvider.grantPermission(permission, allRoleMap.get(roleId));
+            }
+            iterator.remove();
         }
     }
 
@@ -309,8 +314,9 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
      * @throws DashboardException If an error occurred while reading or processing dashboards
      */
     @Override
-    public DashboardArtifact exportDashboard(String dashboardUrl) throws DashboardException {
+    public DashboardArtifact exportDashboard(String dashboardUrl, boolean permissions) throws DashboardException {
         Optional<DashboardMetadata> dashboardMetadataOptional = dao.get(dashboardUrl);
+        Map<String, List<Role>> dashboardRoles = getDashboardRoles(dashboardUrl);
         if (!dashboardMetadataOptional.isPresent()) {
             throw new DashboardException("Cannot find the dashboard '" + dashboardUrl + "'");
         }
@@ -332,6 +338,13 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
         // Set list of custom widgets
         widgetCollection.setCustom(widgets.get(WidgetType.CUSTOM));
         artifact.setWidgets(widgetCollection);
+
+        if (permissions) {
+            dashboardRoles.forEach((permission, roles) -> {
+                List<String> roleNames = roles.stream().map(Role::getName).collect(Collectors.toList());
+                artifact.addPermissions(permission, roleNames);
+            });
+        }
         return artifact;
     }
 

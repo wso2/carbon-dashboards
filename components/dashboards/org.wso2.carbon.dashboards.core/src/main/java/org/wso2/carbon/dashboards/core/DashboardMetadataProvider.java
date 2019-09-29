@@ -116,6 +116,8 @@ public interface DashboardMetadataProvider {
     void updateDashboardRoles(String user, String dashboardUrl, Map<String, List<String>> roles) throws
             DashboardException;
 
+    void updateDashboardRoles(String dashboardUrl, Map<String, List<String>> roles) throws DashboardException;
+
     /**
      * Return exportable dashboard definition.
      *
@@ -125,7 +127,7 @@ public interface DashboardMetadataProvider {
      * @return Exportable dashboard definition
      * @throws DashboardException If an error occurred while reading or processing dashboards
      */
-    DashboardArtifact exportDashboard(String dashboardUrl) throws DashboardException;
+    DashboardArtifact exportDashboard(String dashboardUrl, boolean permissions) throws DashboardException;
 
     DashboardConfigurations getReportGenerationConfigurations();
 
