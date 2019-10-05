@@ -35,7 +35,8 @@ export default class GoldenLayoutFactory {
         // Set dashboard content to be passed into a widget (as props)
         if (dashboard) {
             goldenLayout.dashboard = {
-                properties: dashboard.content.properties || {}
+                properties: dashboard.content.properties || {},
+                id: dashboard.url
             }
         }
 
