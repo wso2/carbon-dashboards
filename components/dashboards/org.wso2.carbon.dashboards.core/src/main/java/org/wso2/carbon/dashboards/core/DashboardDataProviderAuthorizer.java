@@ -35,7 +35,10 @@ import org.wso2.carbon.data.provider.DataProviderAuthorizer;
 import org.wso2.carbon.data.provider.bean.DataProviderConfigRoot;
 import org.wso2.carbon.data.provider.exception.DataProviderException;
 
-import java.util.*;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 
 import static org.wso2.carbon.dashboards.core.utils.DashboardUtil.findWidgets;
 
@@ -54,8 +57,8 @@ public class DashboardDataProviderAuthorizer implements DataProviderAuthorizer {
     private static final String MAIN_CONFIG = "configs";
     private static final String DATA_PROVIDER_CONFIG = "config";
     private static final String QUERY_DATA = "queryData";
-    private static final String QUERY_VALUES= "queryValues";
-    private static final String QUERY_NAME= "queryName";
+    private static final String QUERY_VALUES = "queryValues";
+    private static final String QUERY_NAME = "queryName";
 
     @Reference(service = DashboardMetadataProvider.class,
             cardinality = ReferenceCardinality.MANDATORY,
@@ -116,7 +119,7 @@ public class DashboardDataProviderAuthorizer implements DataProviderAuthorizer {
 
         boolean isWidgetAvailableInDashboard = false;
         // Check whether the requested widget is in the CUSTOM type set
-        for (String widget : widgets.get(WidgetType.CUSTOM)){
+        for (String widget : widgets.get(WidgetType.CUSTOM)) {
             if (widget.equalsIgnoreCase(widgetName)) {
                 isWidgetAvailableInDashboard = true;
                 break;

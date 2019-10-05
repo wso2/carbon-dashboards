@@ -29,6 +29,9 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * Utility class for Dashboards.
+ */
 public class DashboardUtil {
 
     private static final String UNIVERSAL_WIDGET = "UniversalWidget";
