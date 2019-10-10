@@ -27,12 +27,16 @@ import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.carbon.config.ConfigurationException;
+import org.wso2.carbon.config.provider.ConfigProvider;
+import org.wso2.carbon.dashboards.api.internal.internal.ServiceHolder;
 import org.wso2.carbon.dashboards.core.DashboardMetadataProvider;
 import org.wso2.carbon.uiserver.api.App;
 import org.wso2.carbon.uiserver.spi.RestApiProvider;
 import org.wso2.msf4j.Microservice;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -81,10 +85,43 @@ public class DashboardRestApiProvider implements RestApiProvider {
     @Override
     public Map<String, Microservice> getMicroservices(App app) {
         dashboardMetadataProvider.init(app);
-        Map<String, Microservice> microservices = new HashMap<>(2);
+        HashMap<String, Microservice> additionalServices = getAdditionalApiServices();
+        Map<String, Microservice> microservices = new HashMap<>(additionalServices.size() + 2);
         microservices.put(DashboardRestApi.API_CONTEXT_PATH, new DashboardRestApi(dashboardMetadataProvider));
         microservices.put(WidgetRestApi.API_CONTEXT_PATH,
                           new WidgetRestApi(dashboardMetadataProvider.getWidgetMetadataProvider()));
+        microservices.putAll(additionalServices);
+        return microservices;
+    }
+
+    /**
+     * Get the context path and microservice instance of the additional API services
+     *
+     * @return hashmap containing additional API services
+     */
+    private HashMap<String, Microservice> getAdditionalApiServices() {
+        ConfigProvider configProvider = ServiceHolder.getInstance().getConfigProvider();
+        HashMap<String, Microservice> microservices = new HashMap<>();
+
+        try {
+            LinkedHashMap<String, String> additionalApis =
+                    (LinkedHashMap<String, String>) configProvider.getConfigurationObject("additional.apis");
+
+            if (additionalApis != null) {
+                additionalApis.forEach((path, impl) -> {
+                    try {
+                        Class<?> serviceClass = Class.forName(impl);
+                        Microservice microservice = (Microservice) serviceClass.newInstance();
+                        microservices.put(path, microservice);
+                    } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+                        LOGGER.error("Error occurred while adding new microservice '{}' for path '{}' as " +
+                                "specified in Additional API configuration. Error: {}", impl, path, e.getMessage());
+                    }
+                });
+            }
+        } catch (ConfigurationException e) {
+            LOGGER.error("Error occurred while accessing Additional API configuration: {}", e.getMessage());
+        }
         return microservices;
     }
 }
