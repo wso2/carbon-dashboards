@@ -23,10 +23,10 @@ metaRequirements.0.optional = true
 instructions.configure = \
 org.wso2.carbon.extensions.touchpoint.mkdir(path:${installFolder}/../{runtime}/deployment/);\
 org.wso2.carbon.extensions.touchpoint.mkdir(path:${installFolder}/../{runtime}/deployment/web-ui-apps/);\
-org.wso2.carbon.extensions.touchpoint.mkdir(path:${installFolder}/../{runtime}/deployment/web-ui-apps/portal/);\
-org.wso2.carbon.extensions.touchpoint.mkdir(path:${installFolder}/../{runtime}/deployment/web-ui-apps/portal/extensions/);\
-org.wso2.carbon.extensions.touchpoint.mkdir(path:${installFolder}/../{runtime}/deployment/web-ui-apps/portal/extensions/widgets/);\
-org.wso2.carbon.extensions.touchpoint.copy(source:${installFolder}/../lib/features/org.wso2.carbon.dashboards.samples_${feature.version}/widgets/,target:${installFolder}/../{runtime}/deployment/web-ui-apps/portal/extensions/widgets/,overwrite:true);\
+org.wso2.carbon.extensions.touchpoint.mkdir(path:${installFolder}/../{runtime}/deployment/web-ui-apps/analytics-dashboard/);\
+org.wso2.carbon.extensions.touchpoint.mkdir(path:${installFolder}/../{runtime}/deployment/web-ui-apps/analytics-dashboard/extensions/);\
+org.wso2.carbon.extensions.touchpoint.mkdir(path:${installFolder}/../{runtime}/deployment/web-ui-apps/analytics-dashboard/extensions/widgets/);\
+org.wso2.carbon.extensions.touchpoint.copy(source:${installFolder}/../lib/features/org.wso2.carbon.dashboards.samples_${feature.version}/widgets/,target:${installFolder}/../{runtime}/deployment/web-ui-apps/analytics-dashboard/extensions/widgets/,overwrite:true);\
 org.eclipse.equinox.p2.touchpoint.natives.remove(path:${installFolder}/../lib/features/org.wso2.carbon.dashboards.samples_${feature.version}/widgets/);\
 org.wso2.carbon.extensions.touchpoint.mkdir(path:${installFolder}/../{runtime}/resources/);\
 org.wso2.carbon.extensions.touchpoint.copy(source:${installFolder}/../lib/features/org.wso2.carbon.dashboards.samples_${feature.version}/resources/,target:${installFolder}/../{runtime}/resources/,overwrite:true);\

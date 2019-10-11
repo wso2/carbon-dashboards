@@ -44,7 +44,7 @@ You can add following properties to pom file available in Carbon-UI-Server/tests
 ```
 
 4. Unzip the distribution and run the server. You can access the dashboard component from
-https://localhost:9292/portal/ or http://localhost:9090/portal/
+https://localhost:9292/analytics-dashboard/ or http://localhost:9090/analytics-dashboard/
 
 ## License
 Carbon dashboards is available under the Apache 2 License.

@@ -162,7 +162,7 @@ export default class DashboardListingPage extends Component {
         return (
             <MuiThemeProvider muiTheme={defaultTheme}>
                 <Header
-                    title={<FormattedMessage id="portal.title" defaultMessage="Portal" />}
+                    title={<FormattedMessage id="portal.title" defaultMessage="Analytics Dashboard" />}
                     rightElement={<span><WidgetButton /><UserMenu /></span>}
                 />
                 <div style={styles.thumbnailsWrapper}>
