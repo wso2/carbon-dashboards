@@ -114,8 +114,8 @@ public class DashboardRestApiProvider implements RestApiProvider {
                         Microservice microservice = (Microservice) serviceClass.newInstance();
                         microservices.put(path, microservice);
                     } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
-                        LOGGER.error("Error occurred while adding new microservice '{}' for path '{}' as " +
-                                "specified in Additional API configuration. Error: {}", impl, path, e.getMessage());
+                        LOGGER.error("Error occurred while registering microservice '{}' for path '{}'. " +
+                                "Error: {}", impl, path, e.getMessage());
                     }
                 });
             }
