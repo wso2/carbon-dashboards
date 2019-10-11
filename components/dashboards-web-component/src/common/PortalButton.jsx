@@ -29,7 +29,7 @@ class PortalButton extends Component {
         return (
             <FlatButton
                 style={{ minWidth: '48px' }}
-                label={<FormattedMessage id='portal.title' defaultMessage='Portal' />}
+                label={<FormattedMessage id='portal.title' defaultMessage='Analytics Dashboard' />}
                 icon={<ActionViewModule />}
                 onClick={() => this.props.history.push('/')}
             />

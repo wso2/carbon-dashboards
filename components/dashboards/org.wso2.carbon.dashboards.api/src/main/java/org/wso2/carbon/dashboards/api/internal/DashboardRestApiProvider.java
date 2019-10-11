@@ -44,7 +44,7 @@ import java.util.Map;
            immediate = true)
 public class DashboardRestApiProvider implements RestApiProvider {
 
-    public static final String DASHBOARD_PORTAL_APP_NAME = "portal";
+    public static final String DASHBOARD_PORTAL_APP_NAME = "analytics-dashboard";
     private static final Logger LOGGER = LoggerFactory.getLogger(DashboardRestApiProvider.class);
 
     private DashboardMetadataProvider dashboardMetadataProvider;

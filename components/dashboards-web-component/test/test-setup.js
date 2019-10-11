@@ -23,4 +23,4 @@ import Adapter from 'enzyme-adapter-react-16';
 configure({ adapter: new Adapter() });
 
 // Setting-up the browser environment.
-global.window.contextPath = '/portal';
+global.window.contextPath = '/analytics-dashboard';

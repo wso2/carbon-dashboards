@@ -286,10 +286,10 @@ public class DashboardRestApi implements Microservice {
 
     /**
      * Get dashboard with widget definitions.
-     * URL: https://localhost:9643/portal/apis/dashboards/<DASHBOARD_URL>/export
+     * URL: https://localhost:9643/analytics-dashboard/apis/dashboards/<DASHBOARD_URL>/export
      *
      * To download the dashboard as an attachment,
-     * URL: https://localhost:9643/portal/apis/dashboards/<DASHBOARD_URL>/export?download=true
+     * URL: https://localhost:9643/analytics-dashboard/apis/dashboards/<DASHBOARD_URL>/export?download=true
      *
      * @since 4.0.29
      *

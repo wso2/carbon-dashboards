@@ -208,7 +208,7 @@ export default class Login extends Component {
             <MuiThemeProvider muiTheme={defaultTheme}>
                 <div>
                     <Header
-                        title={<FormattedMessage id='portal.title' defaultMessage='Portal' />}
+                        title={<FormattedMessage id='portal.title' defaultMessage='Analytics Dashboard' />}
                         rightElement={<span />}
                     />
                     <FormPanel
