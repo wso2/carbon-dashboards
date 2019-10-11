@@ -165,6 +165,6 @@ export default class DashboardAPI {
     static exportDashboardByID(dashboardId) {
         return new DashboardAPI()
             .getHTTPClient()
-            .get(`${dashboardId}/export`);
+            .get(`${dashboardId}/export?permissions=true`);
     }
 }
