@@ -220,6 +220,7 @@ export default class WidgetRenderer extends Component {
                 setTimeout(() => this.setState({ reRenderWidget: false }), 50);
                 return null;
             } else {
+                getWidgetChannelManager().setDashboard(this.props.glContainer.layoutManager.dashboard);
                 const widgetProps = {
                     ...this.props,
                     dashboard: this.props.glContainer.layoutManager.dashboard,

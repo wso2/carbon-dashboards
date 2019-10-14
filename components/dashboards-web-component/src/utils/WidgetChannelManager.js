@@ -16,11 +16,14 @@
 
 let channelManager = null;
 
+const SESSION_USER = 'DASHBOARD_USER';
+
 class WidgetChannelManager {
 
     constructor() {
         this.webSocket = null;
         this.widgetMap = {};
+        this.dashboard = null;
         this.subscribeWidget = this.subscribeWidget.bind(this);
         this.unsubscribeWidget = this.unsubscribeWidget.bind(this);
         this.poll = this.poll.bind(this);
@@ -35,13 +38,17 @@ class WidgetChannelManager {
     /**
      * Set a widget to the widget map and send configuration to the provider endpoint.
      * @param widgetId
+     * @param widgetName
      * @param callback
      * @param dataConfig
      */
-    subscribeWidget(widgetId, callback, dataConfig) {
+    subscribeWidget(widgetId, widgetName, callback, dataConfig) {
         this.widgetMap[widgetId] = callback;
         this.waitForConn(this.webSocket, () => {
             let configJSON = {
+                widgetName: widgetName,
+                username: this._getCurrentUser(),
+                dashboardId: (this.dashboard && this.dashboard.id) ? this.dashboard.id : null,
                 providerName: dataConfig.configs.type,
                 dataProviderConfiguration: dataConfig.configs.config,
                 topic: widgetId,
@@ -58,6 +65,9 @@ class WidgetChannelManager {
     unsubscribeWidget(widgetId) {
         delete this.widgetMap[widgetId];
         let config = {
+            widgetName: null,
+            username: null,
+            dashboardId: null,
             topic: widgetId,
             providerName: null,
             dataProviderConfiguration: null,
@@ -69,13 +79,17 @@ class WidgetChannelManager {
     /**
      * Request publish data from the provider endpoint
      * @param widgetId
+     * @param widgetName
      * @param callback
      * @param dataConfig
      * @param paginate
      */
-    poll(widgetId, callback, dataConfig) {
+    poll(widgetId, widgetName, callback, dataConfig) {
         this.widgetMap[widgetId] = callback;
         let config = {
+            widgetName: widgetName,
+            username: this._getCurrentUser(),
+            dashboardId: (this.dashboard && this.dashboard.id) ? this.dashboard.id : null,
             topic: widgetId,
             providerName: dataConfig.configs.type,
             dataProviderConfiguration: dataConfig.configs.config,
@@ -138,6 +152,53 @@ class WidgetChannelManager {
             that.waitForConn(socket, callback);
         }
     }, 1000)
+    }
+
+    /**
+     * Get session cookie by name.
+     *
+     * @param {string} name Name of the cookie
+     * @returns {string} Content
+     */
+    static _getSessionCookie(name) {
+        name = `${name}=`;
+        const arr = document.cookie.split(';');
+        for (let i = 0; i < arr.length; i++) {
+            let c = arr[i];
+            while (c.charAt(0) === ' ') {
+                c = c.substring(1);
+            }
+            if (c.indexOf(name) === 0) {
+                return c.substring(name.length, c.length);
+            }
+        }
+        return '';
+    }
+
+    /**
+     * Get current user.
+     *
+     * @return {{}} User object
+     */
+    _getCurrentUser() {
+        const user = JSON.parse(WidgetChannelManager._getSessionCookie(SESSION_USER));
+        return (user && user.username) ? user.username : null;
+    }
+
+    /**
+     * Set the dashboard of the widget.
+     */
+    setDashboard(dashboard) {
+        this.dashboard = dashboard;
+    }
+
+    /**
+     * Get the dashboard of the widget.
+     *
+     * @return {{}} Dashboard object
+     */
+    getDashboard() {
+        return this.dashboard;
     }
 }
 

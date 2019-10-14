@@ -17,8 +17,6 @@
  */
 package org.wso2.carbon.dashboards.core.internal;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.analytics.idp.client.core.api.IdPClient;
@@ -31,10 +29,7 @@ import org.wso2.carbon.dashboards.core.DashboardMetadataProvider;
 import org.wso2.carbon.dashboards.core.WidgetMetadataProvider;
 import org.wso2.carbon.dashboards.core.bean.DashboardConfigurations;
 import org.wso2.carbon.dashboards.core.bean.DashboardMetadata;
-import org.wso2.carbon.dashboards.core.bean.DashboardMetadataContent;
 import org.wso2.carbon.dashboards.core.bean.importer.DashboardArtifact;
-import org.wso2.carbon.dashboards.core.bean.importer.Page;
-import org.wso2.carbon.dashboards.core.bean.importer.PageContent;
 import org.wso2.carbon.dashboards.core.bean.importer.WidgetCollection;
 import org.wso2.carbon.dashboards.core.bean.importer.WidgetType;
 import org.wso2.carbon.dashboards.core.bean.widget.GeneratedWidgetConfigs;
@@ -49,7 +44,6 @@ import org.wso2.carbon.uiserver.api.App;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -57,6 +51,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import static org.wso2.carbon.dashboards.core.utils.DashboardUtil.findWidgets;
 
 /**
  * Default dashboard metadata provider.
@@ -70,7 +66,6 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
     private static final String PERMISSION_SUFFIX_VIEWER = ".viewer";
     private static final String PERMISSION_SUFFIX_EDITOR = ".editor";
     private static final String PERMISSION_SUFFIX_OWNER = ".owner";
-    private static final String UNIVERSAL_WIDGET = "UniversalWidget";
 
     private final DashboardMetadataDao dao;
     private DataSourceService dataSourceService;
@@ -346,46 +341,6 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
             });
         }
         return artifact;
-    }
-
-    /**
-     * Find widgets by analyzing a dashboard pages.
-     *
-     * @param dashboardMetadataContent Dashboard content
-     * @return Set of widget IDs
-     * @throws DashboardException If an error occurred while reading or processing dashboards
-     */
-    private Map<WidgetType, Set<String>> findWidgets(DashboardMetadataContent dashboardMetadataContent) {
-        Map<WidgetType, Set<String>> widgets = new HashMap<>();
-        widgets.put(WidgetType.GENERATED, new HashSet<>());
-        widgets.put(WidgetType.CUSTOM, new HashSet<>());
-        Gson gson = new Gson();
-        for (JsonElement element : dashboardMetadataContent.getPages()) {
-            Page page = gson.fromJson(element, Page.class);
-            findWidgets(page.getContent(), widgets);
-        }
-        return widgets;
-    }
-
-    /**
-     * Recursively find widgets by analyzing dashboard page contents.
-     *
-     * @param contents Dashboard page content
-     * @param widgets  Set of widget IDs
-     */
-    private void findWidgets(Set<PageContent> contents, Map<WidgetType, Set<String>> widgets) {
-        for (PageContent content : contents) {
-            if (content.getComponent() != null) {
-                if (UNIVERSAL_WIDGET.equals(content.getComponent())) {
-                    widgets.get(WidgetType.GENERATED).add((String) content.getProps().get("widgetID"));
-                } else {
-                    widgets.get(WidgetType.CUSTOM).add(content.getComponent());
-                }
-            }
-            if (content.getContent() != null) {
-                findWidgets(content.getContent(), widgets);
-            }
-        }
     }
 
     /**

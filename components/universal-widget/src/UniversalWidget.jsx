@@ -56,7 +56,7 @@ export default class UniversalWidget extends Widget {
         if (this.props.providerConfig) {
             this.state.providerConfigs = this.props.providerConfig;
             super.getWidgetChannelManager().subscribeWidget(
-                this.props.id, this.handleWidgetData, this.props.providerConfig);
+                this.props.id, this.props.widgetID, this.handleWidgetData, this.props.providerConfig);
             this.setState({config: this.props.chartConfig, metadata: this.props.metadata});
         } else {
             this.getHTTPClient()
@@ -74,7 +74,7 @@ export default class UniversalWidget extends Widget {
                         this.handleCustomWidgetInputs(providerConfiguration.configs.config.queryData)
                     }
                     super.getWidgetChannelManager().subscribeWidget(
-                        this.props.id, this.handleWidgetData, providerConfiguration);
+                        this.props.id, this.props.widgetID, this.handleWidgetData, providerConfiguration);
                     this.setState({config: message.data.configs.chartConfig, metadata: message.data.configs.metadata});
                 })
                 .catch((error) => {
@@ -153,7 +153,8 @@ export default class UniversalWidget extends Widget {
             this.getQuery.apply(this, widgetInputs);
         this.widgetContext.channelManager.unsubscribeWidget(this.widgetContext.props.id);
         this.widgetContext.channelManager.subscribeWidget(this.widgetContext.props.id,
-            this.widgetContext.handleWidgetData, this.widgetContext.state.providerConfigs);
+            this.widgetContext.props.widgetID, this.widgetContext.handleWidgetData,
+            this.widgetContext.state.providerConfigs);
         this.widgetContext.setState({ config: this.widgetContext.state.config });
         if (receivedData.granularity) {
             this.widgetContext.setState({granularity: receivedData.granularity});
