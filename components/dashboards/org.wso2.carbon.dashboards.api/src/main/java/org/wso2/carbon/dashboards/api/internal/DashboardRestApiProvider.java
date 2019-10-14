@@ -29,7 +29,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.config.ConfigurationException;
 import org.wso2.carbon.config.provider.ConfigProvider;
-import org.wso2.carbon.dashboards.api.internal.internal.ServiceHolder;
 import org.wso2.carbon.dashboards.core.DashboardMetadataProvider;
 import org.wso2.carbon.uiserver.api.App;
 import org.wso2.carbon.uiserver.spi.RestApiProvider;
@@ -49,9 +48,11 @@ import java.util.Map;
 public class DashboardRestApiProvider implements RestApiProvider {
 
     public static final String DASHBOARD_PORTAL_APP_NAME = "analytics-dashboard";
+    private static final String ADDITIONAL_APIS_PROP = "additional.apis";
     private static final Logger LOGGER = LoggerFactory.getLogger(DashboardRestApiProvider.class);
 
     private DashboardMetadataProvider dashboardMetadataProvider;
+    private ConfigProvider configProvider;
 
     @Activate
     protected void activate(BundleContext bundleContext) {
@@ -77,6 +78,20 @@ public class DashboardRestApiProvider implements RestApiProvider {
         LOGGER.debug("DashboardMetadataProvider '{}' unregistered.", dashboardDataProvider.getClass().getName());
     }
 
+    @Reference(service = ConfigProvider.class,
+            cardinality = ReferenceCardinality.MANDATORY,
+            policy = ReferencePolicy.DYNAMIC,
+            unbind = "unregisterConfigProvider")
+    protected void registerConfigProvider(ConfigProvider configProvider) {
+        this.configProvider = configProvider;
+        LOGGER.debug("ConfigProvider '{}' registered.", configProvider.getClass().getName());
+    }
+
+    protected void unregisterConfigProvider(ConfigProvider configProvider) {
+        this.configProvider = null;
+        LOGGER.debug("ConfigProvider '{}' unregistered.", configProvider.getClass().getName());
+    }
+
     @Override
     public String getAppName() {
         return DASHBOARD_PORTAL_APP_NAME;
@@ -100,12 +115,11 @@ public class DashboardRestApiProvider implements RestApiProvider {
      * @return hashmap containing additional API services
      */
     private HashMap<String, Microservice> getAdditionalApiServices() {
-        ConfigProvider configProvider = ServiceHolder.getInstance().getConfigProvider();
         HashMap<String, Microservice> microservices = new HashMap<>();
 
         try {
             LinkedHashMap<String, String> additionalApis =
-                    (LinkedHashMap<String, String>) configProvider.getConfigurationObject("additional.apis");
+                    (LinkedHashMap<String, String>) configProvider.getConfigurationObject(ADDITIONAL_APIS_PROP);
 
             if (additionalApis != null) {
                 additionalApis.forEach((path, impl) -> {
