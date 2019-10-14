@@ -33,7 +33,6 @@ class WidgetChannelManager {
         this._wsOnMessage = this._wsOnMessage.bind(this);
         this._initializeWebSocket();
         this.waitForConn = this.waitForConn.bind(this);
-        this._getCurrentUser = this._getCurrentUser.bind(this);
     }
 
     /**

@@ -52,13 +52,13 @@ import static org.wso2.carbon.dashboards.core.utils.DashboardUtil.findWidgets;
 public class DashboardDataProviderAuthorizer implements DataProviderAuthorizer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DashboardDataProviderAuthorizer.class);
-
-    private DashboardMetadataProvider dashboardMetadataProvider;
     private static final String MAIN_CONFIG = "configs";
     private static final String DATA_PROVIDER_CONFIG = "config";
     private static final String QUERY_DATA = "queryData";
     private static final String QUERY_VALUES = "queryValues";
     private static final String QUERY_NAME = "queryName";
+
+    private DashboardMetadataProvider dashboardMetadataProvider;
 
     @Reference(service = DashboardMetadataProvider.class,
             cardinality = ReferenceCardinality.MANDATORY,
@@ -83,17 +83,17 @@ public class DashboardDataProviderAuthorizer implements DataProviderAuthorizer {
         String dashboardId = dataProviderConfigRoot.getDashboardId();
         String username = dataProviderConfigRoot.getUsername();
         String widgetName = dataProviderConfigRoot.getWidgetName();
-        if (dashboardId == null || dashboardId.equals("")) {
+        if (dashboardId == null || dashboardId.isEmpty()) {
             String error = "Dashboard Id in the Data Provider Config cannot be empty.";
             LOGGER.error(error);
             throw new DataProviderException(error);
         }
-        if (username == null || username.equals("")) {
+        if (username == null || username.isEmpty()) {
             String error = "Username in the Data Provider Config cannot be empty.";
             LOGGER.error(error);
             throw new DataProviderException(error);
         }
-        if (widgetName == null || widgetName.equals("")) {
+        if (widgetName == null || widgetName.isEmpty()) {
             String error = "Widget Name in the Data Provider Config cannot be empty.";
             LOGGER.error(error);
             throw new DataProviderException(error);
@@ -201,7 +201,7 @@ public class DashboardDataProviderAuthorizer implements DataProviderAuthorizer {
         }
 
         // get the query need to be run, from widget conf read from backend
-        if (queryName != null && !queryName.equals("") && queryData.getAsJsonObject().get(queryName) != null) {
+        if (queryName != null && !queryName.isEmpty() && queryData.getAsJsonObject().get(queryName) != null) {
             query = queryData.getAsJsonObject().get(queryName).getAsString();
         } else {
             String error = "Cannot find the query in the widget configuration.";
@@ -223,7 +223,7 @@ public class DashboardDataProviderAuthorizer implements DataProviderAuthorizer {
             for (String key : queryValues.getAsJsonObject().keySet()) {
                 String keyValue = queryValues.getAsJsonObject().get(key).getAsString();
                 if (keyValue == null) {
-                    String error = "Cannot find the replaceable value value for " + key + ".";
+                    String error = "Cannot find the replaceable value for " + key + ".";
                     LOGGER.error(error);
                     throw new DataProviderException(error);
                 }
