@@ -57,6 +57,14 @@ public class DashboardDataProviderAuthorizer implements DataProviderAuthorizer {
     private static final String QUERY_DATA = "queryData";
     private static final String QUERY_VALUES = "queryValues";
     private static final String QUERY_NAME = "queryName";
+    private static final String QUERY_PROPERTY_NAME = "query";
+    private static final String NOT_LIKE_CONTEXT_PATH = "not like \'/t/%\'";
+    private static final String LIKE_CONTEXT_PATH = "like \'/t/{{tenantDomain}}/%\'";
+    private static final String CONTEXT_CONDITION_KEY = "{{contextCondition}}";
+    private static final String TENANT_DOMAIN_KEY = "{{tenantDomain}}";
+    private static final String TENANT_ID_KEY = "{{tenantId}}";
+    private static final String SUPER_TENANT_DOMAIN = "carbon.super";
+    private static final String SUPER_TENANT_ID = "-1234";
 
     private DashboardMetadataProvider dashboardMetadataProvider;
 
@@ -156,7 +164,7 @@ public class DashboardDataProviderAuthorizer implements DataProviderAuthorizer {
         }
         WidgetConfigs widgetConfigs = widgetMetaInfo.get().getConfigs();
         JsonElement dataProviderConfig = widgetConfigs.getProviderConfig();
-        assembleQuery(dataProviderConfigRoot, dataProviderConfig);
+        assembleQuery(username, dataProviderConfigRoot, dataProviderConfig);
         LOGGER.debug("Authorized via the '{}' class.", this.getClass().getName());
         return true;
     }
@@ -164,15 +172,21 @@ public class DashboardDataProviderAuthorizer implements DataProviderAuthorizer {
     /**
      * This method replaces the template values in the query with the values sent from front-end.
      *
+     * @param username name of the logged in user
      * @param dataProviderConfigRoot root configuration for the data provider (comes from the front-end)
      * @param dataProviderConfig data provider config obtained through widget conf. (read by back-end)
      **/
-    private void assembleQuery(DataProviderConfigRoot dataProviderConfigRoot, JsonElement dataProviderConfig)
-            throws DataProviderException {
+    private void assembleQuery(String username, DataProviderConfigRoot dataProviderConfigRoot,
+                               JsonElement dataProviderConfig) throws DataProviderException {
         JsonElement queryData; // query data obtained through reading the widget conf
         String queryName; // name of the query need to be run
         JsonElement queryValues = null; // values needed to be replaced in the query as key/value pairs
         String query;
+        String contextPath;
+
+        // As an example if the username is "admin@carbon.super", the tenant domain will be extracted as "carbon.super".
+        String[] usernameSections = username.split("@");
+        String tenantDomain = usernameSections[usernameSections.length - 1];
 
         if (dataProviderConfig.getAsJsonObject().get(MAIN_CONFIG) != null
                 && dataProviderConfig.getAsJsonObject().get(MAIN_CONFIG).getAsJsonObject()
@@ -230,7 +244,17 @@ public class DashboardDataProviderAuthorizer implements DataProviderAuthorizer {
                 query = query.replace(key, keyValue);
             }
         }
+
+        if (tenantDomain.equalsIgnoreCase(SUPER_TENANT_DOMAIN)) {
+            contextPath = NOT_LIKE_CONTEXT_PATH;
+        } else {
+            contextPath = LIKE_CONTEXT_PATH;
+        }
+        query = query.replace(CONTEXT_CONDITION_KEY, contextPath)
+                .replace(TENANT_DOMAIN_KEY, tenantDomain)
+                .replace(TENANT_ID_KEY, SUPER_TENANT_ID);
+
         Objects.requireNonNull(dataProviderConfigRoot.getDataProviderConfiguration()).getAsJsonObject()
-                .get(QUERY_DATA).getAsJsonObject().addProperty("query", query);
+                .get(QUERY_DATA).getAsJsonObject().addProperty(QUERY_PROPERTY_NAME, query);
     }
 }
