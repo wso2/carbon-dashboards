@@ -96,7 +96,8 @@ public class DashboardImporter {
                 if (permissionMap.containsKey(PERMISSION_OWNERS)) {
                     permissionMap.put(PERMISSION_OWNER, permissionMap.remove(PERMISSION_OWNERS));
                 }
-                dashboardMetadataProvider.updateDashboardRoles(dashboard.getUrl(), dashboardArtifact.getPermissions());
+                dashboardMetadataProvider.updateDashboardRoles(dashboard.getUrl(), dashboardArtifact.getPermissions(),
+                        null);
 
             } catch (DashboardException e) {
                 LOGGER.warn("Cannot save dashboard importing from '{}' to the database.", dashboardArtifactPath, e);

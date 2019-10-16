@@ -203,9 +203,9 @@ public class DashboardRestApi implements Microservice {
     @GET
     @Path("/roles")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getRoles() {
+    public Response getRoles(@Context Request request) {
         try {
-            List<Role> allRoles = dashboardDataProvider.getAllRoles();
+            List<Role> allRoles = dashboardDataProvider.getAllRoles(getUserName(request));
             return Response.ok()
                     .entity(allRoles)
                     .build();
@@ -252,10 +252,10 @@ public class DashboardRestApi implements Microservice {
     @GET
     @Path("/{url}/roles")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getDashboardRoles(@PathParam("url") String url) {
+    public Response getDashboardRoles(@PathParam("url") String url, @Context Request request) {
         try {
             return Response.ok()
-                    .entity(dashboardDataProvider.getDashboardRoles(url))
+                    .entity(dashboardDataProvider.getDashboardRoles(url, getUserName(request)))
                     .build();
         } catch (DashboardException e) {
             LOGGER.error("Cannot retrieve roles for dashboard '" + replaceCRLFCharacters(url) + "'", e);
@@ -301,9 +301,9 @@ public class DashboardRestApi implements Microservice {
     @Path("/{url}/export")
     @Produces(MediaType.APPLICATION_JSON)
     public Response exportDashboard(@PathParam("url") String url, @QueryParam("download") boolean download,
-                                    @QueryParam("permissions") boolean permissions) {
+                                    @QueryParam("permissions") boolean permissions, @Context Request request) {
         try {
-            DashboardArtifact artifact = dashboardDataProvider.exportDashboard(url, permissions);
+            DashboardArtifact artifact = dashboardDataProvider.exportDashboard(url, permissions, getUserName(request));
             Response.ResponseBuilder responseBuilder = Response.ok(artifact);
             if (download) {
                 responseBuilder.header("Content-Disposition", "attachment; filename=\""

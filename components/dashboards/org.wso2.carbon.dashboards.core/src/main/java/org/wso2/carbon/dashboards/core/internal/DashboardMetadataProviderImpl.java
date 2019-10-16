@@ -229,15 +229,18 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
     }
 
     @Override
-    public Map<String, List<Role>> getDashboardRoles(String dashboardUrl) throws DashboardException {
+    public Map<String, List<Role>> getDashboardRoles(String dashboardUrl, String username) throws DashboardException {
         Map<String, List<Role>> roles = new HashMap<>();
         try {
-            roles.put("owners", permissionProvider.getGrantedRoles(
-                    new Permission(PERMISSION_APP_NAME, dashboardUrl + PERMISSION_SUFFIX_OWNER)));
-            roles.put("editors", permissionProvider.getGrantedRoles(
-                    new Permission(PERMISSION_APP_NAME, dashboardUrl + PERMISSION_SUFFIX_EDITOR)));
-            roles.put("viewers", permissionProvider.getGrantedRoles(
-                    new Permission(PERMISSION_APP_NAME, dashboardUrl + PERMISSION_SUFFIX_VIEWER)));
+            roles.put("owners", permissionProvider.getGrantedRolesOfTenant(
+                    new Permission(PERMISSION_APP_NAME, dashboardUrl + PERMISSION_SUFFIX_OWNER),
+                    username));
+            roles.put("editors", permissionProvider.getGrantedRolesOfTenant(
+                    new Permission(PERMISSION_APP_NAME, dashboardUrl + PERMISSION_SUFFIX_EDITOR),
+                    username));
+            roles.put("viewers", permissionProvider.getGrantedRolesOfTenant(
+                    new Permission(PERMISSION_APP_NAME, dashboardUrl + PERMISSION_SUFFIX_VIEWER),
+                    username));
         } catch (PermissionException e) {
             throw new DashboardException("Unable to get roles for the dashboard '" + dashboardUrl + "'", e);
         }
@@ -245,9 +248,10 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
     }
 
     @Override
-    public List<org.wso2.carbon.analytics.idp.client.core.models.Role> getAllRoles() throws DashboardException {
+    public List<org.wso2.carbon.analytics.idp.client.core.models.Role> getAllRoles(String username)
+            throws DashboardException {
         try {
-            return identityClient.getAllRoles();
+            return identityClient.getAllRolesOfTenant(username);
         } catch (IdPClientException e) {
             throw new DashboardException("Unable to get all user roles.", e);
         }
@@ -268,18 +272,22 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
             throws DashboardException {
         if (permissionProvider.hasPermission(user, new Permission(PERMISSION_APP_NAME,
                 dashboardUrl + PERMISSION_SUFFIX_OWNER))) {
-            updateDashboardRoles(dashboardUrl, roleIdMap);
+            updateDashboardRoles(dashboardUrl, roleIdMap, user);
         } else {
             throw new UnauthorizedException("Insufficient permissions to update roles of the dashboard with ID" +
                     dashboardUrl);
         }
     }
 
-    public void updateDashboardRoles(String dashboardUrl, Map<String, List<String>> roleIdMap)
+    public void updateDashboardRoles(String dashboardUrl, Map<String, List<String>> roleIdMap, String username)
             throws DashboardException {
         List<org.wso2.carbon.analytics.idp.client.core.models.Role> allRoles;
         try {
-            allRoles = identityClient.getAllRoles();
+            if (username != null) {
+                allRoles = identityClient.getAllRolesOfTenant(username);
+            } else {
+                allRoles = identityClient.getAllRoles();
+            }
         } catch (IdPClientException e) {
             throw new DashboardException("Unable to get all user roles.", e);
         }
@@ -309,9 +317,10 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
      * @throws DashboardException If an error occurred while reading or processing dashboards
      */
     @Override
-    public DashboardArtifact exportDashboard(String dashboardUrl, boolean permissions) throws DashboardException {
+    public DashboardArtifact exportDashboard(String dashboardUrl, boolean permissions, String username)
+            throws DashboardException {
         Optional<DashboardMetadata> dashboardMetadataOptional = dao.get(dashboardUrl);
-        Map<String, List<Role>> dashboardRoles = getDashboardRoles(dashboardUrl);
+        Map<String, List<Role>> dashboardRoles = getDashboardRoles(dashboardUrl, username);
         if (!dashboardMetadataOptional.isPresent()) {
             throw new DashboardException("Cannot find the dashboard '" + dashboardUrl + "'");
         }

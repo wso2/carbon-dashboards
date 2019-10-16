@@ -106,9 +106,9 @@ public interface DashboardMetadataProvider {
 
     void delete(String user, String dashboardUrl) throws DashboardException;
 
-    Map<String, List<Role>> getDashboardRoles(String dashboardUrl) throws DashboardException;
+    Map<String, List<Role>> getDashboardRoles(String dashboardUrl, String username) throws DashboardException;
 
-    List<org.wso2.carbon.analytics.idp.client.core.models.Role> getAllRoles() throws DashboardException;
+    List<org.wso2.carbon.analytics.idp.client.core.models.Role> getAllRoles(String username) throws DashboardException;
 
     List<org.wso2.carbon.analytics.idp.client.core.models.Role> getRolesByUsername(String username)
             throws DashboardException;
@@ -116,7 +116,8 @@ public interface DashboardMetadataProvider {
     void updateDashboardRoles(String user, String dashboardUrl, Map<String, List<String>> roles) throws
             DashboardException;
 
-    void updateDashboardRoles(String dashboardUrl, Map<String, List<String>> roles) throws DashboardException;
+    void updateDashboardRoles(String dashboardUrl, Map<String, List<String>> roles, String username)
+            throws DashboardException;
 
     /**
      * Return exportable dashboard definition.
@@ -127,7 +128,8 @@ public interface DashboardMetadataProvider {
      * @return Exportable dashboard definition
      * @throws DashboardException If an error occurred while reading or processing dashboards
      */
-    DashboardArtifact exportDashboard(String dashboardUrl, boolean permissions) throws DashboardException;
+    DashboardArtifact exportDashboard(String dashboardUrl, boolean permissions, String username)
+            throws DashboardException;
 
     DashboardConfigurations getReportGenerationConfigurations();
 
