@@ -433,7 +433,7 @@
         <carbon.datasources.version>1.1.4</carbon.datasources.version>
 
         <!--Analytics-->
-        <carbon.analytics.version>3.0.7</carbon.analytics.version>
+        <carbon.analytics.version>3.0.14</carbon.analytics.version>
         <carbon.analytics.version.range>[3.0.0, 4.0.0)</carbon.analytics.version.range>
         <!--Analytics common-->
         <carbon.analytics-common.version>6.1.32</carbon.analytics-common.version>
