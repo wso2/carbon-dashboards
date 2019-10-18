@@ -159,6 +159,7 @@
             org.slf4j.*; version="${slf4j.version.range}",
             com.google.gson.*; version="${gson.version.range}",
             org.yaml.snakeyaml.*; version="${org.yaml.version.range}",
+            feign.*; version="${openfeign.version}",
             javax.ws.rs.*; version="${javax.ws.rs.version.range}",
             org.wso2.carbon.utils.*; version="${carbon.utils.version.range}",
         </import.package>
