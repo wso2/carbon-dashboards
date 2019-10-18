@@ -78,6 +78,12 @@ public class MockPermissionProvider implements PermissionProvider {
     }
 
     @Override
+    public List<Role> getGrantedRolesOfTenant(Permission permission, String s) throws PermissionException {
+        // TODO: Need to implement in-memory permission store.
+        return new ArrayList<>();
+    }
+
+    @Override
     public List<Role> getGrantedRoles(String permissionID) throws PermissionException {
         // TODO: 11/16/17 Need to implement in-memory permission store.
         return new ArrayList<>();
