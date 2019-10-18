@@ -18,23 +18,32 @@
 package org.wso2.carbon.dashboards.core;
 
 import com.google.gson.JsonElement;
+import feign.Response;
+import feign.RetryableException;
+import feign.gson.GsonDecoder;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.carbon.analytics.idp.client.core.api.AnalyticsHttpClientBuilderService;
+import org.wso2.carbon.config.ConfigurationException;
+import org.wso2.carbon.config.provider.ConfigProvider;
 import org.wso2.carbon.dashboards.core.bean.DashboardMetadata;
 import org.wso2.carbon.dashboards.core.bean.DashboardMetadataContent;
+import org.wso2.carbon.dashboards.core.bean.authorizer.TenantIdInfo;
 import org.wso2.carbon.dashboards.core.bean.importer.WidgetType;
 import org.wso2.carbon.dashboards.core.bean.widget.WidgetConfigs;
 import org.wso2.carbon.dashboards.core.bean.widget.WidgetMetaInfo;
 import org.wso2.carbon.dashboards.core.exception.DashboardException;
 import org.wso2.carbon.dashboards.core.exception.UnauthorizedException;
+import org.wso2.carbon.dashboards.core.internal.authorizer.DashboardAuthorizerServiceFactory;
 import org.wso2.carbon.data.provider.DataProviderAuthorizer;
 import org.wso2.carbon.data.provider.bean.DataProviderConfigRoot;
 import org.wso2.carbon.data.provider.exception.DataProviderException;
 
+import java.io.IOException;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -52,6 +61,11 @@ import static org.wso2.carbon.dashboards.core.utils.DashboardUtil.findWidgets;
 public class DashboardDataProviderAuthorizer implements DataProviderAuthorizer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DashboardDataProviderAuthorizer.class);
+    private static final String AUTH_CONFIGS_HEADER = "auth.configs";
+    private static final String AUTH_CONFIGS_PROPERTIES_HEADER = "properties";
+    private static final String ADMIN_SERVICE_BASE_URL_KEY = "adminServiceBaseUrl";
+    private static final String ADMIN_SERVICE_USERNAME_KEY = "adminServiceUsername";
+    private static final String ADMIN_SERVICE_PASSWORD_KEY = "adminServicePassword";
     private static final String MAIN_CONFIG = "configs";
     private static final String DATA_PROVIDER_CONFIG = "config";
     private static final String QUERY_DATA = "queryData";
@@ -64,9 +78,10 @@ public class DashboardDataProviderAuthorizer implements DataProviderAuthorizer {
     private static final String TENANT_DOMAIN_KEY = "{{tenantDomain}}";
     private static final String TENANT_ID_KEY = "{{tenantId}}";
     private static final String SUPER_TENANT_DOMAIN = "carbon.super";
-    private static final String SUPER_TENANT_ID = "-1234";
 
+    private AnalyticsHttpClientBuilderService clientBuilderService;
     private DashboardMetadataProvider dashboardMetadataProvider;
+    private ConfigProvider configProvider;
 
     @Reference(service = DashboardMetadataProvider.class,
             cardinality = ReferenceCardinality.MANDATORY,
@@ -80,6 +95,37 @@ public class DashboardDataProviderAuthorizer implements DataProviderAuthorizer {
     protected void unsetDashboardMetadataProvider(DashboardMetadataProvider dashboardDataProvider) {
         this.dashboardMetadataProvider = null;
         LOGGER.debug("DashboardMetadataProvider '{}' unregistered.", dashboardDataProvider.getClass().getName());
+    }
+
+    @Reference(
+            name = "carbon.anaytics.common.clientservice",
+            service = AnalyticsHttpClientBuilderService.class,
+            cardinality = ReferenceCardinality.MANDATORY,
+            policy = ReferencePolicy.DYNAMIC,
+            unbind = "unregisterAnalyticsHttpClient"
+    )
+    protected void registerAnalyticsHttpClient(AnalyticsHttpClientBuilderService service) {
+        this.clientBuilderService = service;
+        LOGGER.debug("AnalyticsHttpClientBuilderService '{}' registered.", service.getClass().getName());
+    }
+
+    protected void unregisterAnalyticsHttpClient(AnalyticsHttpClientBuilderService service) {
+        this.clientBuilderService = null;
+        LOGGER.debug("AnalyticsHttpClientBuilderService '{}' unregistered.", service.getClass().getName());
+    }
+
+    @Reference(service = ConfigProvider.class,
+            cardinality = ReferenceCardinality.MANDATORY,
+            policy = ReferencePolicy.DYNAMIC,
+            unbind = "unsetConfigProvider")
+    protected void setConfigProvider(ConfigProvider configProvider) {
+        this.configProvider = configProvider;
+        LOGGER.debug("ConfigProvider '{}' registered.", configProvider.getClass().getName());
+    }
+
+    protected void unsetConfigProvider(ConfigProvider configProvider) {
+        this.configProvider = null;
+        LOGGER.debug("ConfigProvider '{}' unregistered.", configProvider.getClass().getName());
     }
 
     @Override
@@ -245,16 +291,126 @@ public class DashboardDataProviderAuthorizer implements DataProviderAuthorizer {
             }
         }
 
-        if (tenantDomain.equalsIgnoreCase(SUPER_TENANT_DOMAIN)) {
-            contextPath = NOT_LIKE_CONTEXT_PATH;
-        } else {
-            contextPath = LIKE_CONTEXT_PATH;
+        if (tenantDomain != null && !tenantDomain.isEmpty()) {
+            if (tenantDomain.equalsIgnoreCase(SUPER_TENANT_DOMAIN)) {
+                contextPath = NOT_LIKE_CONTEXT_PATH;
+            } else {
+                contextPath = LIKE_CONTEXT_PATH;
+            }
+            String tenantId = getTenantId(username);
+            query = query.replace(CONTEXT_CONDITION_KEY, contextPath)
+                    .replace(TENANT_DOMAIN_KEY, tenantDomain)
+                    .replace(TENANT_ID_KEY, tenantId);
         }
-        query = query.replace(CONTEXT_CONDITION_KEY, contextPath)
-                .replace(TENANT_DOMAIN_KEY, tenantDomain)
-                .replace(TENANT_ID_KEY, SUPER_TENANT_ID);
 
         Objects.requireNonNull(dataProviderConfigRoot.getDataProviderConfiguration()).getAsJsonObject()
                 .get(QUERY_DATA).getAsJsonObject().addProperty(QUERY_PROPERTY_NAME, query);
+    }
+
+    /**
+     * This method replaces the template values in the query with the values sent from front-end.
+     *
+     * @param username name of the logged in user
+     * @return id of the tenant
+     **/
+    private String getTenantId(String username) throws DataProviderException {
+        String adminServiceUrl;
+        String adminUsername;
+        String adminPassword;
+        try {
+            Map authConfigs = (Map) this.configProvider.getConfigurationObject(AUTH_CONFIGS_HEADER);
+            if (authConfigs == null) {
+                String error = "Cannot find " + AUTH_CONFIGS_HEADER + " in the deployment.yaml file.";
+                LOGGER.error(error);
+                throw new DataProviderException(error);
+            }
+            if (authConfigs.containsKey(AUTH_CONFIGS_PROPERTIES_HEADER)) {
+                Map properties = (Map) authConfigs.get(AUTH_CONFIGS_PROPERTIES_HEADER);
+                if (properties == null) {
+                    String error = AUTH_CONFIGS_PROPERTIES_HEADER + " header under " + AUTH_CONFIGS_HEADER + " in " +
+                            "the deployment.yaml file cannot be empty";
+                    LOGGER.error(error);
+                    throw new DataProviderException(error);
+                }
+                adminServiceUrl = getPropertyValueFromParentMap(properties, ADMIN_SERVICE_BASE_URL_KEY);
+                adminUsername = getPropertyValueFromParentMap(properties, ADMIN_SERVICE_USERNAME_KEY);
+                adminPassword = getPropertyValueFromParentMap(properties, ADMIN_SERVICE_PASSWORD_KEY);
+            } else {
+                String error = "Cannot find " + AUTH_CONFIGS_PROPERTIES_HEADER + " header under the "
+                        + AUTH_CONFIGS_HEADER + " in the deployment.yaml file.";
+                LOGGER.error(error);
+                throw new DataProviderException(error);
+            }
+        } catch (ConfigurationException e) {
+            String error = "Error occurred while getting the " + AUTH_CONFIGS_HEADER + " configuration from " +
+                    "deployment.yaml file.";
+            LOGGER.error(error);
+            throw new DataProviderException(error);
+        }
+        try {
+            Response response = DashboardAuthorizerServiceFactory.getAuthorizerHttpsClient(
+                    this.clientBuilderService, adminServiceUrl, adminUsername, adminPassword).getTenantId(username);
+            if (response == null) {
+                String error = "Response returned from the admin rest api is null.";
+                LOGGER.error(error);
+                throw new DataProviderException(error);
+            } else {
+                if (response.status() == 200) {
+                    TenantIdInfo tenantIdInfo = (TenantIdInfo) new GsonDecoder().decode(response, TenantIdInfo.class);
+                    String tenantId = tenantIdInfo.getTenantId().toString();
+                    if (tenantId.isEmpty()) {
+                        String error = "Tenant Id cannot be found.";
+                        LOGGER.error(error);
+                        throw new DataProviderException(error);
+                    }
+                    return tenantId;
+                } else if (response.status() == 401) {
+                    String error
+                            = "Unauthorized to get response from admin rest api. Status Code: " + response.status();
+                    LOGGER.error(error);
+                    throw new DataProviderException(error);
+                } else {
+                    String error = "Unknown Error occurred while getting response from admin rest api. Status Code: "
+                            + response.status();
+                    LOGGER.error(error);
+                    throw new DataProviderException(error);
+                }
+            }
+        } catch (RetryableException e) {
+            String error = "Unable to reach the admin rest api.";
+            LOGGER.error(error, e);
+            throw new DataProviderException(error, e);
+        } catch (IOException e) {
+            String error = "Error occurred while parsing the admin rest api response.";
+            LOGGER.error(error, e);
+            throw new DataProviderException(error, e);
+        }
+    }
+
+    /**
+     * This method gets property values from the given parent map. This method also validates whether the given key and
+     * the corresponding value is not empty.
+     *
+     * @param parentConfigMap parent configuration map
+     * @param keyToBeChecked the key name need to be checked and retrieve the value for
+     * @return property value
+     **/
+    private String getPropertyValueFromParentMap(Map parentConfigMap, String keyToBeChecked)
+            throws DataProviderException {
+        if (parentConfigMap.containsKey(keyToBeChecked)) {
+            String value = (String) parentConfigMap.get(keyToBeChecked);
+            if (value == null || value.isEmpty()) {
+                String error = "Value of the property '" + keyToBeChecked + "' cannot be empty. Please define the " +
+                        "value for the property under " + AUTH_CONFIGS_HEADER + " in the deployment.yaml file.";
+                LOGGER.error(error);
+                throw new DataProviderException(error);
+            }
+            return value;
+        } else {
+            String error = "Cannot find property " + keyToBeChecked + " under " + AUTH_CONFIGS_HEADER + " in the " +
+                    "deployment.yaml file.";
+            LOGGER.error(error);
+            throw new DataProviderException(error);
+        }
     }
 }
