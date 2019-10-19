@@ -64,8 +64,8 @@ public class DashboardDataProviderAuthorizer implements DataProviderAuthorizer {
     private static final String AUTH_CONFIGS_HEADER = "auth.configs";
     private static final String AUTH_CONFIGS_PROPERTIES_HEADER = "properties";
     private static final String ADMIN_SERVICE_BASE_URL_KEY = "adminServiceBaseUrl";
-    private static final String ADMIN_SERVICE_USERNAME_KEY = "adminServiceUsername";
-    private static final String ADMIN_SERVICE_PASSWORD_KEY = "adminServicePassword";
+    private static final String ADMIN_USERNAME_KEY = "adminUsername";
+    private static final String ADMIN_PASSWORD_KEY = "adminPassword";
     private static final String MAIN_CONFIG = "configs";
     private static final String DATA_PROVIDER_CONFIG = "config";
     private static final String QUERY_DATA = "queryData";
@@ -333,8 +333,8 @@ public class DashboardDataProviderAuthorizer implements DataProviderAuthorizer {
                     throw new DataProviderException(error);
                 }
                 adminServiceUrl = getPropertyValueFromParentMap(properties, ADMIN_SERVICE_BASE_URL_KEY);
-                adminUsername = getPropertyValueFromParentMap(properties, ADMIN_SERVICE_USERNAME_KEY);
-                adminPassword = getPropertyValueFromParentMap(properties, ADMIN_SERVICE_PASSWORD_KEY);
+                adminUsername = getPropertyValueFromParentMap(properties, ADMIN_USERNAME_KEY);
+                adminPassword = getPropertyValueFromParentMap(properties, ADMIN_PASSWORD_KEY);
             } else {
                 String error = "Cannot find " + AUTH_CONFIGS_PROPERTIES_HEADER + " header under the "
                         + AUTH_CONFIGS_HEADER + " in the deployment.yaml file.";
