@@ -160,7 +160,7 @@ class DashboardCard extends Component {
     }
 
     renderMenu(dashboard) {
-        if (!(dashboard.hasOwnerPermission && dashboard.hasDesignerPermission)) {
+        if (!(dashboard.hasOwnerPermission || dashboard.hasDesignerPermission)) {
             return null;
         }
 
@@ -245,7 +245,7 @@ class DashboardCard extends Component {
                             <div>
                                 <span style={styles.cardTitle}>{title}</span>
                                 {
-                                    dashboard.hasOwnerPermission && dashboard.hasDesignerPermission &&
+                                    (dashboard.hasOwnerPermission || dashboard.hasDesignerPermission) &&
                                     (<NavigationMoreVert onClick={this.handleMenuIconClick} style={styles.menuIcon} />)
                                 }
                             </div>
