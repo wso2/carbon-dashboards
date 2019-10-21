@@ -196,7 +196,7 @@ export default class DashboardSettingsRoles extends Component {
     render() {
         const { muiTheme } = this.props;
         return (
-            <div>
+            <div style={{ width : '50%' }}>
                 {
                     actors.map((actor) => {
                         return (
@@ -215,6 +215,7 @@ export default class DashboardSettingsRoles extends Component {
                                         this.state.roles[actor].text = t;
                                         this.setState({ roles: this.state.roles });
                                     }}
+                                    fullWidth
                                 />
                                 <div style={{ display: 'flex', flexWrap: 'wrap' }}>
                                     {
