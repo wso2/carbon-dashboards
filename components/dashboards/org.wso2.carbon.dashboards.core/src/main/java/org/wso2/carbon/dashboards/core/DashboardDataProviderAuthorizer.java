@@ -74,7 +74,10 @@ public class DashboardDataProviderAuthorizer implements DataProviderAuthorizer {
     private static final String QUERY_PROPERTY_NAME = "query";
     private static final String NOT_LIKE_CONTEXT_PATH = "not like \'/t/%\'";
     private static final String LIKE_CONTEXT_PATH = "like \'/t/{{tenantDomain}}/%\'";
+    private static final String STRING_NOT_CONTAIN_CONTEXT = "NOT(str:contains(CONTEXT,\'/t/\'))";
+    private static final String STRING_CONTAIN_CONTEXT = "(str:contains(CONTEXT,\'/t/{{tenantDomain}}\'))";
     private static final String CONTEXT_CONDITION_KEY = "{{contextCondition}}";
+    private static final String CONTEXT_CONTAINS_CONDITION_KEY = "{{contextContainsCondition}}";
     private static final String TENANT_DOMAIN_KEY = "{{tenantDomain}}";
     private static final String TENANT_ID_KEY = "{{tenantId}}";
     private static final String SUPER_TENANT_DOMAIN = "carbon.super";
@@ -229,6 +232,7 @@ public class DashboardDataProviderAuthorizer implements DataProviderAuthorizer {
         JsonElement queryValues = null; // values needed to be replaced in the query as key/value pairs
         String query;
         String contextPath;
+        String contextContainsCondition;
 
         // As an example if the username is "admin@carbon.super", the tenant domain will be extracted as "carbon.super".
         String[] usernameSections = username.split("@");
@@ -294,11 +298,14 @@ public class DashboardDataProviderAuthorizer implements DataProviderAuthorizer {
         if (tenantDomain != null && !tenantDomain.isEmpty()) {
             if (tenantDomain.equalsIgnoreCase(SUPER_TENANT_DOMAIN)) {
                 contextPath = NOT_LIKE_CONTEXT_PATH;
+                contextContainsCondition = STRING_NOT_CONTAIN_CONTEXT;
             } else {
                 contextPath = LIKE_CONTEXT_PATH;
+                contextContainsCondition = STRING_CONTAIN_CONTEXT;
             }
             String tenantId = getTenantId(username);
             query = query.replace(CONTEXT_CONDITION_KEY, contextPath)
+                    .replace(CONTEXT_CONTAINS_CONDITION_KEY, contextContainsCondition)
                     .replace(TENANT_DOMAIN_KEY, tenantDomain)
                     .replace(TENANT_ID_KEY, tenantId);
         }
