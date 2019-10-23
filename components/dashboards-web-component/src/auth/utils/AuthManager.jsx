@@ -214,9 +214,12 @@ export default class AuthManager {
      * @returns {Promise<any>}
      */
     static ssoLogout() {
-        return new Promise((resolve, reject) =>{
-            AuthenticationAPI.ssoLogout(AuthManager.getUser().SDID,AuthManager.getCookie(Constants.ID_TOKEN_COOKIE))
-                .then((response) => resolve(response.data.externalLogoutUrl))
+        return new Promise((resolve, reject) => {
+            AuthenticationAPI.ssoLogout(AuthManager.getUser().SDID, AuthManager.getCookie(Constants.ID_TOKEN_COOKIE))
+                .then((response) => {
+                    AuthManager.discardSession();
+                    resolve(response.data.externalLogoutUrl);
+                })
                 .catch((error) => reject(error));
         })
     }
