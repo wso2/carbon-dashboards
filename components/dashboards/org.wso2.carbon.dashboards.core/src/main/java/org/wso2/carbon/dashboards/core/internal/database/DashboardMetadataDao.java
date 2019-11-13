@@ -26,6 +26,9 @@ import org.wso2.carbon.dashboards.core.bean.DashboardMetadata;
 import org.wso2.carbon.dashboards.core.bean.DashboardMetadataContent;
 import org.wso2.carbon.dashboards.core.exception.DashboardException;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.sql.Blob;
 import java.sql.Connection;
@@ -51,6 +54,7 @@ public class DashboardMetadataDao {
     private static final String COLUMN_DASHBOARD_NAME = "NAME";
     private static final String COLUMN_DASHBOARD_URL = "URL";
     private static final String COLUMN_DASHBOARD_OWNER = "OWNER";
+    private static final String POSTGRESQL_DB_TYPE = "PostgreSQL";
 
     private final DataSource dataSource;
     private final QueryManager queryManager;
@@ -124,13 +128,19 @@ public class DashboardMetadataDao {
             connection = getConnection();
             query = queryManager.getQuery(connection, QueryManager.UPDATE_DASHBOARD_CONTENT_QUERY);
             connection.setAutoCommit(false);
+            String dbType = connection.getMetaData().getDatabaseProductName();
             ps = connection.prepareStatement(query);
             ps.setString(1, dashboardMetadata.getName());
             ps.setString(2, dashboardMetadata.getDescription());
-            Blob blob = connection.createBlob();
-            blob.setBytes(1, toJsonBytes(dashboardMetadata.getContent()));
-            ps.setBlob(3, blob);
-            ps.setString(4, dashboardMetadata.getParentId());
+            if (dbType.equalsIgnoreCase(POSTGRESQL_DB_TYPE)) {
+                ps.setBinaryStream(3, new ByteArrayInputStream(toJsonBytes(dashboardMetadata.getContent())));
+                ps.setInt(4, Integer.parseInt(dashboardMetadata.getParentId()));
+            } else {
+                Blob blob = connection.createBlob();
+                blob.setBytes(1, toJsonBytes(dashboardMetadata.getContent()));
+                ps.setBlob(3, blob);
+                ps.setString(4, dashboardMetadata.getParentId());
+            }
             ps.setString(5, dashboardMetadata.getLandingPage());
             ps.setString(6, dashboardMetadata.getUrl());
             ps.executeUpdate();
@@ -153,16 +163,22 @@ public class DashboardMetadataDao {
             connection = getConnection();
             query = queryManager.getQuery(connection, QueryManager.ADD_DASHBOARD_CONTENT_QUERY);
             connection.setAutoCommit(false);
+            String dbType = connection.getMetaData().getDatabaseProductName();
             ps = connection.prepareStatement(query);
             ps.setString(1, dashboardMetadata.getUrl());
             ps.setString(2, dashboardMetadata.getOwner());
             ps.setString(3, dashboardMetadata.getName());
             ps.setString(4, dashboardMetadata.getDescription());
-            ps.setString(5, dashboardMetadata.getParentId());
             ps.setString(6, dashboardMetadata.getLandingPage());
-            Blob blob = connection.createBlob();
-            blob.setBytes(1, toJsonBytes(dashboardMetadata.getContent()));
-            ps.setBlob(7, blob);
+            if (dbType.equalsIgnoreCase(POSTGRESQL_DB_TYPE)) {
+                ps.setInt(5, Integer.parseInt(dashboardMetadata.getParentId()));
+                ps.setBinaryStream(7, new ByteArrayInputStream(toJsonBytes(dashboardMetadata.getContent())));
+            } else {
+                ps.setString(5, dashboardMetadata.getParentId());
+                Blob blob = connection.createBlob();
+                blob.setBytes(1, toJsonBytes(dashboardMetadata.getContent()));
+                ps.setBlob(7, blob);
+            }
             ps.executeUpdate();
             connection.commit();
         } catch (SQLException e) {
@@ -202,6 +218,7 @@ public class DashboardMetadataDao {
         String query = null;
         try {
             connection = getConnection();
+            String dbType = connection.getMetaData().getDatabaseProductName();
             query = queryManager.getQuery(connection, QueryManager.GET_DASHBOARD_BY_URL_QUERY);
             ps = connection.prepareStatement(query);
             ps.setString(1, url);
@@ -209,14 +226,23 @@ public class DashboardMetadataDao {
 
             if (result.next()) {
                 DashboardMetadata dashboardMetadata = toDashboardMetadata(result);
-                dashboardMetadata.setContent(
-                        parseDashboardMetadataContent(result.getBlob(COLUMN_DASHBOARD_CONTENT)));
+                if (dbType.equalsIgnoreCase(POSTGRESQL_DB_TYPE)) {
+                    dashboardMetadata.setParentId(String.valueOf(result.getInt(COLUMN_DASHBOARD_PARENT_ID)));
+                    dashboardMetadata.setContent(
+                            parseDashboardMetadataContent(result.getBinaryStream(COLUMN_DASHBOARD_CONTENT)));
+                } else {
+                    dashboardMetadata.setContent(
+                            parseDashboardMetadataContent(result.getBlob(COLUMN_DASHBOARD_CONTENT)));
+                }
                 return Optional.of(dashboardMetadata);
             } else {
                 return Optional.empty();
             }
         } catch (SQLException e) {
             LOGGER.debug("Failed to execute SQL query {}", query);
+            throw new DashboardException("Cannot retrieve dashboard for URl '" + url + "'.", e);
+        } catch (IOException e) {
+            LOGGER.debug("Failed to read dashboard content");
             throw new DashboardException("Cannot retrieve dashboard for URl '" + url + "'.", e);
         } finally {
             closeQuietly(connection, ps, result);
@@ -263,6 +289,20 @@ public class DashboardMetadataDao {
             JsonArray pages = new Gson().fromJson(content, JsonArray.class);
             DashboardMetadataContent dashboardMetadataContent = new DashboardMetadataContent(pages);
             return dashboardMetadataContent;
+        }
+    }
+
+    private static DashboardMetadataContent parseDashboardMetadataContent(InputStream inputStream)
+            throws IOException {
+        ByteArrayInputStream binaryStream = (ByteArrayInputStream) inputStream;
+        byte[] buffer = new byte[binaryStream.available()];
+        binaryStream.read(buffer);
+        String content = new String(buffer, StandardCharsets.UTF_8);
+        try {
+            return new Gson().fromJson(content, DashboardMetadataContent.class);
+        } catch (JsonParseException e) {
+            JsonArray pages = new Gson().fromJson(content, JsonArray.class);
+            return new DashboardMetadataContent(pages);
         }
     }
 

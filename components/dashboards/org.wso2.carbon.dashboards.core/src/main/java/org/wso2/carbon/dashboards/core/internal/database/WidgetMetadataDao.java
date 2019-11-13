@@ -23,6 +23,9 @@ import org.slf4j.LoggerFactory;
 import org.wso2.carbon.dashboards.core.bean.widget.GeneratedWidgetConfigs;
 import org.wso2.carbon.dashboards.core.exception.DashboardException;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.sql.Blob;
 import java.sql.Connection;
@@ -42,6 +45,7 @@ public class WidgetMetadataDao {
     private static final String COLUMN_WIDGET_ID = "WIDGET_ID";
     private static final String COLUMN_WIDGET_NAME = "WIDGET_NAME";
     private static final String COLUMN_WIDGET_CONFIGS = "WIDGET_CONFIGS";
+    private static final String POSTGRESQL_DB_TYPE = "PostgreSQL";
 
     private final DataSource dataSource;
     private final QueryManager queryManager;
@@ -117,14 +121,19 @@ public class WidgetMetadataDao {
         generatedWidgetConfigs.setId(generatedWidgetConfigs.getName().replace(" ", "-"));
         try {
             connection = getConnection();
+            String dbType = connection.getMetaData().getDatabaseProductName();
             query = queryManager.getQuery(connection, QueryManager.ADD_WIDGET_CONFIG_QUERY);
             connection.setAutoCommit(false);
             ps = connection.prepareStatement(query);
             ps.setString(1, generatedWidgetConfigs.getId());
             ps.setString(2, generatedWidgetConfigs.getName());
-            Blob blob = connection.createBlob();
-            blob.setBytes(1, toJsonBytes(generatedWidgetConfigs));
-            ps.setObject(3, blob);
+            if (dbType.equalsIgnoreCase(POSTGRESQL_DB_TYPE)) {
+                ps.setBinaryStream(3, new ByteArrayInputStream(toJsonBytes(generatedWidgetConfigs)));
+            } else {
+                Blob blob = connection.createBlob();
+                blob.setBytes(1, toJsonBytes(generatedWidgetConfigs));
+                ps.setObject(3, blob);
+            }
             ps.executeUpdate();
             connection.commit();
         } catch (SQLException e) {
@@ -143,12 +152,17 @@ public class WidgetMetadataDao {
         generatedWidgetConfigs.setId(generatedWidgetConfigs.getName().replace(" ", "-"));
         try {
             connection = getConnection();
+            String dbType = connection.getMetaData().getDatabaseProductName();
             query = queryManager.getQuery(connection, QueryManager.UPDATE_WIDGET_CONFIG_QUERY);
             connection.setAutoCommit(false);
             ps = connection.prepareStatement(query);
-            Blob blob = connection.createBlob();
-            blob.setBytes(1, toJsonBytes(generatedWidgetConfigs));
-            ps.setObject(1, blob);
+            if (dbType.equalsIgnoreCase(POSTGRESQL_DB_TYPE)) {
+                ps.setBinaryStream(1, new ByteArrayInputStream(toJsonBytes(generatedWidgetConfigs)));
+            } else {
+                Blob blob = connection.createBlob();
+                blob.setBytes(1, toJsonBytes(generatedWidgetConfigs));
+                ps.setObject(1, blob);
+            }
             ps.setString(2, generatedWidgetConfigs.getId());
             ps.executeUpdate();
             connection.commit();
@@ -172,6 +186,14 @@ public class WidgetMetadataDao {
                 GeneratedWidgetConfigs.class);
     }
 
+    private static GeneratedWidgetConfigs fromJsonBytes(InputStream inputStream) throws IOException {
+        ByteArrayInputStream binaryStream = (ByteArrayInputStream) inputStream;
+        byte[] buffer = new byte[binaryStream.available()];
+        binaryStream.read(buffer);
+        String content = new String(buffer, StandardCharsets.UTF_8);
+        return GSON.fromJson(content, GeneratedWidgetConfigs.class);
+    }
+
     public GeneratedWidgetConfigs getGeneratedWidgetConfigsForId(String widgetId) throws
             DashboardException {
         Connection connection = null;
@@ -180,16 +202,24 @@ public class WidgetMetadataDao {
         String query = null;
         try {
             connection = getConnection();
+            String dbType = connection.getMetaData().getDatabaseProductName();
             query = queryManager.getQuery(connection, QueryManager.GET_WIDGET_CONFIG_QUERY);
             ps = connection.prepareStatement(query);
             ps.setString(1, widgetId);
             resultSet = ps.executeQuery();
             if (resultSet.next()) {
-                return fromJsonBytes(resultSet.getBlob(COLUMN_WIDGET_CONFIGS));
+                if (dbType.equalsIgnoreCase(POSTGRESQL_DB_TYPE)) {
+                    return fromJsonBytes(resultSet.getBinaryStream(COLUMN_WIDGET_CONFIGS));
+                } else {
+                    return fromJsonBytes(resultSet.getBlob(COLUMN_WIDGET_CONFIGS));
+                }
             }
         } catch (SQLException e) {
             rollbackQuietly(connection);
             LOGGER.debug("Failed to execute SQL query {}", query);
+            throw new DashboardException("Cannot get widget configuration for widget id  " + widgetId + ".", e);
+        } catch (IOException e) {
+            LOGGER.debug("Failed to read generated widget configuration");
             throw new DashboardException("Cannot get widget configuration for widget id  " + widgetId + ".", e);
         } finally {
             closeQuietly(connection, ps, resultSet);
@@ -204,19 +234,27 @@ public class WidgetMetadataDao {
         String query = null;
         try {
             connection = getConnection();
+            String dbType = connection.getMetaData().getDatabaseProductName();
             query = queryManager.getQuery(connection, QueryManager.GET_WIDGET_NAME_ID_MAP_QUERY);
             ps = connection.prepareStatement(query);
             resultSet = ps.executeQuery();
             Set<GeneratedWidgetConfigs> widgetNameSet = new HashSet<>();
+            GeneratedWidgetConfigs generatedWidgetConfigs;
             while (resultSet.next()) {
-                GeneratedWidgetConfigs generatedWidgetConfigs =
-                        fromJsonBytes(resultSet.getBlob(COLUMN_WIDGET_CONFIGS));
+                if (dbType.equalsIgnoreCase(POSTGRESQL_DB_TYPE)) {
+                    generatedWidgetConfigs = fromJsonBytes(resultSet.getBinaryStream(COLUMN_WIDGET_CONFIGS));
+                } else {
+                    generatedWidgetConfigs = fromJsonBytes(resultSet.getBlob(COLUMN_WIDGET_CONFIGS));
+                }
                 widgetNameSet.add(generatedWidgetConfigs);
             }
             return widgetNameSet;
         } catch (SQLException e) {
             rollbackQuietly(connection);
             LOGGER.debug("Failed to execute SQL query {}", query);
+            throw new DashboardException("Failed to get widget widget name set.", e);
+        } catch (IOException e) {
+            LOGGER.debug("Failed to read generated widget configurations");
             throw new DashboardException("Failed to get widget widget name set.", e);
         } finally {
             closeQuietly(connection, ps, resultSet);

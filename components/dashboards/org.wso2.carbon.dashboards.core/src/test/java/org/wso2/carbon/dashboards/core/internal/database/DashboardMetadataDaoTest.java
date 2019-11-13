@@ -27,8 +27,10 @@ import org.wso2.carbon.dashboards.core.bean.DashboardMetadata;
 import org.wso2.carbon.dashboards.core.bean.DashboardMetadataContent;
 import org.wso2.carbon.dashboards.core.exception.DashboardException;
 
+import java.io.ByteArrayInputStream;
 import java.sql.Blob;
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -50,6 +52,8 @@ import static org.mockito.Mockito.when;
  * @since 4.0.0
  */
 public class DashboardMetadataDaoTest {
+
+    private static final String POSTGRESQL_DB_TYPE = "PostgreSQL";
 
     @ParameterizedTest
     @MethodSource("sqlAutoCloseablesProvider")
@@ -107,6 +111,9 @@ public class DashboardMetadataDaoTest {
         when(preparedStatement.executeQuery()).thenThrow(SQLException.class);
         Connection connection = createConnection(preparedStatement);
         DashboardMetadataDao dao = createDao(connection);
+        DatabaseMetaData databaseMetaData = mock(DatabaseMetaData.class);
+        when(connection.getMetaData()).thenReturn(databaseMetaData);
+        when(databaseMetaData.getDatabaseProductName()).thenReturn("H2");
 
         Assertions.assertThrows(DashboardException.class, () -> dao.get("foo"));
         verify(preparedStatement).close();
@@ -120,6 +127,9 @@ public class DashboardMetadataDaoTest {
         PreparedStatement preparedStatement = mock(PreparedStatement.class);
         when(preparedStatement.executeQuery()).thenReturn(resultSet);
         Connection connection = createConnection(preparedStatement);
+        DatabaseMetaData databaseMetaData = mock(DatabaseMetaData.class);
+        when(connection.getMetaData()).thenReturn(databaseMetaData);
+        when(databaseMetaData.getDatabaseProductName()).thenReturn("H2");
         DashboardMetadataDao dao = createDao(connection);
 
         Assertions.assertFalse(dao.get("foo").isPresent());
@@ -139,6 +149,29 @@ public class DashboardMetadataDaoTest {
         when(preparedStatement.executeQuery()).thenReturn(resultSet);
         Connection connection = createConnection(preparedStatement);
         DashboardMetadataDao dao = createDao(connection);
+        DatabaseMetaData databaseMetaData = mock(DatabaseMetaData.class);
+        when(connection.getMetaData()).thenReturn(databaseMetaData);
+        when(databaseMetaData.getDatabaseProductName()).thenReturn("H2");
+
+        Assertions.assertTrue(dao.get("foo").isPresent());
+        verify(preparedStatement).close();
+        verify(connection).close();
+        verify(resultSet).close();
+    }
+
+    @Test
+    void testGetWithPostgreSQL() throws Exception {
+        ByteArrayInputStream byteArrayInputStream = mock(ByteArrayInputStream.class);
+        ResultSet resultSet = mock(ResultSet.class);
+        when(resultSet.next()).thenReturn(true);
+        when(resultSet.getBinaryStream(anyString())).thenReturn(byteArrayInputStream);
+        PreparedStatement preparedStatement = mock(PreparedStatement.class);
+        when(preparedStatement.executeQuery()).thenReturn(resultSet);
+        Connection connection = createConnection(preparedStatement);
+        DashboardMetadataDao dao = createDao(connection);
+        DatabaseMetaData databaseMetaData = mock(DatabaseMetaData.class);
+        when(connection.getMetaData()).thenReturn(databaseMetaData);
+        when(databaseMetaData.getDatabaseProductName()).thenReturn(POSTGRESQL_DB_TYPE);
 
         Assertions.assertTrue(dao.get("foo").isPresent());
         verify(preparedStatement).close();
@@ -179,6 +212,9 @@ public class DashboardMetadataDaoTest {
         when(preparedStatement.executeUpdate()).thenThrow(SQLException.class);
         Connection connection = createConnection(preparedStatement);
         DashboardMetadataDao dao = createDao(connection);
+        DatabaseMetaData databaseMetaData = mock(DatabaseMetaData.class);
+        when(connection.getMetaData()).thenReturn(databaseMetaData);
+        when(databaseMetaData.getDatabaseProductName()).thenReturn("H2");
 
         Assertions.assertThrows(DashboardException.class, () -> dao.add(createDashboardMetadata()));
         verify(connection).setAutoCommit(false);
@@ -192,8 +228,30 @@ public class DashboardMetadataDaoTest {
         PreparedStatement preparedStatement = mock(PreparedStatement.class);
         Connection connection = createConnection(preparedStatement);
         DashboardMetadataDao dao = createDao(connection);
+        DatabaseMetaData databaseMetaData = mock(DatabaseMetaData.class);
+        when(connection.getMetaData()).thenReturn(databaseMetaData);
+        when(databaseMetaData.getDatabaseProductName()).thenReturn("H2");
 
         dao.add(createDashboardMetadata());
+        verify(connection).setAutoCommit(false);
+        verify(preparedStatement).executeUpdate();
+        verify(connection).commit();
+        verify(preparedStatement).close();
+        verify(connection).close();
+    }
+
+    @Test
+    void testAddWithPostgreSQL() throws Exception {
+        PreparedStatement preparedStatement = mock(PreparedStatement.class);
+        Connection connection = createConnection(preparedStatement);
+        DashboardMetadataDao dao = createDao(connection);
+        DatabaseMetaData databaseMetaData = mock(DatabaseMetaData.class);
+        when(connection.getMetaData()).thenReturn(databaseMetaData);
+        when(databaseMetaData.getDatabaseProductName()).thenReturn(POSTGRESQL_DB_TYPE);
+
+        DashboardMetadata dashboardMetadata = createDashboardMetadata();
+        dashboardMetadata.setParentId("0");
+        dao.add(dashboardMetadata);
         verify(connection).setAutoCommit(false);
         verify(preparedStatement).executeUpdate();
         verify(connection).commit();
@@ -207,6 +265,9 @@ public class DashboardMetadataDaoTest {
         when(preparedStatement.executeUpdate()).thenThrow(SQLException.class);
         Connection connection = createConnection(preparedStatement);
         DashboardMetadataDao dao = createDao(connection);
+        DatabaseMetaData databaseMetaData = mock(DatabaseMetaData.class);
+        when(connection.getMetaData()).thenReturn(databaseMetaData);
+        when(databaseMetaData.getDatabaseProductName()).thenReturn("H2");
 
         Assertions.assertThrows(DashboardException.class, () -> dao.update(createDashboardMetadata()));
         verify(connection).setAutoCommit(false);
@@ -220,8 +281,30 @@ public class DashboardMetadataDaoTest {
         PreparedStatement preparedStatement = mock(PreparedStatement.class);
         Connection connection = createConnection(preparedStatement);
         DashboardMetadataDao dao = createDao(connection);
+        DatabaseMetaData databaseMetaData = mock(DatabaseMetaData.class);
+        when(connection.getMetaData()).thenReturn(databaseMetaData);
+        when(databaseMetaData.getDatabaseProductName()).thenReturn("H2");
 
         dao.update(createDashboardMetadata());
+        verify(connection).setAutoCommit(false);
+        verify(preparedStatement).executeUpdate();
+        verify(connection).commit();
+        verify(preparedStatement).close();
+        verify(connection).close();
+    }
+
+    @Test
+    void testUpdateWithPostgreSQL() throws Exception {
+        PreparedStatement preparedStatement = mock(PreparedStatement.class);
+        Connection connection = createConnection(preparedStatement);
+        DashboardMetadataDao dao = createDao(connection);
+        DatabaseMetaData databaseMetaData = mock(DatabaseMetaData.class);
+        when(connection.getMetaData()).thenReturn(databaseMetaData);
+        when(databaseMetaData.getDatabaseProductName()).thenReturn(POSTGRESQL_DB_TYPE);
+
+        DashboardMetadata dashboardMetadata = createDashboardMetadata();
+        dashboardMetadata.setParentId("0");
+        dao.add(dashboardMetadata);
         verify(connection).setAutoCommit(false);
         verify(preparedStatement).executeUpdate();
         verify(connection).commit();
@@ -257,7 +340,7 @@ public class DashboardMetadataDaoTest {
         verify(connection).close();
     }
 
-    private static DashboardMetadataDao createDao(Connection mockedConnection) throws SQLException {
+    private static DashboardMetadataDao createDao(Connection mockedConnection) throws SQLException, DashboardException {
         DataSource dataSource = mock(DataSource.class);
         when(dataSource.getConnection()).thenReturn(mockedConnection);
         QueryManager queryManager = mock(QueryManager.class);
@@ -275,6 +358,13 @@ public class DashboardMetadataDaoTest {
     private static DashboardMetadata createDashboardMetadata() {
         DashboardMetadata dashboardMetadata = new DashboardMetadata();
         dashboardMetadata.setContent(new DashboardMetadataContent());
+        return dashboardMetadata;
+    }
+
+    private static DashboardMetadata createDashboardMetadataForPostgreSQL() {
+        DashboardMetadata dashboardMetadata = new DashboardMetadata();
+        dashboardMetadata.setContent(new DashboardMetadataContent());
+        dashboardMetadata.setParentId("");
         return dashboardMetadata;
     }
 }
