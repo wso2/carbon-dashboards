@@ -27,9 +27,11 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.wso2.carbon.dashboards.core.bean.widget.GeneratedWidgetConfigs;
 import org.wso2.carbon.dashboards.core.exception.DashboardException;
 
+import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.sql.Blob;
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -52,7 +54,9 @@ import static org.mockito.Mockito.when;
  */
 public class WidgetMetadataDaoTest {
 
+    private static final String POSTGRESQL_DB_TYPE = "PostgreSQL";
     private static final Gson GSON = new Gson();
+
 
     private static Stream<Arguments> sqlAutoCloseablesProvider() throws Exception {
         return Stream.of(
@@ -125,6 +129,9 @@ public class WidgetMetadataDaoTest {
         when(preparedStatement.executeQuery()).thenThrow(SQLException.class);
         Connection connection = createConnection(preparedStatement);
         WidgetMetadataDao dao = createDao(connection);
+        DatabaseMetaData databaseMetaData = mock(DatabaseMetaData.class);
+        when(connection.getMetaData()).thenReturn(databaseMetaData);
+        when(databaseMetaData.getDatabaseProductName()).thenReturn("H2");
 
         Assertions.assertThrows(DashboardException.class, () -> dao.getGeneratedWidgetConfigsForId("foo"));
         verify(preparedStatement).close();
@@ -139,6 +146,9 @@ public class WidgetMetadataDaoTest {
         when(preparedStatement.executeQuery()).thenReturn(resultSet);
         Connection connection = createConnection(preparedStatement);
         WidgetMetadataDao dao = createDao(connection);
+        DatabaseMetaData databaseMetaData = mock(DatabaseMetaData.class);
+        when(connection.getMetaData()).thenReturn(databaseMetaData);
+        when(databaseMetaData.getDatabaseProductName()).thenReturn("H2");
 
         Assertions.assertFalse(dao.getGeneratedWidgetConfigsForId("foo") != null);
         verify(preparedStatement).close();
@@ -159,6 +169,31 @@ public class WidgetMetadataDaoTest {
         when(preparedStatement.executeQuery()).thenReturn(resultSet);
         Connection connection = createConnection(preparedStatement);
         WidgetMetadataDao dao = createDao(connection);
+        DatabaseMetaData databaseMetaData = mock(DatabaseMetaData.class);
+        when(connection.getMetaData()).thenReturn(databaseMetaData);
+        when(databaseMetaData.getDatabaseProductName()).thenReturn("H2");
+
+        Assertions.assertTrue(dao.getGeneratedWidgetConfigsForId("foo") != null);
+        verify(preparedStatement).close();
+        verify(connection).close();
+        verify(resultSet).close();
+    }
+
+    @Test
+    void testGetGeneratedWidgetConfigsForIdWithPostgreSQL() throws Exception {
+        GeneratedWidgetConfigs generatedWidgetConfigs = new GeneratedWidgetConfigs();
+        ByteArrayInputStream byteArrayInputStream
+                = new ByteArrayInputStream (GSON.toJson(generatedWidgetConfigs).getBytes(StandardCharsets.UTF_8));
+        ResultSet resultSet = mock(ResultSet.class);
+        when(resultSet.next()).thenReturn(true);
+        when(resultSet.getBinaryStream(anyString())).thenReturn(byteArrayInputStream);
+        PreparedStatement preparedStatement = mock(PreparedStatement.class);
+        when(preparedStatement.executeQuery()).thenReturn(resultSet);
+        Connection connection = createConnection(preparedStatement);
+        WidgetMetadataDao dao = createDao(connection);
+        DatabaseMetaData databaseMetaData = mock(DatabaseMetaData.class);
+        when(connection.getMetaData()).thenReturn(databaseMetaData);
+        when(databaseMetaData.getDatabaseProductName()).thenReturn(POSTGRESQL_DB_TYPE);
 
         Assertions.assertTrue(dao.getGeneratedWidgetConfigsForId("foo") != null);
         verify(preparedStatement).close();
@@ -172,6 +207,9 @@ public class WidgetMetadataDaoTest {
         when(preparedStatement.executeQuery()).thenThrow(SQLException.class);
         Connection connection = createConnection(preparedStatement);
         WidgetMetadataDao dao = createDao(connection);
+        DatabaseMetaData databaseMetaData = mock(DatabaseMetaData.class);
+        when(connection.getMetaData()).thenReturn(databaseMetaData);
+        when(databaseMetaData.getDatabaseProductName()).thenReturn("H2");
 
         Assertions.assertThrows(DashboardException.class, dao::getGeneratedWidgetIdSet);
         verify(preparedStatement).close();
@@ -186,6 +224,9 @@ public class WidgetMetadataDaoTest {
         when(preparedStatement.executeQuery()).thenReturn(resultSet);
         Connection connection = createConnection(preparedStatement);
         WidgetMetadataDao dao = createDao(connection);
+        DatabaseMetaData databaseMetaData = mock(DatabaseMetaData.class);
+        when(connection.getMetaData()).thenReturn(databaseMetaData);
+        when(databaseMetaData.getDatabaseProductName()).thenReturn("H2");
 
         Assertions.assertFalse(!dao.getGeneratedWidgetIdSet().isEmpty());
         verify(preparedStatement).close();
@@ -207,6 +248,31 @@ public class WidgetMetadataDaoTest {
         when(preparedStatement.executeQuery()).thenReturn(resultSet);
         Connection connection = createConnection(preparedStatement);
         WidgetMetadataDao dao = createDao(connection);
+        DatabaseMetaData databaseMetaData = mock(DatabaseMetaData.class);
+        when(connection.getMetaData()).thenReturn(databaseMetaData);
+        when(databaseMetaData.getDatabaseProductName()).thenReturn("H2");
+
+        Assertions.assertTrue(!dao.getGeneratedWidgetIdSet().isEmpty());
+        verify(preparedStatement).close();
+        verify(connection).close();
+        verify(resultSet).close();
+    }
+
+    @Test
+    void testGetGeneratedWidgetIdSetWithPostgreSQL() throws Exception {
+        GeneratedWidgetConfigs generatedWidgetConfigs = new GeneratedWidgetConfigs();
+        ByteArrayInputStream byteArrayInputStream
+                = new ByteArrayInputStream (GSON.toJson(generatedWidgetConfigs).getBytes(StandardCharsets.UTF_8));
+        ResultSet resultSet = mock(ResultSet.class);
+        when(resultSet.next()).thenReturn(true, false);
+        when(resultSet.getBinaryStream(anyString())).thenReturn(byteArrayInputStream);
+        PreparedStatement preparedStatement = mock(PreparedStatement.class);
+        when(preparedStatement.executeQuery()).thenReturn(resultSet);
+        Connection connection = createConnection(preparedStatement);
+        WidgetMetadataDao dao = createDao(connection);
+        DatabaseMetaData databaseMetaData = mock(DatabaseMetaData.class);
+        when(connection.getMetaData()).thenReturn(databaseMetaData);
+        when(databaseMetaData.getDatabaseProductName()).thenReturn(POSTGRESQL_DB_TYPE);
 
         Assertions.assertTrue(!dao.getGeneratedWidgetIdSet().isEmpty());
         verify(preparedStatement).close();
@@ -220,6 +286,9 @@ public class WidgetMetadataDaoTest {
         when(preparedStatement.executeUpdate()).thenThrow(SQLException.class);
         Connection connection = createConnection(preparedStatement);
         WidgetMetadataDao dao = createDao(connection);
+        DatabaseMetaData databaseMetaData = mock(DatabaseMetaData.class);
+        when(connection.getMetaData()).thenReturn(databaseMetaData);
+        when(databaseMetaData.getDatabaseProductName()).thenReturn("H2");
         GeneratedWidgetConfigs generatedWidgetConfigs = new GeneratedWidgetConfigs();
         generatedWidgetConfigs.setName("foo");
         Assertions.assertThrows(DashboardException.class, () -> dao.addGeneratedWidgetConfigs(generatedWidgetConfigs));
@@ -237,6 +306,27 @@ public class WidgetMetadataDaoTest {
         when(preparedStatement.executeUpdate()).thenReturn(1);
         Connection connection = createConnection(preparedStatement);
         WidgetMetadataDao dao = createDao(connection);
+        DatabaseMetaData databaseMetaData = mock(DatabaseMetaData.class);
+        when(connection.getMetaData()).thenReturn(databaseMetaData);
+        when(databaseMetaData.getDatabaseProductName()).thenReturn("H2");
+        dao.addGeneratedWidgetConfigs(generatedWidgetConfigs);
+        verify(preparedStatement).close();
+        verify(connection).close();
+    }
+
+    @Test
+    void testAddGeneratedWidgetConfigsWithPostgreSQL() throws Exception {
+        GeneratedWidgetConfigs generatedWidgetConfigs = new GeneratedWidgetConfigs();
+        generatedWidgetConfigs.setName("Foo Widget");
+        generatedWidgetConfigs.setProviderConfig(GSON.toJsonTree("{\"providerId\": \"sample-provider\"}"));
+        generatedWidgetConfigs.setChartConfig(GSON.toJsonTree("{\"chartId\": \"sample-chart\"}"));
+        PreparedStatement preparedStatement = mock(PreparedStatement.class);
+        when(preparedStatement.executeUpdate()).thenReturn(1);
+        Connection connection = createConnection(preparedStatement);
+        WidgetMetadataDao dao = createDao(connection);
+        DatabaseMetaData databaseMetaData = mock(DatabaseMetaData.class);
+        when(connection.getMetaData()).thenReturn(databaseMetaData);
+        when(databaseMetaData.getDatabaseProductName()).thenReturn(POSTGRESQL_DB_TYPE);
         dao.addGeneratedWidgetConfigs(generatedWidgetConfigs);
         verify(preparedStatement).close();
         verify(connection).close();
