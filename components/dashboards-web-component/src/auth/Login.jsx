@@ -169,7 +169,7 @@ export default class Login extends Component {
      */
     getReferrerFromQueryString() {
         const queryString = this.props.location.search.replace(/^\?/, '');
-        return Qs.parse(queryString).referrer;
+        return Qs.parse(queryString).referrer || '/';
     }
 
     /**

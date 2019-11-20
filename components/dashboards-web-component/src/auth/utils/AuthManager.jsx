@@ -172,6 +172,11 @@ export default class AuthManager {
                 .getAccessTokenWithRefreshToken()
                 .then((response) => {
                     console.log(response.data);
+                    if(response.status != 200) {
+                        console.log('Error occurred while refreshing token.');
+                        this.discardSession();
+                        reject();
+                    }
                     const { pID, lID, validityPeriod } = response.data;
 
                     const username = AuthManager.isRememberMeSet() ?
