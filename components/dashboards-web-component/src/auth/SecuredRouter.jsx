@@ -53,12 +53,22 @@ export default class SecuredRouter extends Component {
      * Refreshes the access token by validating the expiration timee.
      */
     componentWillMount() {
+        const { history } = this.props;
         setInterval(function () {
+            console.debug("Checking token is expired.")
             if (AuthManager.getUser()) {
                 const expiresOn = new Date(AuthManager.getUser().expires);
                 if ((expiresOn - new Date()) / 1000 < sessionSkew) {
-                    AuthManager.authenticateWithRefreshToken();
+                    const authPromise = AuthManager.authenticateWithRefreshToken();
+                    authPromise.then(() => {
+                        console.debug("Token refresh successful.");
+                    }).catch(() => {
+                        console.log("Token refresh failed.");
+                        history.push('/login');
+                    });
                 }
+            } else {
+                history.push('/login');
             }
         }, 60000);
     }
