@@ -55,15 +55,15 @@ export default class SecuredRouter extends Component {
     componentWillMount() {
         const { history } = this.props;
         setInterval(function () {
-            console.debug("Checking token is expired.")
+            console.debug('Checking token is expired.')
             if (AuthManager.getUser()) {
                 const expiresOn = new Date(AuthManager.getUser().expires);
                 if ((expiresOn - new Date()) / 1000 < sessionSkew) {
                     const authPromise = AuthManager.authenticateWithRefreshToken();
                     authPromise.then(() => {
-                        console.debug("Token refresh successful.");
+                        console.debug('Token refresh successful.');
                     }).catch(() => {
-                        console.log("Token refresh failed.");
+                        console.log('Token refresh failed.');
                         history.push('/login');
                     });
                 }

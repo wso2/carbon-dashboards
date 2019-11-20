@@ -21,7 +21,6 @@ import Qs from 'qs';
 
 import AuthenticationAPI from '../../utils/apis/AuthenticationAPI';
 import { Constants } from '../Constants';
-import { Redirect } from 'react-router-dom';
 
 /**
  * Refresh token validity period.
@@ -174,7 +173,7 @@ export default class AuthManager {
                 .then((response) => {
                     console.log(response.data);
                     if(response.status != 200) {
-                        console.log("Error occurred while refreshing token.");
+                        console.log('Error occurred while refreshing token.');
                         this.discardSession();
                         reject();
                     }
