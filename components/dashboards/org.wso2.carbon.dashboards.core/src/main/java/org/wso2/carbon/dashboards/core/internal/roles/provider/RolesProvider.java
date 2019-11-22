@@ -31,9 +31,11 @@ public class RolesProvider {
     private static final String ROLE_ID = "1";
 
     private List<String> creatorRoleIds = new ArrayList<>();
+    private List<String> widgetCreatorRoleIds = new ArrayList<>();
 
     public RolesProvider(DashboardConfigurations dashboardConfigurations) {
         creatorRoleIds.add(ROLE_ID);
+        widgetCreatorRoleIds.add(ROLE_ID);
         if (dashboardConfigurations.getRoles() != null) {
             readConfigs(dashboardConfigurations);
         }
@@ -43,9 +45,16 @@ public class RolesProvider {
         if (!dashboardConfigurations.getRoles().getCreators().isEmpty()) {
             creatorRoleIds = dashboardConfigurations.getRoles().getCreators();
         }
+        if (!dashboardConfigurations.getRoles().getWidgetCreators().isEmpty()) {
+            widgetCreatorRoleIds = dashboardConfigurations.getRoles().getWidgetCreators();
+        }
     }
 
     public List<String> getCreatorRoleIds() {
         return creatorRoleIds;
+    }
+
+    public List<String> getWidgetCreatorRoleIds() {
+        return widgetCreatorRoleIds;
     }
 }

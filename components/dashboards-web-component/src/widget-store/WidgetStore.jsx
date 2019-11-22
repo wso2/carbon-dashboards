@@ -34,7 +34,7 @@ const styles = {
         overflow: 'hidden'
     },
     customWidgetWrapper: {
-        height: '34vh',
+        height: '57vh',
         marginLeft: '18px',
         overflow: 'hidden'
     },
@@ -101,8 +101,10 @@ export default class WidgetStore extends Component {
                 custom: [],
             },
             hasCreatorPermission: false,
+            hasWidgetCreatorPermission: false,
         };
         this.checkCreatorPermission = this.checkCreatorPermission.bind(this);
+        this.checkWidgetCreatorPermission = this.checkWidgetCreatorPermission.bind(this);
         this.retrieveWidgets = this.retrieveWidgets.bind(this);
         this.filterWidgets = this.filterWidgets.bind(this);
     }
@@ -112,6 +114,7 @@ export default class WidgetStore extends Component {
      */
     componentDidMount() {
         this.checkCreatorPermission();
+        this.checkWidgetCreatorPermission();
         this.retrieveWidgets();
     }
 
@@ -130,6 +133,20 @@ export default class WidgetStore extends Component {
             })
             .catch(() => {
                 this.setState({hasCreatorPermission: false});
+            })
+    }
+
+    /**
+     * Check if the current user has widget creator permissions.
+     */
+    checkWidgetCreatorPermission() {
+        let username = AuthManager.getUser().username;
+        new DashboardAPI().hasWidgetCreatorPermission(username)
+            .then((response) => {
+                this.setState({ hasWidgetCreatorPermission: !!response.data });
+            })
+            .catch(() => {
+                this.setState({ hasWidgetCreatorPermission: false });
             })
     }
 
@@ -211,50 +228,27 @@ export default class WidgetStore extends Component {
                     <span style={{float: 'left'}}>
                         <label style={styles.widgetTypeText}>
                             <FormattedMessage
-                                id="generated.widgets"
-                                defaultMessage="Generated Widgets"
+                                id="custom.widgets"
+                                defaultMessage="Custom Widgets"
                             />
                         </label>
                     </span>
                     <span style={{float: 'right', paddingRight: '36px'}}>
-              <div>
-                <TextField
-                    style={{ width: '232px' }}
-                    hintStyle={{color: 'darkgrey'}}
-                    hintText={
-                        <FormattedMessage
-                            id="search.hint.text"
-                            defaultMessage="Search..."
-                        />
-                    }
-                    value={this.state.filter}
-                    onChange={event => this.filterWidgets(event.target.value)}
-                />
+                        <div>
+                            <TextField
+                                style={{ width: '232px' }}
+                                hintStyle={{color: 'darkgrey'}}
+                                hintText={
+                                    <FormattedMessage
+                                        id="search.hint.text"
+                                        defaultMessage="Search..."
+                                    />
+                                }
+                                value={this.state.filter}
+                                onChange={event => this.filterWidgets(event.target.value)}
+                            />
                         </div>
                     </span>
-                </div>
-                <div
-                    style={this.state.viewGeneratedWidgets ? styles.expandGeneratedWrapper : styles.generatedWidgetWrapper}>
-                    {this.state.widgets.generated}
-                </div>
-                <div style={styles.widgetType}>
-                    <p
-                        onClick={() => this.setState({viewGeneratedWidgets: !this.state.viewGeneratedWidgets})}
-                        style={styles.text}
-                    >
-                        {this.state.widgets.generated.length > 21 &&
-                        (this.state.viewGeneratedWidgets ?
-                            (<FormattedMessage id="see.less" defaultMessage="See Less"/>) :
-                            (<FormattedMessage id="see.more" defaultMessage="See More"/>))}
-                    </p>
-                </div>
-                <div>
-                    <label style={styles.widgetTypeText}>
-                        <FormattedMessage
-                            id="custom.widgets"
-                            defaultMessage="Custom Widgets"
-                        />
-                    </label>
                 </div>
                 <div style={this.state.viewCustomWidgets ? styles.expandCustomWrapper : styles.customWidgetWrapper}>
                     {this.state.widgets.custom}
@@ -263,13 +257,43 @@ export default class WidgetStore extends Component {
                     onClick={() => this.setState({viewCustomWidgets: !this.state.viewCustomWidgets})}
                     style={styles.text}
                 >
-                    {this.state.widgets.custom.length > 21 &&
+                    {this.state.widgets.custom.length > 30 &&
                     (this.state.viewCustomWidgets ?
                         (<FormattedMessage id="see.less" defaultMessage="See Less"/>) :
                         (<FormattedMessage id="see.more" defaultMessage="See More"/>))}
                 </p>
                 {
-                    this.state.hasCreatorPermission &&
+                    this.state.widgets.generated.length > 0 &&
+                    (<div>
+                        <div style={styles.generatedWidgetTypeText}>
+                            <span style={{float: 'left'}}>
+                                <label style={styles.widgetTypeText}>
+                                    <FormattedMessage
+                                        id="generated.widgets"
+                                        defaultMessage="Generated Widgets"
+                                    />
+                                </label>
+                            </span>
+                        </div>
+                        <div
+                            style={this.state.viewGeneratedWidgets ? styles.expandGeneratedWrapper : styles.generatedWidgetWrapper}>
+                            {this.state.widgets.generated}
+                        </div>
+                        <div style={styles.widgetType}>
+                            <p
+                                onClick={() => this.setState({viewGeneratedWidgets: !this.state.viewGeneratedWidgets})}
+                                style={styles.text}
+                            >
+                                {this.state.widgets.generated.length > 21 &&
+                                (this.state.viewGeneratedWidgets ?
+                                    (<FormattedMessage id="see.less" defaultMessage="See Less"/>) :
+                                    (<FormattedMessage id="see.more" defaultMessage="See More"/>))}
+                            </p>
+                        </div>
+                    </div>)
+                }
+                {
+                    this.state.hasWidgetCreatorPermission &&
                     (
                         <span style={styles.actionButton} title="Create Widget">
                             <FloatingActionButton onClick={() => this.props.history.push("/createGadget")}>
