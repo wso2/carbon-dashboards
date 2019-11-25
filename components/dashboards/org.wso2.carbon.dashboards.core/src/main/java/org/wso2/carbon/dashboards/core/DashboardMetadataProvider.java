@@ -134,4 +134,6 @@ public interface DashboardMetadataProvider {
     DashboardConfigurations getReportGenerationConfigurations();
 
     boolean isCreator(String username) throws DashboardException;
+
+    boolean isWidgetCreator(String username) throws DashboardException;
 }

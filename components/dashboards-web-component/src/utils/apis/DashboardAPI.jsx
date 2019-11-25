@@ -119,6 +119,17 @@ export default class DashboardAPI {
     }
 
     /**
+     * Check if the user has widget creator permissions.
+     *
+     * @param {string} username Username
+     */
+    hasWidgetCreatorPermission(username) {
+        return new DashboardAPI()
+            .getHTTPClient()
+            .get(`roles/${username}/iswidgetcreator`);
+    }
+
+    /**
      * Get roles associated for a particular dashboard.
      *
      * @param {string} dashboardId Dashboard ID

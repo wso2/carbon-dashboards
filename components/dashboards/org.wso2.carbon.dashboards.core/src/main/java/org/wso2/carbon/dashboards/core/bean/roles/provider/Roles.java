@@ -31,7 +31,14 @@ public class Roles {
     @Element(description = "list of dashboard creator roles")
     private List<String> creators = Collections.emptyList();
 
+    @Element(description = "list of dashboard widget creator roles")
+    private List<String> widgetCreators = Collections.emptyList();
+
     public List<String> getCreators() {
         return creators;
+    }
+
+    public List<String> getWidgetCreators() {
+        return widgetCreators;
     }
 }

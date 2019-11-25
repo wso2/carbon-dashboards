@@ -41,6 +41,9 @@ import ChartPreviewer from './chartPreview/ChartPreviewer';
 // API
 import GadgetsGenerationAPI from '../../utils/apis/GadgetsGenerationAPI';
 import defaultTheme from '../../utils/Theme';
+import DashboardAPI from "../../utils/apis/DashboardAPI";
+import AuthManager from "../../auth/utils/AuthManager";
+import Error404 from "../../error-pages/Error404";
 
 const appContext = window.contextPath;
 
@@ -99,7 +102,9 @@ class GadgetsGenerationWizard extends Component {
             stepIndex: 0,
             previewGadget: false,
             previewConfiguration: {},
+            hasWidgetCreatorPermission: false,
         };
+        this.checkWidgetCreatorPermission = this.checkWidgetCreatorPermission.bind(this);
         this.handleGadgetDetailsChange = this.handleGadgetDetailsChange.bind(this);
         this.handleProviderTypeChange = this.handleProviderTypeChange.bind(this);
         this.handleProviderConfigPropertyChange = this.handleProviderConfigPropertyChange.bind(this);
@@ -122,6 +127,21 @@ class GadgetsGenerationWizard extends Component {
                 providersList: response.data,
             });
         });
+        this.checkWidgetCreatorPermission();
+    }
+
+    /**
+     * Check if the current user has widget creator permissions.
+     */
+    checkWidgetCreatorPermission() {
+        let username = AuthManager.getUser().username;
+        new DashboardAPI().hasWidgetCreatorPermission(username)
+            .then((response) => {
+                this.setState({ hasWidgetCreatorPermission: !!response.data });
+            })
+            .catch(() => {
+                this.setState({ hasWidgetCreatorPermission: false });
+            })
     }
 
     /**
@@ -551,6 +571,10 @@ class GadgetsGenerationWizard extends Component {
 
     render() {
         const { loading, stepIndex } = this.state;
+
+        if (!this.state.hasWidgetCreatorPermission) {
+            return <Error404/>;
+        }
 
         return (
             <MuiThemeProvider muiTheme={defaultTheme}>
