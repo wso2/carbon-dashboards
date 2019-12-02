@@ -138,7 +138,7 @@ class WidgetChannelManager {
      * @private
      */
     _wsOnClose(message) {
-        // TODO: handle on close event
+        setTimeout(this._initializeWebSocket, 1000);
     }
 
     waitForConn(socket, callback) {
