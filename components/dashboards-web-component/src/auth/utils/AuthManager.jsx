@@ -177,7 +177,7 @@ export default class AuthManager {
                         this.discardSession();
                         reject();
                     }
-                    const { pID, lID, validityPeriod } = response.data;
+                    const { pID, lID, validityPeriod, iID } = response.data;
 
                     const username = AuthManager.isRememberMeSet() ?
                         window.localStorage.getItem('username') : AuthManager.getUser().username;
@@ -190,6 +190,7 @@ export default class AuthManager {
                     // If rememberMe, set refresh token into a persistent cookie else session cookie.
                     const refreshTokenValidityPeriod = AuthManager.isRememberMeSet() ? REFRESH_TOKEN_VALIDITY_PERIOD : null;
                     AuthManager.setCookie(Constants.REFRESH_TOKEN_COOKIE, lID, refreshTokenValidityPeriod, window.contextPath);
+                    AuthManager.setCookie(Constants.ID_TOKEN_COOKIE, iID, 604800, window.contextPath);
                     resolve();
                 })
                 .catch(error => reject(error));
