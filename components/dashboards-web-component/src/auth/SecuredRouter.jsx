@@ -55,7 +55,7 @@ export default class SecuredRouter extends Component {
     componentWillMount() {
         const { history } = this.props;
         setInterval(function () {
-            console.debug('Checking token is expired.')
+            console.debug('Checking token is expired.');
             if (AuthManager.getUser()) {
                 const expiresOn = new Date(AuthManager.getUser().expires);
                 if ((expiresOn - new Date()) / 1000 < sessionSkew) {
