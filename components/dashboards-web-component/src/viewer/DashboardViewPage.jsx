@@ -168,8 +168,7 @@ class DashboardViewPage extends Component {
                                 right: 0,
                                 bottom: 0,
                                 width: 'calc(100% - 25px)',
-                                overflowX: 'hidden',
-                                overflowY: 'auto'
+                                overflow: 'auto',
                             }
                             : undefined
                     }
