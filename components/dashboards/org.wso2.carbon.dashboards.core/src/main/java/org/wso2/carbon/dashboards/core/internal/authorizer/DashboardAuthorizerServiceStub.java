@@ -27,7 +27,7 @@ import feign.Response;
  */
 public interface DashboardAuthorizerServiceStub {
 
-    @RequestLine("GET /api/am/admin/v0.15/tenant-info/{username}")
+    @RequestLine("GET /api/am/admin/v0.16/tenant-info/{username}")
     @Headers("Content-Type: application/json")
     Response getTenantId(@Param("username") String username);
 }
