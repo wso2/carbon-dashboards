@@ -31,7 +31,7 @@
     "copy-webpack-plugin": "^4.6.0",
     "css-loader": "^2.1.0",
     "html-loader": "^0.5.5",
-    "node-sass": "^4.5.3",
+    "node-sass": "^4.13.0",
     "recharts": "^1.0.0-alpha.4",
     "sass-loader": "^7.1.0",
     "style-loader": "^0.23.1",
