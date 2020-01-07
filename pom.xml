@@ -473,6 +473,7 @@
         <maven.clean.plugin.version>3.0.0</maven.clean.plugin.version>
         <jacoco.maven.plugin.version>0.7.9</jacoco.maven.plugin.version>
         <junit-platform.surefire-provider.version>1.0.2</junit-platform.surefire-provider.version>
+        <maven.findbugsplugin.version>3.0.5</maven.findbugsplugin.version>
 
         <!--Feign-->
         <openfeign.version>9.3.1</openfeign.version>

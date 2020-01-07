@@ -63,7 +63,7 @@
     "html-loader": "^0.5.5",
     "jest": "^24.0.0",
     "mock-local-storage": "^1.0.4",
-    "node-sass": "^4.5.3",
+    "node-sass": "^4.13.0",
     "rimraf": "^2.6.2",
     "sass-loader": "^6.0.6",
     "simple-progress-webpack-plugin": "^1.1.2",
