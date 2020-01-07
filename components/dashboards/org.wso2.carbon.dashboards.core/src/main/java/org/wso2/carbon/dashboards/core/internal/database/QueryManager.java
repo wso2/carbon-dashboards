@@ -58,6 +58,7 @@ public class QueryManager {
     public static final String UPDATE_DASHBOARD_CONTENT_QUERY = "update_dashboard_content";
     public static final String DEFAULT_DB_TYPE = "H2";
     public static final String DEFAULT_DB_VERSION = "default";
+    private static final String DB2_DB_TYPE = "DB2";
     private static final String FILE_SQL_QUERIES = "sql-queries.yaml";
 
     private final List<Queries> componentQueries;
@@ -97,6 +98,11 @@ public class QueryManager {
      * @throws SQLException
      */
     public String getQuery(Connection connection, String key) throws SQLException {
+        // DB2 product name changes with the specific versions(For an example DB2/LINUXX8664, DB2/NT). Hence, checks
+        // whether the product name contains "DB2".
+        if (connection.getMetaData().getDatabaseProductName().contains(DB2_DB_TYPE)) {
+            return getQuery(DB2_DB_TYPE, connection.getMetaData().getDatabaseProductVersion(), key);
+        }
         return getQuery(connection.getMetaData().getDatabaseProductName(),
                 connection.getMetaData().getDatabaseProductVersion(), key);
     }
