@@ -20,6 +20,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { Paper } from 'material-ui';
 import { EditorInsertChart } from 'material-ui/svg-icons';
+import _ from 'lodash';
 
 const styles = {
     widgetCard: {
@@ -68,12 +69,16 @@ export default class WidgetCard extends Component {
         const widget = this.props.widget;
         const widgetCardStyle = styles.widgetCard;
         widgetCardStyle.display = this.props.isHidden ? 'none' : 'inline-block';
+        const truncatedWidgetName = _.truncate(widget.name, {
+            length: 25,
+            separator: ' ',
+        });
         return (
             <Paper id={widget.id} style={widgetCardStyle}>
                 {widget.thumbnailURL ?
                     this.renderWidgetCardThumbnailImage(widget) :
                     this.renderWidgetCardDefaultThumbnail()}
-                <div style={styles.widgetCardTitle}>{widget.name}</div>
+                <div title={widget.name} style={styles.widgetCardTitle}>{truncatedWidgetName}</div>
             </Paper>
         );
     }
