@@ -33,7 +33,6 @@ const styles = {
     widgetCardTitle: {
         fontSize: 14,
         padding: 10,
-        height: 30,
         display: 'flex',
         justifyContent: 'center',
         overflow: 'hidden',
