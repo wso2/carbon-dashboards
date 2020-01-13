@@ -100,7 +100,7 @@ public class QueryManager {
     public String getQuery(Connection connection, String key) throws SQLException {
         // DB2 product name changes with the specific versions(For an example DB2/LINUXX8664, DB2/NT). Hence, checks
         // whether the product name contains "DB2".
-        if (connection.getMetaData().getDatabaseProductName().contains(DB2_DB_TYPE)) {
+        if (connection.getMetaData().getDatabaseProductName().toLowerCase().contains(DB2_DB_TYPE.toLowerCase())) {
             return getQuery(DB2_DB_TYPE, connection.getMetaData().getDatabaseProductVersion(), key);
         }
         return getQuery(connection.getMetaData().getDatabaseProductName(),
