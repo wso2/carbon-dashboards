@@ -21,7 +21,7 @@
     overflow: auto;
     position: fixed;
     height: calc(100% - 27px);
-    width: 25px;
+    width: 40px;
 }
 
 .side-bar-nav svg {
@@ -56,6 +56,10 @@
     text-align: right;
     padding: 15px 0 !important;
     line-height: 23px !important;
+    /*  This is a div inside a span. In edge div tries to occupy 100% space unless we specify otherwise 
+        https://github.com/wso2/analytics-apim/issues/760
+    */
+    display: inline-block;
 }
 
 .side-bar-nav::-webkit-scrollbar {
