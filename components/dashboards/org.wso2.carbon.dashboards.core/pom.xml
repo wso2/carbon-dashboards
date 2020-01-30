@@ -51,12 +51,6 @@
             <artifactId>org.wso2.carbon.uiserver</artifactId>
         </dependency>
 
-        <!--Analytics-->
-        <dependency>
-            <groupId>org.wso2.carbon.analytics</groupId>
-            <artifactId>org.wso2.carbon.data.provider</artifactId>
-        </dependency>
-
         <!-- Analytics common -->
         <dependency>
             <groupId>org.wso2.carbon.analytics-common</groupId>
@@ -175,14 +169,12 @@
             org.wso2.carbon.analytics.permissions.*; version="${carbon.analytics-common.version.range}",
             org.wso2.carbon.analytics.idp.client.*; version="${carbon.analytics-common.version.range}",
             org.wso2.carbon.database.query.manager.*; version="${carbon.analytics-common.version.range}",
-            org.wso2.carbon.data.provider.*; version="${carbon.analytics.version.range}",
             org.osgi.framework; version="${org.osgi.framework.version.range}",
             org.osgi.framework.wiring; version="${org.osgi.framework.wiring.version.range}",
             org.osgi.service.component.annotations.*; version="${org.osgi.service.component.annotations.version.range}",
             org.slf4j.*; version="${slf4j.version.range}",
             com.google.gson.*; version="${gson.version.range}",
             org.yaml.snakeyaml.*; version="${org.yaml.version.range}",
-            feign.*; version="${openfeign.version}",
             javax.ws.rs.*; version="${javax.ws.rs.version.range}",
             org.wso2.carbon.utils.*; version="${carbon.utils.version.range}",
         </import.package>
