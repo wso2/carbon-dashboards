@@ -33,8 +33,12 @@ import org.wso2.carbon.analytics.permissions.PermissionProvider;
 import org.wso2.carbon.config.ConfigurationException;
 import org.wso2.carbon.config.provider.ConfigProvider;
 import org.wso2.carbon.dashboards.core.DashboardMetadataProvider;
+import org.wso2.carbon.dashboards.core.DashboardThemeConfigProvider;
 import org.wso2.carbon.dashboards.core.bean.DashboardConfigurations;
 import org.wso2.carbon.datasource.core.api.DataSourceService;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * aas
@@ -48,6 +52,7 @@ public class StartupListener {
     private DashboardConfigurations dashboardConfigurations;
     private PermissionProvider permissionProvider;
     private IdPClient idPClient;
+    private Map<String, DashboardThemeConfigProvider> dashboardThemeConfigProviderClassMap = new ConcurrentHashMap<>();
 
     @Reference(service = DataSourceService.class,
                cardinality = ReferenceCardinality.AT_LEAST_ONE,
@@ -106,10 +111,27 @@ public class StartupListener {
         this.idPClient = null;
     }
 
+    @Reference(service = DashboardThemeConfigProvider.class,
+            cardinality = ReferenceCardinality.AT_LEAST_ONE,
+            policy = ReferencePolicy.DYNAMIC,
+            unbind = "unsetDashboardThemeConfigProvider")
+    protected void setDashboardThemeConfigProvider(DashboardThemeConfigProvider dashboardThemeConfigProvider) {
+        this.dashboardThemeConfigProviderClassMap.put(dashboardThemeConfigProvider.getClass().getName(),
+                dashboardThemeConfigProvider);
+        LOGGER.debug("Dashboard Theme Config Provider '{}' registered.",
+                dashboardThemeConfigProvider.getClass().getName());
+    }
+
+    protected void unsetDashboardThemeConfigProvider(DashboardThemeConfigProvider dashboardThemeConfigProvider) {
+        this.dashboardThemeConfigProviderClassMap.remove(dashboardThemeConfigProvider.getClass().getName());
+        LOGGER.debug("Dashboard Theme ConfigProvider'{}' unregistered.",
+                dashboardThemeConfigProvider.getClass().getName());
+    }
+
     @Activate
     protected void activate(BundleContext bundleContext) {
         DashboardMetadataProvider dashboardMetadataProvider = new DashboardMetadataProviderImpl(dataSourceService,
-                dashboardConfigurations, permissionProvider, idPClient);
+                dashboardConfigurations, permissionProvider, idPClient, dashboardThemeConfigProviderClassMap);
         bundleContext.registerService(DashboardMetadataProvider.class, dashboardMetadataProvider, null);
         LOGGER.debug("{} activated.", this.getClass().getName());
     }

@@ -45,6 +45,9 @@ public class DashboardConfigurations {
     @Element(description = "Report generation configurations")
     Map<String, Object> reportGeneration = Collections.emptyMap();
 
+    @Element(description = "Map of roles list")
+    public String themeConfigProviderClass = "org.wso2.carbon.dashboards.core.DefaultDashboardThemeConfigProvider";
+
     /**
      * Get map of roles.
      *
@@ -70,6 +73,15 @@ public class DashboardConfigurations {
      */
     public Map<String, Object> getReportConfigs() {
         return reportGeneration;
+    }
+
+    /**
+     * Get theme configuration provider class.
+     *
+     * @return theme config provider full qualified class name
+     */
+    public String getThemeConfigProviderClass() {
+        return themeConfigProviderClass;
     }
 
 }

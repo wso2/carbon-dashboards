@@ -136,4 +136,15 @@ public interface DashboardMetadataProvider {
     boolean isCreator(String username) throws DashboardException;
 
     boolean isWidgetCreator(String username) throws DashboardException;
+
+    /**
+     * Return the dashboard logo path.
+     *
+     * @since 4.1.14
+     *
+     * @param username name of the user
+     * @return Return dashboard logo path
+     * @throws DashboardException If an error occurred while getting the logo path
+     */
+    String getLogoPath(String username) throws DashboardException;
 }

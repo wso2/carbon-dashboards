@@ -356,4 +356,24 @@ public class DashboardRestApi implements Microservice {
                                                                   .getReportConfigs();
         return Response.ok().entity(reportConfigurations).build();
     }
+
+    /**
+     * Gets logo path
+     *
+     * @since 4.1.14
+     *
+     * @return response
+     */
+    @GET
+    @Path("/logo")
+    public Response getLogoPath(@Context Request request) {
+        String logoPath;
+        try {
+            logoPath = dashboardDataProvider.getLogoPath(getUserName(request));
+        } catch (DashboardException e) {
+            LOGGER.error("Cannot get dashboard logo path.", e);
+            return Response.serverError().entity("Cannot get dashboard logo path.").build();
+        }
+        return Response.ok().entity(logoPath).build();
+    }
 }

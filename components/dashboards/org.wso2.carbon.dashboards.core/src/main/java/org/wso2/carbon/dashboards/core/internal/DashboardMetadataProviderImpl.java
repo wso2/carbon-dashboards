@@ -26,6 +26,7 @@ import org.wso2.carbon.analytics.permissions.bean.Permission;
 import org.wso2.carbon.analytics.permissions.bean.Role;
 import org.wso2.carbon.analytics.permissions.exceptions.PermissionException;
 import org.wso2.carbon.dashboards.core.DashboardMetadataProvider;
+import org.wso2.carbon.dashboards.core.DashboardThemeConfigProvider;
 import org.wso2.carbon.dashboards.core.WidgetMetadataProvider;
 import org.wso2.carbon.dashboards.core.bean.DashboardConfigurations;
 import org.wso2.carbon.dashboards.core.bean.DashboardMetadata;
@@ -72,12 +73,15 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
     private final DashboardConfigurations dashboardConfigurations;
     private final PermissionProvider permissionProvider;
     private final IdPClient identityClient;
+    private final DashboardThemeConfigProvider dashboardThemeConfigProvider;
 
     private WidgetMetadataProvider widgetMetadataProvider;
 
     public DashboardMetadataProviderImpl(DataSourceService dataSourceService,
                                          DashboardConfigurations dashboardConfigurations,
-                                         PermissionProvider permissionProvider, IdPClient identityClient) {
+                                         PermissionProvider permissionProvider, IdPClient identityClient,
+                                         Map<String, DashboardThemeConfigProvider>
+                                                 dashboardThemeConfigProviderClassMap) {
         try {
             this.dao = DashboardMetadataDaoFactory.createDao(dataSourceService, dashboardConfigurations);
             this.dao.initDashboardTable();
@@ -88,14 +92,23 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
         this.dashboardConfigurations = dashboardConfigurations;
         this.permissionProvider = permissionProvider;
         this.identityClient = identityClient;
+        this.dashboardThemeConfigProvider = getDashboardThemeConfigProvider(dashboardThemeConfigProviderClassMap);
     }
 
     DashboardMetadataProviderImpl(DashboardMetadataDao dao, DashboardConfigurations dashboardConfigurations,
-                                  PermissionProvider permissionProvider, IdPClient identityClient) {
+                                  PermissionProvider permissionProvider, IdPClient identityClient,
+                                  DashboardThemeConfigProvider dashboardThemeConfigProvider) {
         this.dao = dao;
         this.dashboardConfigurations = dashboardConfigurations;
         this.permissionProvider = permissionProvider;
         this.identityClient = identityClient;
+        this.dashboardThemeConfigProvider = dashboardThemeConfigProvider;
+    }
+
+    private DashboardThemeConfigProvider getDashboardThemeConfigProvider(
+            Map<String, DashboardThemeConfigProvider> dashboardThemeConfigProviderClassMap) {
+        String themeConfigClassName = this.dashboardConfigurations.getThemeConfigProviderClass();
+        return dashboardThemeConfigProviderClassMap.get(themeConfigClassName);
     }
 
     @Override
@@ -475,5 +488,10 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
             }
         }
         return isWidgetCreator;
+    }
+
+    @Override
+    public String getLogoPath(String username) throws DashboardException {
+        return this.dashboardThemeConfigProvider.getLogoPath(username);
     }
 }
