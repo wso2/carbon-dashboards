@@ -48,6 +48,9 @@ public class DashboardConfigurations {
     @Element(description = "Map of roles list")
     public String themeConfigProviderClass = "org.wso2.carbon.dashboards.core.DefaultDashboardThemeConfigProvider";
 
+    @Element(description = "Map of roles list")
+    public String themeConfigResourcesPath = "https://localhost:9643/analytics-dashboard/public/app/images";
+
     /**
      * Get map of roles.
      *
@@ -82,6 +85,15 @@ public class DashboardConfigurations {
      */
     public String getThemeConfigProviderClass() {
         return themeConfigProviderClass;
+    }
+
+    /**
+     * Get theme configuration resources path.
+     *
+     * @return theme config resources path
+     */
+    public String getThemeConfigResourcesPath() {
+        return themeConfigResourcesPath;
     }
 
 }
