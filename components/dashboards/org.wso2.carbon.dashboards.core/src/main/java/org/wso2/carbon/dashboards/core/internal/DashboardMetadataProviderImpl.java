@@ -92,7 +92,11 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
         this.dashboardConfigurations = dashboardConfigurations;
         this.permissionProvider = permissionProvider;
         this.identityClient = identityClient;
-        this.dashboardThemeConfigProvider = getDashboardThemeConfigProvider(dashboardThemeConfigProviderClassMap);
+        try {
+            this.dashboardThemeConfigProvider = getDashboardThemeConfigProvider(dashboardThemeConfigProviderClassMap);
+        } catch (DashboardException e) {
+            throw new DashboardRuntimeException("Error occurred while getting the dashboard theme config provider.", e);
+        }
     }
 
     DashboardMetadataProviderImpl(DashboardMetadataDao dao, DashboardConfigurations dashboardConfigurations,
@@ -106,9 +110,16 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
     }
 
     private DashboardThemeConfigProvider getDashboardThemeConfigProvider(
-            Map<String, DashboardThemeConfigProvider> dashboardThemeConfigProviderClassMap) {
+            Map<String, DashboardThemeConfigProvider> dashboardThemeConfigProviderClassMap) throws DashboardException {
         String themeConfigClassName = this.dashboardConfigurations.getThemeConfigProviderClass();
-        return dashboardThemeConfigProviderClassMap.get(themeConfigClassName);
+        DashboardThemeConfigProvider dashboardThemeConfigProvider
+                = dashboardThemeConfigProviderClassMap.get(themeConfigClassName);
+
+        if (dashboardThemeConfigProvider == null) {
+            throw new DashboardException("Cannot find the class " +
+                    themeConfigClassName + " of type DashboardThemeConfigProvider.");
+        }
+        return dashboardThemeConfigProvider;
     }
 
     @Override
@@ -491,7 +502,7 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
     }
 
     @Override
-    public String getLogoPath(String username) throws DashboardException {
-        return this.dashboardThemeConfigProvider.getLogoPath(username);
+    public String getThemeConfigPath(String username) throws DashboardException {
+        return this.dashboardThemeConfigProvider.getPath(username);
     }
 }

@@ -63,14 +63,14 @@ public class DefaultDashboardThemeConfigProvider implements DashboardThemeConfig
     }
 
     @Override
-    public String getLogoPath(String username) throws DashboardException {
+    public String getPath(String username) throws DashboardException {
         Map<String, String> properties = idPClientConfiguration.getProperties();
         String baseUrl = properties.getOrDefault(ExternalIdPClientConstants.BASE_URL,
                 ExternalIdPClientConstants.DEFAULT_BASE_URL);
         String portalAppContext = properties.getOrDefault(ExternalIdPClientConstants.PORTAL_APP_CONTEXT,
                 ExternalIdPClientConstants.DEFAULT_PORTAL_APP_CONTEXT);
-        String logoPath = baseUrl + "/" + portalAppContext + "/public/app/images/logo.svg";
-        LOGGER.debug("Default logo path returned via '{}' class for user: '{}.'", this.getClass().getName(), username);
+        String logoPath = baseUrl + "/" + portalAppContext + "/public/app/images";
+        LOGGER.debug("Default path returned via '{}' class for user: '{}.'", this.getClass().getName(), username);
         return logoPath;
     }
 }

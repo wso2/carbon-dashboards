@@ -138,13 +138,13 @@ public interface DashboardMetadataProvider {
     boolean isWidgetCreator(String username) throws DashboardException;
 
     /**
-     * Return the dashboard logo path.
+     * Return the path where fav icon, logo etc. are stored.
      *
      * @since 4.1.14
      *
      * @param username name of the user
-     * @return Return dashboard logo path
-     * @throws DashboardException If an error occurred while getting the logo path
+     * @return Return theme content stored path
+     * @throws DashboardException If an error occurred while getting the theme content stored path
      */
-    String getLogoPath(String username) throws DashboardException;
+    String getThemeConfigPath(String username) throws DashboardException;
 }

@@ -28,6 +28,7 @@ import Axios from "axios";
 import AuthManager from "../auth/utils/AuthManager";
 
 const baseURL = `${window.location.origin}${window.contextPath}/apis/dashboards`;
+const logoPathPostfix = '/logo.svg';
 
 export default class Header extends Component {
 
@@ -44,9 +45,10 @@ export default class Header extends Component {
             timeout: 300000,
             headers: {"Authorization": "Bearer " + AuthManager.getUser().SDID}
         })
-            .get(`/logo`)
+            .get(`/theme-config-path`)
             .then(response => {
-                this.setState({logoPath: response.data})
+                let completeLogoPath = response.data + logoPathPostfix;
+                this.setState({logoPath: completeLogoPath})
             })
             .catch(error => {
                 console.error('Unable to get the logo path for the dashboard.', error);
