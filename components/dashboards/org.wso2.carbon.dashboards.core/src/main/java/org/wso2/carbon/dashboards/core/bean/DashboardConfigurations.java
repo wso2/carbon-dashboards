@@ -45,10 +45,10 @@ public class DashboardConfigurations {
     @Element(description = "Report generation configurations")
     Map<String, Object> reportGeneration = Collections.emptyMap();
 
-    @Element(description = "Map of roles list")
+    @Element(description = "Theme configuration provider class name")
     public String themeConfigProviderClass = "org.wso2.carbon.dashboards.core.DefaultDashboardThemeConfigProvider";
 
-    @Element(description = "Map of roles list")
+    @Element(description = "Location where theme configuration resources(ex: fav icon, logo etc.) are stored in")
     public String themeConfigResourcesPath = "https://localhost:9643/analytics-dashboard/public/app/images";
 
     /**
