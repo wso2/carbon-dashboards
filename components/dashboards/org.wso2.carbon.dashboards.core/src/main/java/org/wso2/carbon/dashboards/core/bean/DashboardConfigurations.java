@@ -45,6 +45,12 @@ public class DashboardConfigurations {
     @Element(description = "Report generation configurations")
     Map<String, Object> reportGeneration = Collections.emptyMap();
 
+    @Element(description = "Theme configuration provider class name")
+    public String themeConfigProviderClass = "org.wso2.carbon.dashboards.core.DefaultDashboardThemeConfigProvider";
+
+    @Element(description = "Location where theme configuration resources(ex: fav icon, logo etc.) are stored in")
+    public String themeConfigResourcesPath = "https://localhost:9643/analytics-dashboard/public/app/images";
+
     /**
      * Get map of roles.
      *
@@ -70,6 +76,24 @@ public class DashboardConfigurations {
      */
     public Map<String, Object> getReportConfigs() {
         return reportGeneration;
+    }
+
+    /**
+     * Get theme configuration provider class.
+     *
+     * @return theme config provider full qualified class name
+     */
+    public String getThemeConfigProviderClass() {
+        return themeConfigProviderClass;
+    }
+
+    /**
+     * Get theme configuration resources path.
+     *
+     * @return theme config resources path
+     */
+    public String getThemeConfigResourcesPath() {
+        return themeConfigResourcesPath;
     }
 
 }

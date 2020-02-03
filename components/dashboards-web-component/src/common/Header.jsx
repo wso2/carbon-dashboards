@@ -24,15 +24,53 @@ import { AppBar } from 'material-ui';
 
 import UserMenu from './UserMenu';
 import defaultTheme from '../utils/Theme';
+import Axios from "axios";
+import AuthManager from "../auth/utils/AuthManager";
+
+const baseURL = `${window.location.origin}${window.contextPath}/apis/dashboards`;
+const logoPathPostfix = '/logo.svg';
 
 export default class Header extends Component {
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            logoPath: ''
+        }
+    }
+
+    componentDidMount() {
+        Axios.create({
+            baseURL: baseURL,
+            timeout: 300000,
+            headers: {"Authorization": "Bearer " + AuthManager.getUser().SDID}
+        })
+            .get(`/theme-config-path`)
+            .then(response => {
+                let completeLogoPath = response.data + logoPathPostfix;
+                this.setState({logoPath: completeLogoPath})
+            })
+            .catch(error => {
+                console.error('Unable to get the logo path for the dashboard.', error);
+            });
+    }
+
     render() {
+        const logo = (
+            <Link style={{ height: '17px' }} to={'/'}>
+                <img
+                    height='17'
+                    src={this.state.logoPath}
+                    alt='logo'
+                />
+            </Link>
+        );
         return (
             <AppBar
                 style={{ zIndex: this.props.theme.zIndex.drawer + 100 }}
                 title={this.props.title}
                 iconElementRight={this.props.rightElement}
-                iconElementLeft={this.props.logo}
+                iconElementLeft={logo}
                 onLeftIconButtonClick={this.props.onLogoClick}
                 iconStyleLeft={{ margin: '0 15px 0 0', display: 'flex', alignItems: 'center' }}
                 titleStyle={{ fontSize: 16 }}
@@ -55,15 +93,6 @@ Header.propTypes = {
 };
 
 Header.defaultProps = {
-    logo: (
-        <Link style={{ height: '17px' }} to={'/'}>
-            <img
-                height='17'
-                src={`${window.contextPath}/public/app/images/logo.svg`}
-                alt='logo'
-            />
-        </Link>
-    ),
     onLogoClick: null,
     rightElement: <UserMenu />,
     theme: defaultTheme,

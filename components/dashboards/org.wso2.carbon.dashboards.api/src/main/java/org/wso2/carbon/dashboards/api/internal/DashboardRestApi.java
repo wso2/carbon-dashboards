@@ -356,4 +356,24 @@ public class DashboardRestApi implements Microservice {
                                                                   .getReportConfigs();
         return Response.ok().entity(reportConfigurations).build();
     }
+
+    /**
+     * Gets parent path where logo, fav icon etc. are stored.
+     *
+     * @since 4.1.14
+     *
+     * @return response
+     */
+    @GET
+    @Path("/theme-config-path")
+    public Response getThemeConfigPath(@Context Request request) {
+        String logoPath;
+        try {
+            logoPath = dashboardDataProvider.getThemeConfigPath(getUserName(request));
+        } catch (DashboardException e) {
+            LOGGER.error("Cannot get the path where theme resources are stored.", e);
+            return Response.serverError().entity("Cannot get the path where theme resources are stored.").build();
+        }
+        return Response.ok().entity(logoPath).build();
+    }
 }

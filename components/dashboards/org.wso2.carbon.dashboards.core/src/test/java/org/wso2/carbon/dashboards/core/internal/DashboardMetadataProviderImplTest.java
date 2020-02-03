@@ -25,6 +25,7 @@ import org.wso2.carbon.analytics.idp.client.core.api.IdPClient;
 import org.wso2.carbon.analytics.idp.client.core.models.Role;
 import org.wso2.carbon.analytics.permissions.PermissionProvider;
 import org.wso2.carbon.analytics.permissions.bean.Permission;
+import org.wso2.carbon.dashboards.core.DashboardThemeConfigProvider;
 import org.wso2.carbon.dashboards.core.WidgetMetadataProvider;
 import org.wso2.carbon.dashboards.core.bean.DashboardConfigurations;
 import org.wso2.carbon.dashboards.core.bean.DashboardMetadata;
@@ -90,13 +91,14 @@ public class DashboardMetadataProviderImplTest {
         PermissionProvider permissionProvider = mock(PermissionProvider.class);
 
         IdPClient idPClient = mock(IdPClient.class);
+        DashboardThemeConfigProvider dashboardThemeConfigProvider = mock(DashboardThemeConfigProvider.class);
         List<org.wso2.carbon.analytics.idp.client.core.models.Role> userRoles = new ArrayList<>();
         userRoles.add(new org.wso2.carbon.analytics.idp.client.core.models.Role
                               ("1", "admin"));
         when(idPClient.getUserRoles(anyString())).thenReturn(userRoles);
 
         DashboardMetadataProviderImpl dashboardMetadataProvider = createDashboardProvider(dao, permissionProvider,
-                                                                                          idPClient);
+                idPClient, dashboardThemeConfigProvider);
         dashboardMetadataProvider.add("", dashboardMetadata);
         verify(dao).add(eq(dashboardMetadata));
     }
@@ -109,6 +111,7 @@ public class DashboardMetadataProviderImplTest {
         PermissionProvider permissionProvider = mock(PermissionProvider.class);
 
         IdPClient idPClient = mock(IdPClient.class);
+        DashboardThemeConfigProvider dashboardThemeConfigProvider = mock(DashboardThemeConfigProvider.class);
         List<Role> userRoles = new ArrayList<>();
         userRoles.add(new org.wso2.carbon.analytics.idp.client.core.models.Role
                               ("test_role", "test_role"));
@@ -116,7 +119,7 @@ public class DashboardMetadataProviderImplTest {
         when(idPClient.getAdminRole()).thenReturn(new Role("test_role2", "test_role2"));
 
         DashboardMetadataProviderImpl dashboardMetadataProvider = createDashboardProvider(dao, permissionProvider,
-                                                                                          idPClient);
+                idPClient, dashboardThemeConfigProvider);
         Assertions.assertThrows(UnauthorizedException.class, () -> dashboardMetadataProvider.
                 add("testUser", dashboardMetadata));
     }
@@ -171,16 +174,20 @@ public class DashboardMetadataProviderImplTest {
 
     private static DashboardMetadataProviderImpl createDashboardProvider(DashboardMetadataDao dao,
                                                                          PermissionProvider permissionProvider) {
-        return createDashboardProvider(dao, permissionProvider, mock(IdPClient.class));
+        return createDashboardProvider(dao, permissionProvider, mock(IdPClient.class),
+                mock(DashboardThemeConfigProvider.class));
     }
 
     private static DashboardMetadataProviderImpl createDashboardProvider(DashboardMetadataDao dao,
                                                                          PermissionProvider permissionProvider,
-                                                                         IdPClient idPClient) {
+                                                                         IdPClient idPClient,
+                                                                         DashboardThemeConfigProvider
+                                                                                 dashboardThemeConfigProvider) {
         DashboardMetadataProviderImpl provider = new DashboardMetadataProviderImpl(dao,
                                                                                    new DashboardConfigurations(),
                                                                                    permissionProvider,
-                                                                                   idPClient);
+                                                                                   idPClient,
+                                                                                   dashboardThemeConfigProvider);
         provider.setWidgetMetadataProvider(mock(WidgetMetadataProvider.class));
         return provider;
     }
