@@ -57,7 +57,6 @@ public class DashboardConfigurations {
     @Element(description = "file name of the favicon")
     public String faviconFileName = "favicon.ico";
 
-
     /**
      * Get map of roles.
      *
