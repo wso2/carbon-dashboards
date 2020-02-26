@@ -360,7 +360,7 @@ public class DashboardRestApi implements Microservice {
     /**
      * Gets path where fav icon is stored.
      *
-     * @since 4.1.14
+     * @since 4.1.16
      *
      * @return response
      */
@@ -380,7 +380,7 @@ public class DashboardRestApi implements Microservice {
     /**
      * Gets path where fav icon is stored.
      *
-     * @since 4.1.14
+     * @since 4.1.16
      *
      * @return response
      */
