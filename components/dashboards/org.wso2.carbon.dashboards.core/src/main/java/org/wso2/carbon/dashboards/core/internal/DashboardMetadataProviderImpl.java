@@ -502,7 +502,12 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
     }
 
     @Override
-    public String getThemeConfigPath(String username) throws DashboardException {
-        return this.dashboardThemeConfigProvider.getPath(username);
+    public String getFaviconPath(String username) throws DashboardException {
+        return this.dashboardThemeConfigProvider.getFaviconPath(username);
+    }
+
+    @Override
+    public String getLogoPath(String username) throws DashboardException {
+        return this.dashboardThemeConfigProvider.getLogoPath(username);
     }
 }
