@@ -140,7 +140,7 @@ public interface DashboardMetadataProvider {
     /**
      * Return the path where fav icon is stored.
      *
-     * @since 4.1.14
+     * @since 4.1.16
      *
      * @param username name of the user
      * @return Return path of the favicon icon
@@ -151,7 +151,7 @@ public interface DashboardMetadataProvider {
     /**
      * Return the path where logo image is stored.
      *
-     * @since 4.1.14
+     * @since 4.1.16
      *
      * @param username name of the user
      * @return Return path of the logo image
