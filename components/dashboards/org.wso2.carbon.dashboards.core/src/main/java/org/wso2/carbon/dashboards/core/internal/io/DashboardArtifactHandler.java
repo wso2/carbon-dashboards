@@ -31,7 +31,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -98,18 +97,4 @@ public class DashboardArtifactHandler {
         return (fileName == null) ? "" : fileName.toString();
     }
 
-    /**
-     * Marks the given dashboard artifact as 'imported'.
-     *
-     * @param artifactFilePath path to dashboard artifact
-     */
-    public static void markArtifactAsImported(String artifactFilePath) {
-        Path artifactPath = Paths.get(artifactFilePath);
-        try {
-            Files.move(artifactPath, artifactPath.resolveSibling(getFileName(artifactPath) + ".imported"));
-        } catch (IOException e) {
-            LOGGER.warn("Cannot mark dashboard artifact '{}' as imported. Hence, it will be re-imported in next " +
-                        "server startup.", artifactFilePath, e);
-        }
-    }
 }

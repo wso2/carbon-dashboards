@@ -164,15 +164,29 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
         Set<DashboardMetadata> dashboardList = dao.getAll();
         return dashboardList.stream().
                 filter(dashboardMetadata -> {
+                    DashboardMetadata dashboardMetadataDetails;
+                    try {
+                        Optional<DashboardMetadata> dashboardMetadataOptional = get(dashboardMetadata.getUrl());
+                        if (dashboardMetadataOptional.isPresent()) {
+                            dashboardMetadataDetails = dashboardMetadataOptional.get();
+                        } else {
+                            return false;
+                        }
+                    } catch (DashboardException e) {
+                        //no need to handle exception since this is a data filter method.
+                        LOGGER.error("Error occurred while getting dashboard.", e);
+                        return false;
+                    }
+
                     if (permissionProvider.hasPermission(user, new Permission(PERMISSION_APP_NAME,
                             dashboardMetadata.getUrl() + PERMISSION_SUFFIX_OWNER))) {
                         dashboardMetadata.setHasOwnerPermission(true);
-                        dashboardMetadata.setHasDesignerPermission(true);
+                        dashboardMetadata.setHasDesignerPermission(!dashboardMetadataDetails.getContent().isReadOnly());
                         dashboardMetadata.setHasViewerPermission(true);
                         return true;
                     } else if (permissionProvider.hasPermission(user, new Permission(PERMISSION_APP_NAME,
                             dashboardMetadata.getUrl() + PERMISSION_SUFFIX_EDITOR))) {
-                        dashboardMetadata.setHasDesignerPermission(true);
+                        dashboardMetadata.setHasDesignerPermission(!dashboardMetadataDetails.getContent().isReadOnly());
                         dashboardMetadata.setHasViewerPermission(true);
                         return true;
                     } else if (permissionProvider.hasPermission(user, new Permission(PERMISSION_APP_NAME,
