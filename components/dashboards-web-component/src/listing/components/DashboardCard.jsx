@@ -22,8 +22,7 @@ import { FormattedMessage } from 'react-intl';
 import PropTypes from 'prop-types';
 
 import {
-    Card, CardMedia, CardTitle, Dialog, FlatButton, Menu, MenuItem, Popover, Snackbar,
-    TextField
+    Card, CardMedia, CardTitle, Dialog, FlatButton, Menu, MenuItem, Popover, Snackbar, TextField
 } from 'material-ui';
 import { NavigationMoreVert } from 'material-ui/svg-icons';
 
@@ -365,12 +364,11 @@ class DashboardCard extends Component {
         let exportMenuItem;
         const dashboardName = dashboard.name;
         const dashboardURL = dashboard.url;
-        if (dashboard.hasDesignerPermission) {
-            exportMenuItem = (<MenuItem
-                primaryText={<FormattedMessage id="export.button" defaultMessage="Export" />}
-                onClick={() => DashboardExporter.exportDashboard(dashboardName, dashboardURL)}
-            />);
-        }
+        exportMenuItem = (<MenuItem
+            primaryText={<FormattedMessage id="export.button" defaultMessage="Export" />}
+            onClick={() => DashboardExporter.exportDashboard(dashboardName, dashboardURL)}
+        />);
+
         let settingsMenuItem;
         let deleteMenuItem;
         if (dashboard.hasOwnerPermission) {
