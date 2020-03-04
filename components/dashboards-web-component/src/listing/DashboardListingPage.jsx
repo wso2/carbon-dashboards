@@ -150,7 +150,8 @@ export default class DashboardListingPage extends Component {
 
         // Render dashboards.
         return this.state.dashboards.map((dashboard) => {
-            return <DashboardCard key={dashboard.url} dashboard={dashboard} />;
+            return <DashboardCard key={dashboard.url} dashboard={dashboard}
+                retrieveDashboards={this.retrieveDashboards} />;
         });
     }
 
