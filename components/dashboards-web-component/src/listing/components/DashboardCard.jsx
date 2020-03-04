@@ -21,12 +21,16 @@ import { Link, withRouter } from 'react-router-dom';
 import { FormattedMessage } from 'react-intl';
 import PropTypes from 'prop-types';
 
-import { Card, CardMedia, CardTitle, Dialog, FlatButton, Menu, MenuItem, Popover, Snackbar } from 'material-ui';
+import {
+    Card, CardMedia, CardTitle, Dialog, FlatButton, Menu, MenuItem, Popover, Snackbar,
+    TextField
+} from 'material-ui';
 import { NavigationMoreVert } from 'material-ui/svg-icons';
 
 import DashboardThumbnail from '../../utils/DashboardThumbnail';
 import DashboardAPI from '../../utils/apis/DashboardAPI';
 import DashboardExporter from '../../utils/DashboardExporter';
+import { HttpStatus } from "../../utils/Constants";
 
 const styles = {
     card: {
@@ -59,6 +63,8 @@ const styles = {
     cardTitle: {
         float: 'left',
     },
+    errorMessage: {},
+    successMessage: {},
 };
 
 class DashboardCard extends Component {
@@ -68,7 +74,12 @@ class DashboardCard extends Component {
             isMenuOpen: false,
             menuAnchorElement: null,
             isDashboardDeleteConfirmDialogOpen: false,
+            isDashboardDuplicateConfigDialogOpen: false,
             dashboardDeleteActionResult: null,
+            newDashboardName: null,
+            newDashboardUrl: null,
+            showMessage: false,
+            message: '',
         };
 
         this.handleMenuIconClick = this.handleMenuIconClick.bind(this);
@@ -76,6 +87,14 @@ class DashboardCard extends Component {
         this.hideDashboardDeleteConfirmDialog = this.hideDashboardDeleteConfirmDialog.bind(this);
         this.showDashboardDeleteConfirmDialog = this.showDashboardDeleteConfirmDialog.bind(this);
         this.handleDashboardDeletionConfirm = this.handleDashboardDeletionConfirm.bind(this);
+
+        this.duplicateDashboard = this.duplicateDashboard.bind(this);
+        this.showDashboardDuplicateConfigDialog = this.showDashboardDuplicateConfigDialog.bind(this);
+        this.hideDashboardDuplicateConfigDialog = this.hideDashboardDuplicateConfigDialog.bind(this);
+        this.renderDashboardDuplicateConfigDialog = this.renderDashboardDuplicateConfigDialog.bind(this);
+        this.renderDashboardMessage = this.renderDashboardMessage.bind(this);
+        this.showError = this.showError.bind(this);
+        this.showMessage = this.showMessage.bind(this);
 
         this.renderDashboardDeleteConfirmDialog = this.renderDashboardDeleteConfirmDialog.bind(this);
         this.renderDashboardDeletionSuccessMessage = this.renderDashboardDeletionSuccessMessage.bind(this);
@@ -106,6 +125,99 @@ class DashboardCard extends Component {
             isDashboardDeleteConfirmDialogOpen: true,
             isMenuOpen: false,
         });
+    }
+
+    showDashboardDuplicateConfigDialog() {
+        const { dashboard } = this.props;
+        this.setState({
+            isDashboardDuplicateConfigDialogOpen: true,
+            isMenuOpen: false,
+            newDashboardName: dashboard.name + ' Copy',
+            newDashboardUrl: dashboard.url + '_copy',
+        });
+    }
+
+    hideDashboardDuplicateConfigDialog() {
+        this.setState({ isDashboardDuplicateConfigDialogOpen: false });
+    }
+
+    /**
+     * Show error message.
+     *
+     * @param {string} message Error message
+     */
+    showError(message) {
+        this.showMessage(message, styles.errorMessage);
+    }
+
+    /**
+     * Show info message.
+     *
+     * @param {string} message Message
+     * @param {string} style Message style
+     */
+    showMessage(message, style = styles.successMessage) {
+        this.setState({
+            showMessage: true,
+            message,
+        });
+    }
+
+    duplicateDashboard(dashboard) {
+        this.hideDashboardDuplicateConfigDialog();
+        const { retrieveDashboards } = this.props;
+        DashboardAPI.exportDashboardByID(dashboard.url)
+            .then((response) => {
+                let dashboard = response.data.dashboard;
+                dashboard.url = this.state.newDashboardUrl;
+                dashboard.name = this.state.newDashboardName;
+                dashboard.content.readOnly = false;
+                new DashboardAPI()
+                    .createDashboard(response.data.dashboard)
+                    .then((response) => {
+                        switch (response.status) {
+                            case HttpStatus.CREATED: {
+                                this.showMessage(
+                                    <FormattedMessage
+                                        id='dashboard.duplicate.success'
+                                        defaultMessage="Dashboard is duplicated successfully!"
+                                    />
+                                );
+                                retrieveDashboards();
+                                break;
+                            }
+                            default: {
+                                this.showError(
+                                    <FormattedMessage
+                                        id='dashboard.duplicate.failure'
+                                        defaultMessage="Unable to duplicate the dashboard due to unknown error."
+                                    />
+                                );
+                                break;
+                            }
+                        }
+                    })
+                    .catch((error) => {
+                        if (error.response.status === HttpStatus.CONFLICT) {
+                            this.showError(
+                                <FormattedMessage
+                                    id='dashboard.duplicate.error.sameurl'
+                                    defaultMessage="Dashboard with same url already exists. Please use a different url."
+                                />
+                            );
+                        } else {
+                            this.showError(this.context.intl.formatMessage({
+                                id: "dashboard.duplicate.add.error",
+                                defaultMessage: "Couldn't create the dashboard!!"
+                            }));
+                        }
+                    });
+
+            })
+            .catch((e) => {
+                console.error(`Duplicating dashboard '${dashboard.name}' with URL '${dashboard.url}' failed.`, e);
+            });
+
     }
 
     handleDashboardDeletionConfirm(dashboard) {
@@ -142,11 +254,85 @@ class DashboardCard extends Component {
         );
     }
 
+    renderDashboardDuplicateConfigDialog(dashboard) {
+        const actionsButtons = [
+            <TextField
+                floatingLabelText={
+                    <FormattedMessage id="dashboard.duplicate.name" defaultMessage="Name" />
+                }
+                hintText={
+                    <FormattedMessage
+                        id="dashboard.duplicate.name.hint.text"
+                        defaultMessage="E.g. Sales Statistics"
+                    />
+                }
+                value={this.state.newDashboardName}
+                fullWidth
+                onChange={(e, value) => {
+                    this.setState({
+                        newDashboardName: value,
+                    });
+                }}
+            />,
+            <TextField
+                floatingLabelText={
+                    <FormattedMessage id="dashboard.duplicate.url" defaultMessage="URL" />
+                }
+                hintText={
+                    <FormattedMessage
+                        id="dashboard.duplicate.url.hint.text"
+                        defaultMessage="E.g. sales-stats"
+                    />
+                }
+                value={this.state.newDashboardUrl}
+                fullWidth
+                onChange={(e, value) => {
+                    this.setState({
+                        newDashboardUrl: value,
+                    });
+                }}
+            />,
+            <FlatButton
+                primary
+                label={<FormattedMessage id='dialog-box.confirmation.cancel' defaultMessage='Cancel' />}
+                onClick={this.hideDashboardDuplicateConfigDialog}
+            />,
+            <FlatButton
+                primary
+                label={<FormattedMessage id='dialog-box.confirmation.ok' defaultMessage='Ok' />}
+                onClick={() => this.duplicateDashboard(dashboard)}
+            />,
+        ];
+
+        return (
+            <Dialog
+                title={`Do you want to duplicate dashboard '${dashboard.name}'?`}
+                actions={actionsButtons}
+                open={this.state.isDashboardDuplicateConfigDialogOpen}
+                modal={false}
+                onRequestClose={this.hideDashboardDuplicateConfigDialog}
+            >
+            </Dialog>
+        );
+    }
+
     renderDashboardDeletionSuccessMessage(dashboard) {
         return (<Snackbar
             open
             message={`Dashboard '${dashboard.name}' deleted successfully`}
             autoHideDuration={4000}
+        />);
+    }
+
+    renderDashboardMessage() {
+        return (<Snackbar
+            contentStyle={styles.messageBox}
+            open={this.state.showMessage}
+            message={this.state.message}
+            autoHideDuration={4000}
+            onRequestClose={() => {
+                this.setState({ showMessage: false, message: '' });
+            }}
         />);
     }
 
@@ -163,6 +349,11 @@ class DashboardCard extends Component {
         if (!(dashboard.hasOwnerPermission || dashboard.hasDesignerPermission)) {
             return null;
         }
+        let duplicateMenuItem;
+        duplicateMenuItem = (<MenuItem
+            primaryText={<FormattedMessage id='duplicate.button' defaultMessage='Duplicate' />}
+            onClick={() => this.showDashboardDuplicateConfigDialog(dashboard)}
+        />);
 
         let designMenuItem;
         if (dashboard.hasDesignerPermission) {
@@ -202,6 +393,7 @@ class DashboardCard extends Component {
                 onRequestClose={this.handleMenuCloseRequest}
             >
                 <Menu>
+                    {duplicateMenuItem}
                     {designMenuItem}
                     {settingsMenuItem}
                     {exportMenuItem}
@@ -258,6 +450,8 @@ class DashboardCard extends Component {
                 {this.renderMenu(dashboard)}
                 {this.renderDashboardDeleteConfirmDialog(dashboard)}
                 {this.renderDashboardDeletionFailMessage(dashboard)}
+                {this.renderDashboardDuplicateConfigDialog(dashboard)}
+                {this.renderDashboardMessage()}
             </span>
         );
     }

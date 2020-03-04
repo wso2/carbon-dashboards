@@ -30,6 +30,7 @@ import java.util.Map;
  */
 public class DashboardMetadataContent {
     private Map<String, String> properties = new HashMap<>();
+    private boolean readOnly = false;
     private JsonArray pages;
 
     public DashboardMetadataContent() {
@@ -73,5 +74,13 @@ public class DashboardMetadataContent {
      */
     public void setPages(JsonArray pages) {
         this.pages = pages;
+    }
+
+    public boolean isReadOnly() {
+        return readOnly;
+    }
+
+    public void setReadOnly(boolean readOnly) {
+        this.readOnly = readOnly;
     }
 }

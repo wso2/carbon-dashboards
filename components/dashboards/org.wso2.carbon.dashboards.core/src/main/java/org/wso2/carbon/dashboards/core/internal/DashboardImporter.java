@@ -83,22 +83,20 @@ public class DashboardImporter {
                     dashboardMetadataProvider.update(dashboard);
                 } else {
                     dashboardMetadataProvider.add(dashboard);
+                    // Fix keys before saving
+                    Map<String, List<String>> permissionMap = dashboardArtifact.getPermissions();
+                    if (permissionMap.containsKey(PERMISSION_VIEWERS)) {
+                        permissionMap.put(PERMISSION_VIEWER, permissionMap.remove(PERMISSION_VIEWERS));
+                    }
+                    if (permissionMap.containsKey(PERMISSION_EDITORS)) {
+                        permissionMap.put(PERMISSION_EDITOR, permissionMap.remove(PERMISSION_EDITORS));
+                    }
+                    if (permissionMap.containsKey(PERMISSION_OWNERS)) {
+                        permissionMap.put(PERMISSION_OWNER, permissionMap.remove(PERMISSION_OWNERS));
+                    }
+                    dashboardMetadataProvider
+                            .updateDashboardRoles(dashboard.getUrl(), dashboardArtifact.getPermissions(), null);
                 }
-
-                // Fix keys before saving
-                Map<String, List<String>> permissionMap = dashboardArtifact.getPermissions();
-                if (permissionMap.containsKey(PERMISSION_VIEWERS)) {
-                    permissionMap.put(PERMISSION_VIEWER, permissionMap.remove(PERMISSION_VIEWERS));
-                }
-                if (permissionMap.containsKey(PERMISSION_EDITORS)) {
-                    permissionMap.put(PERMISSION_EDITOR, permissionMap.remove(PERMISSION_EDITORS));
-                }
-                if (permissionMap.containsKey(PERMISSION_OWNERS)) {
-                    permissionMap.put(PERMISSION_OWNER, permissionMap.remove(PERMISSION_OWNERS));
-                }
-                dashboardMetadataProvider.updateDashboardRoles(dashboard.getUrl(), dashboardArtifact.getPermissions(),
-                        null);
-
             } catch (DashboardException e) {
                 LOGGER.warn("Cannot save dashboard importing from '{}' to the database.", dashboardArtifactPath, e);
                 continue;
@@ -142,7 +140,6 @@ public class DashboardImporter {
                 }
             }
 
-            DashboardArtifactHandler.markArtifactAsImported(dashboardArtifactPath);
             LOGGER.info("{} imported dashboard '{}' from '{}'.", (importedSuccessfully ? "Successfully" : "Partially"),
                         dashboard.getUrl(), dashboardArtifactPath);
         }

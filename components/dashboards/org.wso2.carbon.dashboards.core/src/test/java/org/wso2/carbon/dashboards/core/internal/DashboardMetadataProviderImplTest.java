@@ -73,7 +73,10 @@ public class DashboardMetadataProviderImplTest {
     @Test
     void testGetAll() throws Exception {
         DashboardMetadataDao dao = mock(DashboardMetadataDao.class);
-        when(dao.getAll()).thenReturn(Collections.singleton(new DashboardMetadata()));
+        DashboardMetadata dashboardMetadata = new DashboardMetadata();
+        dashboardMetadata.setUrl("testUrl");
+        when(dao.getAll()).thenReturn(Collections.singleton(dashboardMetadata));
+        when(dao.get(dashboardMetadata.getUrl())).thenReturn(Optional.of(dashboardMetadata));
 
         PermissionProvider permissionProvider = mock(PermissionProvider.class);
         when(permissionProvider.hasPermission(eq("testUser"), Mockito.isA(Permission.class))).thenReturn(true);
