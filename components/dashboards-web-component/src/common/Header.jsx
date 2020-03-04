@@ -30,39 +30,47 @@ import defaultTheme from '../utils/Theme';
 import AuthManager from '../auth/utils/AuthManager';
 
 const baseURL = `${window.location.origin}${window.contextPath}/apis/dashboards`;
-const logoPathPostfix = '/logo.svg';
-const faviconPostfix = '/favicon.ico';
 
 export default class Header extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            themeConfigPath: '',
+            faviconPath: '',
+            logoPath: '',
         };
     }
 
     componentDidMount() {
-        Axios.create({
+        const httpClient = Axios.create({
             baseURL,
             timeout: 300000,
             headers: { Authorization: 'Bearer ' + AuthManager.getUser().SDID },
-        })
-            .get('/theme-config-path')
+        });
+
+        httpClient.get('/favicon-path')
             .then((response) => {
-                this.setState({ themeConfigPath: response.data });
+                this.setState({ faviconPath: response.data });
             })
             .catch((error) => {
-                console.error('Unable to get the logo path for the dashboard.', error);
+                console.error('Unable to get the favicon path for the dashboard.', error);
+            });
+
+        httpClient.get('/logo-path')
+            .then((response) => {
+                this.setState({ logoPath: response.data });
+            })
+            .catch((error) => {
+                console.error('Unable to get the logo image path for the dashboard.', error);
             });
     }
 
     render() {
-        const { themeConfigPath } = this.state;
+        const { faviconPath, logoPath } = this.state;
         const logo = (
             <Link style={{ height: '17px' }} to="/">
                 <img
                     height='17'
-                    src={themeConfigPath + logoPathPostfix}
+                    src={logoPath}
                     alt='logo'
                 />
             </Link>
@@ -76,7 +84,7 @@ export default class Header extends Component {
                     <link
                         id="favicon"
                         rel="shortcut icon"
-                        href={themeConfigPath + faviconPostfix}
+                        href={faviconPath}
                         type="image/x-icon"
                     />
                 </Helmet>

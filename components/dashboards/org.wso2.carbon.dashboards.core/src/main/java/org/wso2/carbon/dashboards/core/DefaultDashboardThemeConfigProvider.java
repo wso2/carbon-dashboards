@@ -63,13 +63,25 @@ public class DefaultDashboardThemeConfigProvider implements DashboardThemeConfig
     }
 
     @Override
-    public String getPath(String username) throws DashboardException {
+    public String getFaviconPath(String username) throws DashboardException {
         Map<String, String> properties = idPClientConfiguration.getProperties();
         String baseUrl = properties.getOrDefault(ExternalIdPClientConstants.BASE_URL,
                 ExternalIdPClientConstants.DEFAULT_BASE_URL);
         String portalAppContext = properties.getOrDefault(ExternalIdPClientConstants.PORTAL_APP_CONTEXT,
                 ExternalIdPClientConstants.DEFAULT_PORTAL_APP_CONTEXT);
-        String logoPath = baseUrl + "/" + portalAppContext + "/public/app/images";
+        String faviconPath = baseUrl + "/" + portalAppContext + "/public/app/images/favicon.ico";
+        LOGGER.debug("Default path returned via '{}' class for user: '{}.'", this.getClass().getName(), username);
+        return faviconPath;
+    }
+
+    @Override
+    public String getLogoPath(String username) throws DashboardException {
+        Map<String, String> properties = idPClientConfiguration.getProperties();
+        String baseUrl = properties.getOrDefault(ExternalIdPClientConstants.BASE_URL,
+                ExternalIdPClientConstants.DEFAULT_BASE_URL);
+        String portalAppContext = properties.getOrDefault(ExternalIdPClientConstants.PORTAL_APP_CONTEXT,
+                ExternalIdPClientConstants.DEFAULT_PORTAL_APP_CONTEXT);
+        String logoPath = baseUrl + "/" + portalAppContext + "/public/app/images/logo.svg";
         LOGGER.debug("Default path returned via '{}' class for user: '{}.'", this.getClass().getName(), username);
         return logoPath;
     }

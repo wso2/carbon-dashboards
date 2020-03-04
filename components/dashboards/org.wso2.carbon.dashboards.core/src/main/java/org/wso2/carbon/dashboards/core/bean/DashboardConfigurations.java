@@ -51,6 +51,12 @@ public class DashboardConfigurations {
     @Element(description = "Location where theme configuration resources(ex: fav icon, logo etc.) are stored in")
     public String themeConfigResourcesPath = "https://localhost:9643/analytics-dashboard/public/app/images";
 
+    @Element(description = "file name of the logo image")
+    public String logoFileName = "logo.svg";
+
+    @Element(description = "file name of the favicon")
+    public String faviconFileName = "favicon.ico";
+
     /**
      * Get map of roles.
      *
@@ -95,5 +101,24 @@ public class DashboardConfigurations {
     public String getThemeConfigResourcesPath() {
         return themeConfigResourcesPath;
     }
+
+    /**
+     * Get file name of the logo image.
+     *
+     * @return logo image file name
+     */
+    public String getLogoFileName() {
+        return logoFileName;
+    }
+
+    /**
+     * Get file name of the favicon.
+     *
+     * @return favicon icon file name
+     */
+    public String getFaviconFileName() {
+        return faviconFileName;
+    }
+
 
 }

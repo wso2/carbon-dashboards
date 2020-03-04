@@ -358,21 +358,41 @@ public class DashboardRestApi implements Microservice {
     }
 
     /**
-     * Gets parent path where logo, fav icon etc. are stored.
+     * Gets path where fav icon is stored.
      *
-     * @since 4.1.14
+     * @since 4.1.16
      *
      * @return response
      */
     @GET
-    @Path("/theme-config-path")
-    public Response getThemeConfigPath(@Context Request request) {
+    @Path("/favicon-path")
+    public Response getFaviconPath(@Context Request request) {
+        String faviconPath;
+        try {
+            faviconPath = dashboardDataProvider.getFaviconPath(getUserName(request));
+        } catch (DashboardException e) {
+            LOGGER.error("Cannot get the path where favicon is stored.", e);
+            return Response.serverError().entity("Cannot get the path where favicon is stored.").build();
+        }
+        return Response.ok().entity(faviconPath).build();
+    }
+
+    /**
+     * Gets path where fav icon is stored.
+     *
+     * @since 4.1.16
+     *
+     * @return response
+     */
+    @GET
+    @Path("/logo-path")
+    public Response getLogoPath(@Context Request request) {
         String logoPath;
         try {
-            logoPath = dashboardDataProvider.getThemeConfigPath(getUserName(request));
+            logoPath = dashboardDataProvider.getLogoPath(getUserName(request));
         } catch (DashboardException e) {
-            LOGGER.error("Cannot get the path where theme resources are stored.", e);
-            return Response.serverError().entity("Cannot get the path where theme resources are stored.").build();
+            LOGGER.error("Cannot get the path where logo image is stored.", e);
+            return Response.serverError().entity("Cannot get the path where logo image is stored.").build();
         }
         return Response.ok().entity(logoPath).build();
     }

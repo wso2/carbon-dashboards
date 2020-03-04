@@ -26,11 +26,21 @@ import org.wso2.carbon.dashboards.core.exception.DashboardException;
 public interface DashboardThemeConfigProvider {
 
     /**
-     * Return the path where fav icon, logo etc. are stored.
+     * Return the path where fav icon is stored.
      *
      * @param username full username(ex: admin@carbon.super).
-     * @return path where theme resources(fav icon, logo etc) are stored.
-     * @throws DashboardException if getting path where dashboard resources are stored, failed due to exception.
+     * @return path to the favicn icon
+     * @throws DashboardException if getting path where favicon is stored, failed due to exception.
      */
-    String getPath(String username) throws DashboardException;
+    String getFaviconPath(String username) throws DashboardException;
+
+    /**
+     * Return the path where logo image is stored.
+     *
+     * @param username full username(ex: admin@carbon.super).
+     * @return path to the logo image
+     * @throws DashboardException if getting path where logo image is stored, failed due to exception.
+     */
+    String getLogoPath(String username) throws DashboardException;
+
 }
