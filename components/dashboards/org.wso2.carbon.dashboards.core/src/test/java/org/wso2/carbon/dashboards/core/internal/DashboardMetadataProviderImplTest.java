@@ -67,7 +67,7 @@ public class DashboardMetadataProviderImplTest {
         Assertions.assertFalse(dashboardMetadataProvider.getDashboardByUser("testUser", "bar", null).isPresent());
         Assertions.assertFalse(dashboardMetadataProvider.
                 getDashboardByUser("testUser", "foo-bar", "settings").isPresent());
-        verify(dao, times(3)).get(anyString());
+        verify(dao, times(4)).get(anyString());
     }
 
     @Test
