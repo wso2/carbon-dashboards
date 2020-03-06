@@ -21,7 +21,7 @@
 
     <groupId>org.wso2.carbon.dashboards</groupId>
     <artifactId>carbon-dashboards</artifactId>
-    <version>4.1.18-SNAPSHOT</version>
+    <version>4.1.19-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>WSO2 Carbon Dashboards - Parent</name>
@@ -393,7 +393,7 @@
     </dependencyManagement>
 
     <properties>
-        <carbon.dashboards.version>4.1.18-SNAPSHOT</carbon.dashboards.version>
+        <carbon.dashboards.version>4.1.19-SNAPSHOT</carbon.dashboards.version>
 
         <!-- Datasource -->
         <carbon.datasource.core.version>1.1.8</carbon.datasource.core.version>

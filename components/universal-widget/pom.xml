@@ -21,7 +21,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>universal-widget</artifactId>
-    <version>4.1.18-SNAPSHOT</version>
+    <version>4.1.19-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>WSO2 Carbon Dashboards - Universal Widget</name>
@@ -29,7 +29,7 @@
     <parent>
         <groupId>org.wso2.carbon.dashboards</groupId>
         <artifactId>carbon-dashboards</artifactId>
-        <version>4.1.18-SNAPSHOT</version>
+        <version>4.1.19-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 

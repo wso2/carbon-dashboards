@@ -240,10 +240,11 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
     @Override
     public void update(String user, DashboardMetadata dashboardMetadata) throws DashboardException {
         // TODO: 11/10/17 validate parameters
-        if (permissionProvider.hasPermission(user, new Permission(PERMISSION_APP_NAME, dashboardMetadata.getUrl() +
-                PERMISSION_SUFFIX_OWNER))
-                || permissionProvider.hasPermission(user, new Permission(PERMISSION_APP_NAME,
-                dashboardMetadata.getUrl() + PERMISSION_SUFFIX_EDITOR))) {
+        if ((permissionProvider.hasPermission(user,
+                new Permission(PERMISSION_APP_NAME, dashboardMetadata.getUrl() + PERMISSION_SUFFIX_OWNER))
+                || permissionProvider.hasPermission(user,
+                new Permission(PERMISSION_APP_NAME, dashboardMetadata.getUrl() + PERMISSION_SUFFIX_EDITOR)))
+                && !isReadOnly(dashboardMetadata.getUrl())) {
             dao.update(dashboardMetadata);
         } else {
             throw new UnauthorizedException("Insufficient permissions to update the dashboard with ID "
@@ -427,12 +428,35 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
     private boolean checkPermissions(String user, String dashboardUrl, String originComponent) {
         switch (originComponent) {
             case "designer":
-                return hasPermission(user, dashboardUrl, PERMISSION_SUFFIX_EDITOR) ||
-                        hasPermission(user, dashboardUrl, PERMISSION_SUFFIX_OWNER);
+                return (hasPermission(user, dashboardUrl, PERMISSION_SUFFIX_EDITOR) ||
+                        hasPermission(user, dashboardUrl, PERMISSION_SUFFIX_OWNER)) && !isReadOnly(dashboardUrl);
             case "settings":
                 return hasPermission(user, dashboardUrl, PERMISSION_SUFFIX_OWNER);
             default:
                 return false;
+        }
+    }
+
+    /**
+     * Check dashbaord content is ready only
+     *
+     * @param dashboardUrl url
+     * @return true if it is read only
+     */
+    private boolean isReadOnly(String dashboardUrl) {
+        DashboardMetadata metadata;
+        try {
+            Optional<DashboardMetadata> optional = get(dashboardUrl);
+            if (optional.isPresent()) {
+                metadata = optional.get();
+                return metadata.getContent().isReadOnly();
+            } else {
+                return false;
+            }
+        } catch (DashboardException e) {
+            //no need to handle exception since this is a data filter method.
+            LOGGER.error("Error occurred while getting dashboard.", e);
+            return false;
         }
     }
 

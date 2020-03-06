@@ -23,7 +23,7 @@
     <groupId>org.wso2.carbon.dashboards.samples</groupId>
     <artifactId>samples-parent</artifactId>
     <packaging>pom</packaging>
-    <version>4.1.18-SNAPSHOT</version>
+    <version>4.1.19-SNAPSHOT</version>
 
     <name>WSO2 Carbon Dashboards - Samples</name>
     <url>http://wso2.org</url>
@@ -31,7 +31,7 @@
     <parent>
         <groupId>org.wso2.carbon.dashboards</groupId>
         <artifactId>carbon-dashboards</artifactId>
-        <version>4.1.18-SNAPSHOT</version>
+        <version>4.1.19-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
