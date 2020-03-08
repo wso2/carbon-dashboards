@@ -220,6 +220,7 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
                 .filter(role -> hasRoles(user, role))
                 .collect(Collectors.toSet());
         if (!filteredRoleIds.isEmpty()) {
+            dashboardMetadata.setOwner(user);
             dao.add(dashboardMetadata);
             for (Permission permission : buildDashboardPermissions(dashboardMetadata.getUrl())) {
                 permissionProvider.addPermission(permission);
