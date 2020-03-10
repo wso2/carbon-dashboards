@@ -85,6 +85,9 @@ export default class DashboardAPI {
                 this.getHTTPClient().defaults.headers.common['X-Dashboard-Origin-Component'] = "settings";
                 break;
             }
+            default: {
+                delete this.getHTTPClient().defaults.headers.common['X-Dashboard-Origin-Component'];
+            }
         }
         return this.getHTTPClient().get(dashboardId);
     }
