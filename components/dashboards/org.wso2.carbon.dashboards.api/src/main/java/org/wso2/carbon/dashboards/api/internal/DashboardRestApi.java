@@ -236,6 +236,7 @@ public class DashboardRestApi implements Microservice {
 
     @GET
     @Path("/roles/{username}/iscreator")
+    @Produces(MediaType.TEXT_PLAIN)
     public Response isCreator(@PathParam("username") String username) {
         try {
             boolean isCreator = dashboardDataProvider.isCreator(username);
@@ -251,6 +252,7 @@ public class DashboardRestApi implements Microservice {
 
     @GET
     @Path("/roles/{username}/iswidgetcreator")
+    @Produces(MediaType.TEXT_PLAIN)
     public Response isWidgetCreator(@PathParam("username") String username) {
         try {
             boolean isWidgetCreator = dashboardDataProvider.isWidgetCreator(username);
@@ -366,6 +368,7 @@ public class DashboardRestApi implements Microservice {
      */
     @GET
     @Path("/favicon-path")
+    @Produces(MediaType.TEXT_PLAIN)
     public Response getFaviconPath(@Context Request request) {
         String faviconPath;
         try {
@@ -386,6 +389,7 @@ public class DashboardRestApi implements Microservice {
      */
     @GET
     @Path("/logo-path")
+    @Produces(MediaType.TEXT_PLAIN)
     public Response getLogoPath(@Context Request request) {
         String logoPath;
         try {
