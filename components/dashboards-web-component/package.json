@@ -32,17 +32,17 @@
     "material-ui": "^0.20.0",
     "prop-types": "^15.6.0",
     "qs": "^6.5.1",
-    "react": "^16.4.0",
+    "react": "^16.13.1",
     "react-ace": "^5.9.0",
     "react-color": "^2.13.8",
-    "react-dom": "^16.4.0",
+    "react-dom": "^16.13.1",
+    "react-helmet": "5.2.0",
     "react-intl": "^2.4.0",
     "react-resizable": "^1.7.5",
     "react-router-dom": "^4.1.2",
     "react-speed-dial": "^0.4.7",
     "react-tooltip": "^3.4.0",
-    "react-vizgrammar": "^0.7.14",
-    "react-helmet": "5.2.0"
+    "react-vizgrammar": "^0.7.14"
   },
   "devDependencies": {
     "@babel/core": "^7.2.2",
