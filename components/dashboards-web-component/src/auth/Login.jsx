@@ -216,6 +216,7 @@ export default class Login extends Component {
                         onSubmit={this.authenticate}
                     >
                         <TextField
+                            id="txt-username"
                             autoFocus
                             fullWidth
                             autoComplete="off"
@@ -229,6 +230,7 @@ export default class Login extends Component {
                         />
                         <br />
                         <TextField
+                            id="txt-password"
                             fullWidth
                             type="password"
                             autoComplete="off"
@@ -242,6 +244,7 @@ export default class Login extends Component {
                         />
                         <br />
                         <Checkbox
+                            id="chkbox-remember-me"
                             label={<FormattedMessage id="login.rememberMe" defaultMessage="Remember Me"/>}
                             checked={this.state.rememberMe}
                             onCheck={(e, checked) => {
@@ -253,6 +256,7 @@ export default class Login extends Component {
                         />
                         <br />
                         <RaisedButton
+                            id="btn-submit"
                             primary
                             type="submit"
                             disabled={username === '' || password === ''}
