@@ -171,6 +171,9 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
 
         dao.add(dashboardMetadata);
         for (Permission permission : buildDashboardPermissions(dashboardMetadata.getUrl())) {
+            if (permissionProvider.isPermissionExists(permission)) {
+                continue;
+            }
             permissionProvider.addPermission(permission);
             for (String roleId: rolesProvider.getCreatorRoleIds()) {
                 permissionProvider.grantPermission(permission, new Role(roleId, ""));
