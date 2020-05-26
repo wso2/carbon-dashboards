@@ -47,8 +47,8 @@ class WidgetChannelManager {
                 topic: widgetId,
                 action: 'subscribe'
             };
-        this.webSocket.send(JSON.stringify(configJSON));
-    })
+            this.webSocket.send(JSON.stringify(configJSON));
+        })
     }
 
     /**
@@ -57,13 +57,15 @@ class WidgetChannelManager {
      */
     unsubscribeWidget(widgetId) {
         delete this.widgetMap[widgetId];
-        let config = {
-            topic: widgetId,
-            providerName: null,
-            dataProviderConfiguration: null,
-            action: 'unsubscribe',
-        };
-        this.webSocket.send(JSON.stringify(config));
+        this.waitForConn(this.webSocket, () => {
+            let config = {
+                topic: widgetId,
+                providerName: null,
+                dataProviderConfiguration: null,
+                action: 'unsubscribe',
+            };
+            this.webSocket.send(JSON.stringify(config));
+        })
     }
 
     /**
