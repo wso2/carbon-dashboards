@@ -20,6 +20,7 @@ import React, {Component} from 'react';
 import Axios from 'axios';
 
 const SESSION_USER = 'DASHBOARD_USER';
+const WIDGET_STATES = '?widgetStates=';
 
 /**
  * Widget base class.
@@ -66,9 +67,8 @@ export default class Widget extends Component {
      */
     static _getStateObject() {
         // De-serialize the object in suitable format
-        const hash = decodeURIComponent(window.location.hash);
-        return (hash === '' || hash === '#') ?
-            {} : JSON.parse(hash.substr(1));
+        const searchParams = decodeURIComponent(window.location.search.substr(WIDGET_STATES.length));
+        return (searchParams === '' || searchParams === null) ? {} : JSON.parse(searchParams);
     }
 
     /**
@@ -78,7 +78,9 @@ export default class Widget extends Component {
      */
     static _setStateObject(state) {
         // Serialize the object in suitable format
-        window.location.hash = JSON.stringify(state);
+        const urlPaths = window.location.pathname.split('/');
+        const updatedParams = urlPaths[urlPaths.length - 1] + WIDGET_STATES + encodeURIComponent(JSON.stringify(state));
+        history.pushState(null, '', updatedParams);
     }
 
     /**
