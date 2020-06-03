@@ -160,8 +160,8 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
     }
 
     @Override
-    public Set<DashboardMetadata> getAllByUser(String user) throws DashboardException {
-        Set<DashboardMetadata> dashboardList = dao.getAll();
+    public List<DashboardMetadata> getAllByUser(String user) throws DashboardException {
+        List<DashboardMetadata> dashboardList = dao.getAll();
         return dashboardList.stream().
                 filter(dashboardMetadata -> {
                     DashboardMetadata dashboardMetadataDetails;
@@ -195,7 +195,7 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
                         return true;
                     }
                     return false;
-                }).collect(Collectors.toSet());
+                }).collect(Collectors.toList());
     }
 
     @Override
