@@ -35,9 +35,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import javax.sql.DataSource;
 
 /**
@@ -249,8 +249,8 @@ public class DashboardMetadataDao {
         }
     }
 
-    public Set<DashboardMetadata> getAll() throws DashboardException {
-        Set<DashboardMetadata> dashboardMetadatas = new HashSet<>();
+    public List<DashboardMetadata> getAll() throws DashboardException {
+        List<DashboardMetadata> dashboardMetadatas = new ArrayList<>();
         Connection connection = null;
         PreparedStatement ps = null;
         ResultSet results = null;
