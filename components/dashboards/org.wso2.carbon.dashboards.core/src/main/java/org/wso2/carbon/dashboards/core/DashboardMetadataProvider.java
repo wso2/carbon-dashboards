@@ -27,7 +27,6 @@ import org.wso2.carbon.uiserver.api.App;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 
 /**
  * Provider for dashboards related information.
@@ -64,7 +63,7 @@ public interface DashboardMetadataProvider {
     Optional<DashboardMetadata> getDashboardByUser(String user, String dashboardUrl, String originComponent) throws
             DashboardException;
 
-    Set<DashboardMetadata> getAllByUser(String user) throws DashboardException;
+    List<DashboardMetadata> getAllByUser(String user) throws DashboardException;
 
     /**
      * Add dashboard without permission check.
