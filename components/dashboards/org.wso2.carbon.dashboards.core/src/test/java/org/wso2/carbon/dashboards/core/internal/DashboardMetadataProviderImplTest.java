@@ -75,7 +75,7 @@ public class DashboardMetadataProviderImplTest {
         DashboardMetadataDao dao = mock(DashboardMetadataDao.class);
         DashboardMetadata dashboardMetadata = new DashboardMetadata();
         dashboardMetadata.setUrl("testUrl");
-        when(dao.getAll()).thenReturn(Collections.singleton(dashboardMetadata));
+        when(dao.getAll()).thenReturn(Collections.singletonList(dashboardMetadata));
         when(dao.get(dashboardMetadata.getUrl())).thenReturn(Optional.of(dashboardMetadata));
 
         PermissionProvider permissionProvider = mock(PermissionProvider.class);
