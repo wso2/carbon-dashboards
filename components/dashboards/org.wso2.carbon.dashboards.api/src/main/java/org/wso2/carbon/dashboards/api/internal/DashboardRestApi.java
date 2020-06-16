@@ -244,6 +244,7 @@ public class DashboardRestApi implements Microservice {
                     .entity(isCreator)
                     .build();
         } catch (DashboardException e) {
+            LOGGER.error("Cannot read user roles for '" + username + "'.", e);
             return Response.serverError()
                     .entity("Cannot read user roles for '" + username + "'.")
                     .build();
@@ -260,6 +261,7 @@ public class DashboardRestApi implements Microservice {
                     .entity(isWidgetCreator)
                     .build();
         } catch (DashboardException e) {
+            LOGGER.error("Cannot read user roles for '" + username + "'.", e);
             return Response.serverError()
                     .entity("Cannot read user roles for '" + username + "'.")
                     .build();

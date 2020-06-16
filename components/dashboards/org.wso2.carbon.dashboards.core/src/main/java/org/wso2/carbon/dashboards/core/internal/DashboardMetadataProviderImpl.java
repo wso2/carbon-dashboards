@@ -525,7 +525,7 @@ public class DashboardMetadataProviderImpl implements DashboardMetadataProvider 
         try {
             userRoles = identityClient.getUserRoles(username);
         } catch (IdPClientException e) {
-            throw new DashboardException("Unable to get roles for the username.");
+            throw new DashboardException("Unable to get roles for the username.", e);
         }
         RolesProvider rolesProvider = new RolesProvider(dashboardConfigurations);
         List<String> widgetCreatorRoleIds = rolesProvider.getWidgetCreatorRoleIds();
