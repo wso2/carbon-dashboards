@@ -87,9 +87,9 @@
             </dependency>
             <!--H2-->
             <dependency>
-                <groupId>com.h2database.wso2</groupId>
-                <artifactId>h2-database-engine</artifactId>
-                <version>${h2.database.engine.version}</version>
+                <groupId>org.wso2.orbit.com.h2database</groupId>
+                <artifactId>h2</artifactId>
+                <version>${h2.version}</version>
             </dependency>
 
             <!--Config-->
@@ -398,7 +398,7 @@
         <!-- Datasource -->
         <carbon.datasource.core.version>1.1.8</carbon.datasource.core.version>
         <carbon.datasource.core.version.range>[1.1.2, 2.0.0)</carbon.datasource.core.version.range>
-        <h2.database.engine.version>1.2.140.wso2v3</h2.database.engine.version>
+        <h2.version>1.4.199.wso2v1</h2.version>
 
         <!--Config-->
         <carbon.config.version>2.1.16</carbon.config.version>

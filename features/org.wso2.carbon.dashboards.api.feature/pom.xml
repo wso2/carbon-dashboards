@@ -54,8 +54,8 @@
 
         <!--Datasources-->
         <dependency>
-            <groupId>com.h2database.wso2</groupId>
-            <artifactId>h2-database-engine</artifactId>
+            <groupId>org.wso2.orbit.com.h2database</groupId>
+            <artifactId>h2</artifactId>
         </dependency>
 
         <!-- Common query manager -->
@@ -103,8 +103,8 @@
                                     <version>${carbon.dashboards.version}</version>
                                 </bundle>
                                 <bundle>
-                                    <symbolicName>h2-database-engine</symbolicName>
-                                    <version>${h2.database.engine.version}</version>
+                                    <symbolicName>h2</symbolicName>
+                                    <version>${h2.version}</version>
                                 </bundle>
                                 <bundle>
                                     <symbolicName>org.wso2.carbon.database.query.manager</symbolicName>
