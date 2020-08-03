@@ -87,7 +87,8 @@ class DashboardSettingsPage extends Component {
      * Update dashboard.
      */
     updateDashboard() {
-        const {dashboard} = this.state;
+        const { dashboard } = this.state;
+        const { content: { readOnly } } = dashboard;
 
         // Validate fields.
         if (dashboard.name.length === 0) {
@@ -99,24 +100,27 @@ class DashboardSettingsPage extends Component {
         }
 
         // Save dashboard metadata.
-        new DashboardAPI()
-            .updateDashboardByID(dashboard.url, dashboard)
-            .then((response) => {
-                if (response.status === HttpStatus.OK) {
-                    this.showMessage(this.context.intl.formatMessage({
-                        id: "dashboard.update.success",
-                        defaultMessage: "Dashboard updated successfully!"
-                    }));
-                    setTimeout(() => {
-                        this.props.history.push('/');
-                    }, 1000);
-                }
-            })
-            .catch(() => this.showError(this.context.intl.formatMessage({
-                id: "settings.role.update.failure",
-                defaultMessage: "Failed updating dashboard roles."
-            })));
-
+        if (readOnly) {
+            console.warn('Skipping dashboard update since user not authorize to update dashboard');
+        } else {
+            new DashboardAPI()
+                .updateDashboardByID(dashboard.url, dashboard)
+                .then((response) => {
+                    if (response.status === HttpStatus.OK) {
+                        this.showMessage(this.context.intl.formatMessage({
+                            id: "dashboard.update.success",
+                            defaultMessage: "Dashboard updated successfully!"
+                        }));
+                        setTimeout(() => {
+                            this.props.history.push('/');
+                        }, 1000);
+                    }
+                })
+                .catch(() => this.showError(this.context.intl.formatMessage({
+                    id: "settings.role.update.failure",
+                    defaultMessage: "Failed updating dashboard roles."
+                })));
+        }
         // Save dashboard roles only if there are changes.
         if (this.rolesComponent) {
             this.rolesComponent
@@ -167,6 +171,11 @@ class DashboardSettingsPage extends Component {
         } else if (!this.state.hasDashboard) {
             return <Error404/>;
         }
+        let readOnly = true;
+        const { dashboard } = this.state;
+        if (dashboard && dashboard.content) {
+            ({ content: { readOnly } } = dashboard);
+        }
         return (
             <MuiThemeProvider muiTheme={defaultTheme}>
                 <div>
@@ -200,6 +209,7 @@ class DashboardSettingsPage extends Component {
                                 this.state.dashboard.name = e.target.value;
                                 this.setState({dashboard: this.state.dashboard});
                             }}
+                            disabled={readOnly}
                         />
                         <TextField
                             floatingLabelText={
@@ -218,6 +228,7 @@ class DashboardSettingsPage extends Component {
                                 this.state.dashboard.description = e.target.value;
                                 this.setState({dashboard: this.state.dashboard});
                             }}
+                            disabled={readOnly}
                         />
                         {/* Dashboard roles */}
                         <DashboardSettingsRoles
