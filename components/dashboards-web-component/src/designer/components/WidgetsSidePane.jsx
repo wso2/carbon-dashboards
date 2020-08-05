@@ -44,6 +44,9 @@ export default class WidgetsSidePane extends Component {
         WidgetAPI.getWidgets()
             .then((response) => {
                 this.widgets = response.data || [];
+                this.widgets = this.widgets.filter((widget)=>{
+                    return !!widget;
+                })
                 this.widgets.sort((widgetA, widgetB) => {
                     return (widgetA.name.toLowerCase() < widgetB.name.toLowerCase()) ? -1 : 1;
                 });
