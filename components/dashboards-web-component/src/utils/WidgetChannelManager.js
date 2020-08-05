@@ -64,16 +64,15 @@ class WidgetChannelManager {
      */
     unsubscribeWidget(widgetId) {
         delete this.widgetMap[widgetId];
-        let config = {
-            widgetName: null,
-            username: null,
-            dashboardId: null,
-            topic: widgetId,
-            providerName: null,
-            dataProviderConfiguration: null,
-            action: 'unsubscribe',
-        };
-        this.webSocket.send(JSON.stringify(config));
+	this.waitForConn(this.webSocket, () => {
+            let config = {
+                topic: widgetId,
+                providerName: null,
+                dataProviderConfiguration: null,
+                action: 'unsubscribe',
+            };
+            this.webSocket.send(JSON.stringify(config));
+        })
     }
 
     /**
