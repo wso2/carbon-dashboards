@@ -148,7 +148,7 @@ export default class Login extends Component {
     getReferrer() {
         const referrer = localStorage.getItem(REFERRER_KEY);
         localStorage.removeItem(REFERRER_KEY);
-        return referrer || '/';
+        return (!referrer || referrer === 'undefined') ? '/' : referrer;
     }
 
     /**
