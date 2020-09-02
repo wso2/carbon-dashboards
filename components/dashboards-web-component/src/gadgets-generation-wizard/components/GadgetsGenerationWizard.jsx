@@ -176,14 +176,17 @@ class GadgetsGenerationWizard extends Component {
                     providerDescription: response.data[3] || '',
                 });
             } else {
-                this.setState({
+                var newState = {
                     providerType,
                     providerConfigRenderTypes: response.data[0],
                     providerConfiguration: response.data[1],
-                    queryFunctionImpl: response.data[1].queryData.queryFunctionImpl,
                     providerConfigRenderHints: response.data[2],
                     providerDescription: response.data[3] || '',
-                });
+                };
+                if (response.data[1].queryData && response.data[1].queryData.queryFunctionImpl) {
+                    newState['queryFunctionImpl'] = response.data[1].queryData.queryFunctionImpl;
+                }
+                this.setState(newState);
             }
         }).catch(() => {
             this.displaySnackbar('Failed to load provider configurations', 'errorMessage');
