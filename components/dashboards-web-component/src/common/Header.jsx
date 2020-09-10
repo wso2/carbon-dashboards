@@ -66,18 +66,22 @@ export default class Header extends Component {
 
     render() {
         const { faviconPath, logoPath } = this.state;
-        const logo = (
-            <Link style={{ height: '17px' }} to="/">
-                <img
-                    height='17'
-                    src={logoPath}
-                    alt='logo'
-                />
-            </Link>
-        );
         const {
-            onLogoClick, theme, title, rightElement,
+            onLogoClick, theme, title, rightElement, NavMenu
         } = this.props;
+        const logo = (
+            <>
+                {NavMenu}
+                <Link style={{ height: '17px' }} to="/">
+                    <img
+                        height='17'
+                        src={logoPath}
+                        alt='logo'
+                    />
+                </Link>
+            </>
+        );
+
         return (
             <>
                 <Helmet>
@@ -93,7 +97,6 @@ export default class Header extends Component {
                     title={title}
                     iconElementRight={rightElement}
                     iconElementLeft={logo}
-                    onLeftIconButtonClick={onLogoClick}
                     iconStyleLeft={{ margin: '0 15px 0 0', display: 'flex', alignItems: 'center' }}
                     titleStyle={{ fontSize: 16 }}
                     zDepth={2}
