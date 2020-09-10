@@ -115,6 +115,7 @@ Header.propTypes = {
     ]).isRequired,
     rightElement: PropTypes.element,
     theme: PropTypes.shape({}),
+    NavMenu: PropTypes.element
 };
 
 Header.defaultProps = {
