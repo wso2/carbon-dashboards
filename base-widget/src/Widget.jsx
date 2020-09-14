@@ -186,7 +186,7 @@ export default class Widget extends Component {
     getWidgetConfiguration(widgetId) {
         let httpClient = Axios.create({
             baseURL: window.location.origin + window.contextPath,
-            timeout: 2000,
+            timeout: 60000,
             headers: {"Authorization": "Bearer " + JSON.parse(Widget._getSessionCookie(SESSION_USER)).SDID},
         });
         httpClient.defaults.headers.post['Content-Type'] = 'application/json';
