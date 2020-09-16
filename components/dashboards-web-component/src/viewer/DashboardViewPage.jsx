@@ -180,16 +180,18 @@ class DashboardViewPage extends Component {
     }
 
     renderHeader(theme) {
-        const logo = (
-            <IconButton style={{ margin: 0, padding: 0, width: 'initial', height: theme.appBar.height }}>
+        const NavMenu = (
+            <IconButton
+                onClick={this.handleSidePaneToggle}
+                style={{ margin: 0, padding: 0, marginRight: '30px', width: 'initial', height: theme.appBar.height }}
+            >
                 <NavigationMenu />
             </IconButton>
         );
         return (
             <Header
                 title={this.dashboard ? this.dashboard.name : this.props.match.params.dashboardId}
-                logo={logo}
-                onLogoClick={this.handleSidePaneToggle}
+                NavMenu={NavMenu}
                 rightElement = {
                     <span style={{ position: 'relative' }}>
                         <ThemeButton
