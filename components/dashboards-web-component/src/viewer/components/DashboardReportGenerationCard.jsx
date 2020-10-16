@@ -146,7 +146,7 @@ export default class DashboardReportGenerationCard extends Component {
                                     defaultMessage='Capture Current Page'
                                 />}
                                 onClick={this.capturePage}
-                                backgroundColor={'#1c3b4a'}
+                                backgroundColor={'rgb(153 153 153)'}
                             />
 
                             <List>
@@ -205,7 +205,7 @@ export default class DashboardReportGenerationCard extends Component {
                                 }
                                 onClick={this.generateDashboardReport}
                                 disabled={!(this.state.pageList.length > 0)}
-                                disabledBackgroundColor="rgb(27, 40, 47)"
+                                disabledBackgroundColor='rgb(119 119 119)'
                                 style={{ paddingTop: '5px', paddingBottom: '5px' }}
                             />
                         </div>

@@ -52,7 +52,7 @@ export const lightTheme = getMuiTheme(lightBaseTheme,
             alternateTextColor: Colors.black,
         },
         appBar: {
-            color: Colors.grey200,
+            color: Colors.grey400,
             textColor: Colors.grey900,
             height: 40,
         },
