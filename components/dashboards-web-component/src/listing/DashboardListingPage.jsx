@@ -148,8 +148,14 @@ export default class DashboardListingPage extends Component {
             );
         }
 
+        let sortedDashboards = dashboards.sort((a, b) => {
+            if (a.name.toLowerCase() < b.name.toLowerCase()) return -1;
+            if (a.name.toLowerCase() > b.name.toLowerCase()) return 1;
+            return 0;
+        });
+
         // Render dashboards.
-        return this.state.dashboards.map((dashboard) => {
+        return sortedDashboards.map((dashboard) => {
             return <DashboardCard key={dashboard.url} dashboard={dashboard}
                 retrieveDashboards={this.retrieveDashboards} />;
         });
