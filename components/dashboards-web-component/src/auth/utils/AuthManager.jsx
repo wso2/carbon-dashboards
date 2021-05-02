@@ -47,7 +47,8 @@ export default class AuthManager {
      * @param {{}} user  User object
      */
     static setUser(user) {
-        AuthManager.setCookie(Constants.SESSION_USER_COOKIE, JSON.stringify(user), null, window.contextPath);
+        AuthManager.setCookie(Constants.SESSION_USER_COOKIE, JSON.stringify(user), null, "/analytics-dashboard");
+        AuthManager.setCookie(Constants.DATA_PROVIDER_USER_COOKIE, JSON.stringify(user), null, "/data-provider");
     }
 
     /**
@@ -55,6 +56,7 @@ export default class AuthManager {
      */
     static discardSession() {
         AuthManager.deleteCookie(Constants.SESSION_USER_COOKIE);
+        AuthManager.deleteCookie(Constants.DATA_PROVIDER_USER_COOKIE);
         AuthManager.deleteCookie(Constants.REFRESH_TOKEN_COOKIE);
         window.localStorage.clear();
     }
