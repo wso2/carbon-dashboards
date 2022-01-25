@@ -64,7 +64,7 @@
         <url>https://github.com/wso2/carbon-dashboards.git</url>
         <developerConnection>scm:git:https://github.com/wso2/carbon-dashboards.git</developerConnection>
         <connection>scm:git:https://github.com/wso2/carbon-dashboards.git</connection>
-        <tag>v2.0.7</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <dependencyManagement>
