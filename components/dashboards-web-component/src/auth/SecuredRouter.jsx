@@ -64,7 +64,7 @@ export default class SecuredRouter extends Component {
                         console.debug('Token refresh successful.');
                     }).catch(() => {
                         console.log('Token refresh failed.');
-                        history.push('/login');
+                        location.reload();
                     });
                 }
             } else {
