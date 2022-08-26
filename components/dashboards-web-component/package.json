@@ -28,7 +28,7 @@
     "html2canvas": "^1.0.0-alpha.12",
     "jspdf": "^1.4.1",
     "jspdf-autotable": "^2.3.4",
-    "lodash": "^4.17.5",
+    "lodash": "^4.17.21",
     "material-ui": "^0.20.0",
     "prop-types": "^15.6.0",
     "qs": "^6.5.1",
